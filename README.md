@@ -1,28 +1,24 @@
-# finpilot
+# kyanite
 
-A template for building custom bootc operating system images based on the lessons from [Universal Blue](https://universal-blue.org/) and [Bluefin](https://projectbluefin.io). It is designed to be used manually, but is optimized to be bootstraped by GitHub Copilot. After set up you'll have your own custom Linux. 
+A custom bootc operating system based on Fedora Kinoite (KDE Plasma) built using the lessons from [Universal Blue](https://universal-blue.org/) and the [@projectbluefin/finpilot](https://github.com/projectbluefin/finpilot) template.
 
-This template uses the **multi-stage build architecture** from , combining resources from multiple OCI containers for modularity and maintainability. See the [Architecture](#architecture) section below for details.
-
-**Unlike previous templates, you are not modifying Bluefin and making changes.**: You are assembling your own Bluefin in the same exact way that Bluefin, Aurora, and Bluefin LTS are built. This is way more flexible and better for everyone since the image-agnostic and desktop things we love about Bluefin lives in @projectbluefin/common. 
-
- Instead, you create your own OS repository based on this template, allowing full customization while leveraging Bluefin's robust build system and shared components.
+This OS is based on **kinoite-main** (Fedora KDE Plasma) and provides a clean foundation for customization without the Bluefin desktop configuration.
 
 > Be the one who moves, not the one who is moved.
 
-## Guided Copilot Mode
+## What Makes Kyanite Different?
 
-Here are the steps to guide copilot to make your own repo, or just use it like a regular image template.
+Kyanite is a clean KDE Plasma operating system based on Fedora Kinoite, built using the bootc architecture:
 
-1. Click the green "Use this as a template" button and create a new repository
-2. Select your owner, pick a repo name for your OS, and a description
-3. In the "Jumpstart your project with Copilot (optional)" add this, modify to your liking:
+### Base Configuration
+- **Desktop Environment**: KDE Plasma (via kinoite-main base image)
+- **No Bluefin Common**: Does not include @projectbluefin/common desktop configuration
+- **Clean Foundation**: Minimal base with only essential integrations
 
-```
-Use @projectbluefin/finpilot as a template, name the OS the repository name. Ensure the entire operating system is bootstrapped. Ensure all github actions are enabled and running.  Ensure the README has the github setup instructions for cosign and the other steps required to finish the task.
-```
-
-## What's Included
+### Included Integrations
+- **Homebrew Support**: Via @ublue-os/brew for runtime package management
+- **Flatpak Preinstall**: Automatic Flatpak installation on first boot
+- **ujust Commands**: User-friendly command shortcuts
 
 ### Build System
 - Automated builds via GitHub Actions on every commit
@@ -59,44 +55,36 @@ Use @projectbluefin/finpilot as a template, name the OS the repository name. Ens
 - Helper functions for safe COPR usage
 - See [build/README.md](build/README.md) for details
 
-## Quick Start
+## Getting Started
 
-### 1. Create Your Repository
+### Using the Image
 
-Click "Use this template" to create a new repository from this template.
-
-### 2. Rename the Project
-
-Important: Change `finpilot` to your repository name in these 5 files:
-
-1. `Containerfile` (line 9): `# Name: your-repo-name`
-2. `Justfile` (line 1): `export image_name := "your-repo-name"`
-3. `README.md` (line 1): `# your-repo-name`
-4. `artifacthub-repo.yml` (line 5): `repositoryID: your-repo-name`
-5. `custom/ujust/README.md` (~line 175): `localhost/your-repo-name:stable`
-
-### 3. Enable GitHub Actions
-
-- Go to the "Actions" tab in your repository
-- Click "I understand my workflows, go ahead and enable them"
-
-Your first build will start automatically! 
-
-Note: Image signing is disabled by default. Your images will build successfully without any signing keys. Once you're ready for production, see "Optional: Enable Image Signing" below.
-
-### 4. Customize Your Image
-
-Choose your base image in `Containerfile` (line 23):
-```dockerfile
-FROM ghcr.io/ublue-os/bluefin:stable
+Switch to Kyanite from an existing bootc system:
+```bash
+sudo bootc switch ghcr.io/alyraffauf/kyanite:stable
+sudo systemctl reboot
 ```
 
-Add your packages in `build/10-build.sh`:
+### GitHub Actions Setup
+
+The repository comes with GitHub Actions pre-configured, but you need to enable them:
+
+1. **Go to the Actions tab** in your GitHub repository
+2. **Click "I understand my workflows, go ahead and enable them"**
+3. Your first build will start automatically!
+
+**Note**: Image signing is disabled by default. Your images will build successfully without any signing keys. See [Enable Image Signing](#enable-image-signing) below to set it up for production use.
+
+### Customizing Your Image
+
+#### Add System Packages
+
+Edit `build/10-build.sh` to install packages at build time:
 ```bash
 dnf5 install -y package-name
 ```
 
-Customize your apps:
+#### Configure Applications
 - Add Brewfiles in `custom/brew/` ([guide](custom/brew/README.md))
 - Add Flatpaks in `custom/flatpaks/` ([guide](custom/flatpaks/README.md))
 - Add ujust commands in `custom/ujust/` ([guide](custom/ujust/README.md))
@@ -113,15 +101,7 @@ All changes should be made via pull requests:
 4. Once checks pass, merge the PR
 5. Merging triggers publishes a `:stable` image
 
-### 6. Deploy Your Image
-
-Switch to your image:
-```bash
-sudo bootc switch ghcr.io/your-username/your-repo-name:stable
-sudo systemctl reboot
-```
-
-## Optional: Enable Image Signing
+## Enable Image Signing
 
 Image signing is disabled by default to let you start building immediately. However, signing is strongly recommended for production use.
 
@@ -274,44 +254,34 @@ cosign verify --key cosign.pub ghcr.io/your-username/your-repo-name:stable
 
 ## Architecture
 
-This template follows the **multi-stage build architecture** from @projectbluefin/distroless, as documented in the [Bluefin Contributing Guide](https://docs.projectbluefin.io/contributing/).
+This OS follows a **multi-stage build architecture** for modularity and maintainability.
 
 ### Multi-Stage Build Pattern
 
 **Stage 1: Context (ctx)** - Combines resources from multiple sources:
 - Local build scripts (`/build`)
 - Local custom files (`/custom`)
-- **@projectbluefin/common** - Desktop configuration shared with Aurora
-- **@projectbluefin/branding** - Branding assets
-- **@ublue-os/artwork** - Artwork shared with Aurora and Bazzite
 - **@ublue-os/brew** - Homebrew integration
 
-**Stage 2: Base Image** - Default options:
-- `ghcr.io/ublue-os/silverblue-main:latest` (Fedora-based, default)
-- `quay.io/centos-bootc/centos-bootc:stream10` (CentOS-based alternative)
+**Stage 2: Base Image**:
+- `ghcr.io/ublue-os/kinoite-main:latest` (Fedora KDE Plasma, default for Kyanite)
 
 ### Benefits of This Architecture
 
 - **Modularity**: Compose your image from reusable OCI containers
 - **Maintainability**: Update shared components independently
 - **Reproducibility**: Renovate automatically updates OCI tags to SHA digests
-- **Consistency**: Share components across Bluefin, Aurora, and custom images
+- **Clean Base**: No desktop-specific configuration from Bluefin/Aurora
 
 ### OCI Container Resources
 
-The template imports files from these OCI containers at build time:
+Kyanite imports files from these OCI containers at build time:
 
 ```dockerfile
-COPY --from=ghcr.io/ublue-os/base-main:latest /system_files /oci/base
-COPY --from=ghcr.io/projectbluefin/common:latest /system_files /oci/common
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /oci/brew
 ```
 
 Your build scripts can access these files at:
-- `/ctx/oci/base/` - Base system configuration
-- `/ctx/oci/common/` - Shared desktop configuration
-- `/ctx/oci/branding/` - Branding assets
-- `/ctx/oci/artwork/` - Artwork files
 - `/ctx/oci/brew/` - Homebrew integration files
 
 **Note**: Renovate automatically updates `:latest` tags to SHA digests for reproducible builds.

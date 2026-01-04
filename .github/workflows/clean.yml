@@ -20,7 +20,7 @@ jobs:
           # IMPORTANT: Update this to match your image name from Containerfile (line 9)
           # This should match the "# Name: your-repo-name" comment in your Containerfile
           # Example: If your Containerfile has "# Name: my-custom-os", use "my-custom-os" here
-          packages: finpilot
+          packages: kyanite
           older-than: 90 days
           delete-orphaned-images: true
           keep-n-tagged: 7

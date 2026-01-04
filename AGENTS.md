@@ -1,4 +1,4 @@
-# Copilot Instructions for finpilot bootc Image Template
+# Copilot Instructions for kyanite bootc Image Template
 
 ## CRITICAL: GitHub API Usage
 
@@ -31,9 +31,9 @@
 
 **When this repository is used as a template, you MUST:**
 
-### 1. Rename ALL instances of `finpilot`
+### 1. Rename ALL instances of `kyanite`
 
-**Source of truth**: `Containerfile` line 9: `# Name: finpilot`
+**Source of truth**: `Containerfile` line 9: `# Name: kyanite`
 
 **Files to update:**
 - `Containerfile` (line 9)
@@ -1103,6 +1103,6 @@ Assisted-by: Claude 3.5 Sonnet via GitHub Copilot
 
 ---
 
-**Last Updated**: 2025-11-14  
-**Template Version**: finpilot (Enhanced with comprehensive Copilot instructions)  
+**Last Updated**: 2026-01-04  
+**Template Version**: kyanite (Based on @projectbluefin/finpilot with kinoite-main base)  
 **Maintainer**: Universal Blue Community
