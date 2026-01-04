@@ -37,6 +37,7 @@
 FROM scratch AS ctx
 
 COPY build /build
+COPY files /files
 COPY custom /custom
 COPY packages.json /packages.json
 # Copy from OCI containers to distinct subdirectories to avoid conflicts
