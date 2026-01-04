@@ -3,51 +3,22 @@
 set -eoux pipefail
 
 ###############################################################################
-# Main Build Script
+# Build Orchestrator Script
 ###############################################################################
-# This script follows the @ublue-os/bluefin pattern for build scripts.
-# It uses set -eoux pipefail for strict error handling and debugging.
+# This script orchestrates the execution of all build scripts in sequence.
+# It replaces multiple RUN commands in the Containerfile with a single
+# entry point, reducing image layers and consolidating mount configurations.
 ###############################################################################
 
-# Source helper functions
-# shellcheck source=/dev/null
-source /ctx/build/copr-helpers.sh
-
-echo "::group:: Copy Custom Files"
-
-# Copy system files
-
-rsync -rvKl /ctx/files/ /
-
-# Copy Brewfiles to standard location
-mkdir -p /usr/share/ublue-os/homebrew/
-cp /ctx/custom/brew/*.Brewfile /usr/share/ublue-os/homebrew/
-
-# Consolidate Just Files
-mkdir -p /usr/share/ublue-os/just/
-find /ctx/custom/ujust -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >> /usr/share/ublue-os/just/60-custom.just
-
-# Copy Flatpak preinstall files
-mkdir -p /etc/flatpak/preinstall.d/
-cp /ctx/custom/flatpaks/*.preinstall /etc/flatpak/preinstall.d/
-
+echo "::group:: Starting Build Process"
+echo "Orchestrating build scripts..."
 echo "::endgroup::"
 
-echo "::group:: Install Packages"
+# Execute build scripts in sequence
+/ctx/build/15-custom-files.sh
+/ctx/build/20-packages.sh
+/ctx/build/30-workarounds.sh
+/ctx/build/40-systemd.sh
+/ctx/build/90-cleanup.sh
 
-# Install packages using dnf5
-# Example: dnf5 install -y tmux
-
-# Example using COPR with isolated pattern:
-# copr_install_isolated "ublue-os/staging" package-name
-
-echo "::endgroup::"
-
-echo "::group:: System Configuration"
-
-# System configuration tasks will be handled by later scripts
-# See 40-systemd.sh for service enablement
-
-echo "::endgroup::"
-
-echo "Custom build complete!"
+echo "All build scripts completed successfully!"
