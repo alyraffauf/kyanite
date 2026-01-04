@@ -7,6 +7,11 @@
   // Do not rebase when the default branch is updated
   "rebaseWhen": "never",
 
+  // Enable digest pinning for Dockerfiles
+  "dockerfile": {
+    "pinDigests": true
+  },
+
   customManagers: [
     {
       customType: 'regex',
