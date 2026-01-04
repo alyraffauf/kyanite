@@ -28,7 +28,7 @@
 #    - `ghcr.io/ublue-os/kinoite-main:latest` (Fedora and KDE Plasma)
 #    - `ghcr.io/ublue-os/silverblue-main:latest` (Fedora and GNOME)
 #    - `ghcr.io/ublue-os/base-main:latest` (Fedora and no desktop)
-#    - `quay.io/centos-bootc/centos-bootc:stream10` (CentOS-based) 
+#    - `quay.io/centos-bootc/centos-bootc:stream10` (CentOS-based)
 #
 # See: https://docs.projectbluefin.io/contributing/ for more on this pattern
 ###############################################################################
@@ -45,10 +45,10 @@ COPY packages.json /packages.json
 COPY --from=ghcr.io/ublue-os/brew:latest /system_files /oci/brew
 
 # Base Image - KDE Plasma included
-FROM ghcr.io/ublue-os/kinoite-main:latest
+FROM ghcr.io/ublue-os/kinoite-main:43
 
 ## Alternative base images, no desktop included (uncomment to use):
-# FROM ghcr.io/ublue-os/base-main:latest    
+# FROM ghcr.io/ublue-os/base-main:latest
 # FROM quay.io/centos-bootc/centos-bootc:stream10
 
 ## Alternative desktop base images (uncomment to use):

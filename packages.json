@@ -1,25 +1,20 @@
 {
-  "all": {
-    "include": {
-      "all": [
+    "include": [
         "ansible",
         "chezmoi",
         "fish",
         "ifuse",
+        "kcm-fcitx5",
+        "ksystemlog",
         "lm_sensors",
         "lsp-plugins-lv2",
         "lv2-bankstown",
         "pipewire-module-filter-chain-lv2",
+        "plasma-wallpapers-dynamic",
         "ptyxis",
         "syncthing"
-      ],
-      "silverblue": [],
-      "kinoite": ["kcm-fcitx5", "ksystemlog", "plasma-wallpapers-dynamic"]
-    },
-    "exclude": {
-      "all": [],
-      "silverblue": [],
-      "kinoite": [
+    ],
+    "exclude": [
         "akonadi-server",
         "akonadi-server-mysql",
         "fedora-bookmarks",
@@ -37,7 +32,5 @@
         "mariadb-errmsg",
         "plasma-discover-kns",
         "plasma-welcome-fedora"
-      ]
-    }
-  }
+    ]
 }

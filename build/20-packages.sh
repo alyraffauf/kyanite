@@ -17,9 +17,7 @@ if ! jq empty /ctx/packages.json 2>/dev/null; then
 fi
 
 # build list of all packages requested for inclusion
-readarray -t INCLUDED_PACKAGES < <(jq -r "[(.all.include | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[]), \
-                             (select(.\"$FEDORA_MAJOR_VERSION\" != null).\"$FEDORA_MAJOR_VERSION\".include | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[])] \
-                             | sort | unique[]" /ctx/packages.json)
+readarray -t INCLUDED_PACKAGES < <(jq -r '.include | sort | unique[]' /ctx/packages.json)
 
 # Install Packages
 if [[ "${#INCLUDED_PACKAGES[@]}" -gt 0 ]]; then
@@ -31,9 +29,7 @@ else
 fi
 
 # build list of all packages requested for exclusion
-readarray -t EXCLUDED_PACKAGES < <(jq -r "[(.all.exclude | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[]), \
-                             (select(.\"$FEDORA_MAJOR_VERSION\" != null).\"$FEDORA_MAJOR_VERSION\".exclude | (.all, select(.\"$IMAGE_NAME\" != null).\"$IMAGE_NAME\")[])] \
-                             | sort | unique[]" /ctx/packages.json)
+readarray -t EXCLUDED_PACKAGES < <(jq -r '.exclude | sort | unique[]' /ctx/packages.json)
 
 if [[ "${#EXCLUDED_PACKAGES[@]}" -gt 0 ]]; then
     INSTALLED_EXCLUDED=()
