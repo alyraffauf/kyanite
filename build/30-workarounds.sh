@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-set -ouex pipefail
+set -eoux pipefail
 
 # wonky patch for nix on fedora >=42
-mkdir /nix
+mkdir -p /nix
+chown root:root /nix
+chmod 755 /nix
 
 # Hide Discover entries by renaming them (allows for easy re-enabling)
 discover_apps=(
@@ -27,7 +29,8 @@ echo "application/vnd.flatpak.ref=io.github.kolunmi.Bazaar.desktop" >> /usr/shar
 
 # sets default/pinned applications on the taskmanager applet on the panel, there is no nice way to do this
 # https://bugs.kde.org/show_bug.cgi?id=511560
-sed -i '/<entry name="launchers" type="StringList">/,/<\/entry>/ s/<default>[^<]*<\/default>/<default>preferred:\/\/browser,applications:org.gnome.Ptyxis.desktop,applications:io.github.kolunmi.Bazaar.desktop,preferred:\/\/filemanager<\/default>/' /usr/share/plasma/plasmoids/org.kde.plasma.taskmanager/contents/config/main.xml
+sed -i '/<entry name="launchers" type="StringList">/,/<\/entry>/ s/<default>[^<]*<\/default>/<default>preferred:\/\/browser,applications:org.gnome.Ptyxis.desktop,applications:io.github.kolunmi.Bazaar.desktop,preferred:\/\/filemanager<\/default>/' \
+  /usr/share/plasma/plasmoids/org.kde.plasma.taskmanager/contents/config/main.xml
 
 # Force Ptyxis version opened via dbus (e.g., keyboard shortcut) to use the proper shim
 # https://github.com/ublue-os/bazzite/pull/3620
