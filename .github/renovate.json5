@@ -85,15 +85,6 @@
       "automerge": false
     },
     {
-      "description": "Suppress abandonment warnings for redhat-actions that are still functional",
-      "matchPackageNames": [
-        "redhat-actions/buildah-build",
-        "redhat-actions/push-to-registry"
-      ],
-      "minimumReleaseAge": null,
-      "enabled": true
-    },
-    {
       "description": "Pin digests for container images detected by custom regex managers",
       "matchManagers": ["custom.regex"],
       "matchDatasources": ["docker"],
