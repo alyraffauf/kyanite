@@ -15,7 +15,7 @@ on:
 
 jobs:
     build:
-        uses: ./.github/workflows/build-image.yml
+        uses: ./.github/workflows/_build-image.yml
         permissions:
             contents: read
             packages: write
