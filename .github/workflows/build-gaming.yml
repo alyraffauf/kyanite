@@ -16,6 +16,10 @@ on:
 jobs:
     build:
         uses: ./.github/workflows/build-image.yml
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
         with:
             image_name: "kyanite-gaming"
             image_flavor: "gaming"
