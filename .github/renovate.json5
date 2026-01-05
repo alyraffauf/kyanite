@@ -83,6 +83,15 @@
       "description": "Manual review for major/minor version updates",
       "matchUpdateTypes": ["major", "minor"],
       "automerge": false
+    },
+    {
+      "description": "Suppress abandonment warnings for redhat-actions that are still functional",
+      "matchPackageNames": [
+        "redhat-actions/buildah-build",
+        "redhat-actions/push-to-registry"
+      ],
+      "minimumReleaseAge": null,
+      "enabled": true
     }
   ]
 }
