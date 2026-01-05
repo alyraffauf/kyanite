@@ -26,7 +26,8 @@
       "matchStrings": [
         "(?<justName>.+?)\\s:=\\s(?:env\\(.+?,\\s)?['\"](?<packageName>\\S+?):(?<currentValue>\\S+?)@(?<currentDigest>sha256:[a-f0-9]+?)['\"]\\)?"
       ],
-      "datasourceTemplate": "docker"
+      "datasourceTemplate": "docker",
+      "pinDigests": true
     },
     {
       "customType": "regex",
@@ -37,7 +38,8 @@
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "docker",
-      "currentValueTemplate": "latest"
+      "currentValueTemplate": "latest",
+      "pinDigests": true
     }
   ],
 
