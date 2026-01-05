@@ -4,6 +4,4 @@
 # Popular coding fonts
 cask "font-fira-code-nerd-font"
 cask "font-hack-nerd-font"
-cask "font-ubuntu-nerd-font"
-cask "font-source-code-pro"
-cask "font-cascadia-code-nerd-font"
+cask "font-caskaydia-cove-nerd-font"
