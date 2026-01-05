@@ -2,13 +2,13 @@
 # BUILD ARGUMENTS
 ###############################################################################
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-43}"
 ARG SOURCE_IMAGE="${BASE_IMAGE_NAME}-main"
-ARG BASE_IMAGE="ghcr.io/ublue-os/${SOURCE_IMAGE}"
+# Static value enables Renovate to detect and update the base image
+ARG BASE_IMAGE="ghcr.io/ublue-os/kinoite-main:43"
 ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 # SHA pinning enables Renovate to automatically update dependencies
 # See: https://docs.renovatebot.com/docker/#digest-pinning
-ARG BASE_IMAGE_SHA="sha256:078e422050ed01e5025aa3320eaf2874bc838abdf6d1ed8bcc1c00f508b8d76c"
+ARG BASE_IMAGE_SHA="sha256:bc8c0e5109e8751502f016d4eaa57fa4cdbdf7673840106d80b4642d17fa57b9"
 ARG BREW_IMAGE_SHA="sha256:f9637549a24a7e02315c28db04cc0827dfc04bb74cea3be5c187f10c262c30d2"
 
 ###############################################################################
@@ -28,14 +28,13 @@ COPY --from=brew /system_files /oci/brew
 ###############################################################################
 # MAIN IMAGE
 ###############################################################################
-FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION}@${BASE_IMAGE_SHA} AS base
+FROM ${BASE_IMAGE}@${BASE_IMAGE_SHA} AS base
 
 # Build arguments for image metadata and variant selection
 ARG IMAGE_NAME="${IMAGE_NAME:-kyanite}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
-ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-43}"
 ARG SHA_HEAD_SHORT="${SHA_HEAD_SHORT:-}"
 ARG UBLUE_IMAGE_TAG="${UBLUE_IMAGE_TAG:-stable}"
 
