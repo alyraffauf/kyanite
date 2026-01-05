@@ -26,8 +26,7 @@
       "matchStrings": [
         "(?<justName>.+?)\\s:=\\s(?:env\\(.+?,\\s)?['\"](?<packageName>\\S+?):(?<currentValue>\\S+?)@(?<currentDigest>sha256:[a-f0-9]+?)['\"]\\)?"
       ],
-      "datasourceTemplate": "docker",
-      "pinDigests": true
+      "datasourceTemplate": "docker"
     },
     {
       "customType": "regex",
@@ -38,8 +37,7 @@
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "docker",
-      "currentValueTemplate": "latest",
-      "pinDigests": true
+      "currentValueTemplate": "latest"
     }
   ],
 
@@ -94,6 +92,12 @@
       ],
       "minimumReleaseAge": null,
       "enabled": true
+    },
+    {
+      "description": "Pin digests for container images detected by custom regex managers",
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["docker"],
+      "pinDigests": true
     }
   ]
 }
