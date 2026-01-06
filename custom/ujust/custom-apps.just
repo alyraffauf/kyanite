@@ -64,7 +64,7 @@ jetbrains-toolbox:
 # Install a Flatpak application from Flathub
 [group('Apps')]
 install-flatpak APP_ID:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     echo "Installing {{ APP_ID }} from Flathub..."
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     flatpak install -y flathub {{ APP_ID }}

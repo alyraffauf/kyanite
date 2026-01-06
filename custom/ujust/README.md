@@ -41,7 +41,7 @@ run-maintenance:
 ```just
 # Configure system setting
 configure-thing:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     source /usr/lib/ujust/ujust.sh
     echo "Configure thing?"
     OPTION=$(Choose "Enable" "Disable")
@@ -78,7 +78,7 @@ install-brewfile:
 # Brief description of what the command does
 [group('Category')]
 command-name:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     # Use bash shebang for multi-line scripts
     # Commands go here
 ```
@@ -86,7 +86,7 @@ command-name:
 ### Error Handling
 ```just
 install-something:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     set -euo pipefail  # Exit on error, undefined vars, pipe failures
     # Your commands
 ```
@@ -95,7 +95,7 @@ install-something:
 Use `gum` for interactive prompts (included in Universal Blue images):
 ```just
 interactive-command:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     source /usr/lib/ujust/ujust.sh  # Provides Choose() and other helpers
     OPTION=$(Choose "Option 1" "Option 2" "Cancel")
     echo "You chose: $OPTION"
@@ -116,7 +116,7 @@ install-dev-tools:
 ```just
 [group('System')]
 configure-firewall:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     sudo firewall-cmd --permanent --add-service=ssh
     sudo firewall-cmd --reload
 ```
@@ -127,7 +127,7 @@ configure-firewall:
 ```just
 [group('Development')]
 setup-nodejs:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     curl -fsSL https://fnm.vercel.app/install | bash
     source ~/.bashrc
     fnm install --lts

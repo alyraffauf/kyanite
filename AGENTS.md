@@ -183,7 +183,7 @@ Scripts run in numerical order during image build:
 3. Add to execution list in `10-build.sh`
 
 ```bash
-#!/usr/bin/bash
+#!/usr/bin/env bash
 set -eoux pipefail
 
 echo "::group:: Your Section Name"
@@ -208,7 +208,7 @@ install-dev-tools:
 
 [group('System')]
 run-maintenance:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     echo "Running maintenance..."
     podman system prune -af
 ```

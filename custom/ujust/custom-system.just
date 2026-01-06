@@ -50,7 +50,7 @@ configure-dev-groups:
 # Example toggle command with user choice
 [group('System')]
 toggle-example-feature:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     source /usr/lib/ujust/ujust.sh
     echo "This is an example toggle command."
     echo "Current status: [check your status here]"
@@ -72,7 +72,7 @@ toggle-example-feature:
 # Clean up container images and volumes
 [group('Maintenance')]
 clean-containers:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     echo "Cleaning up Podman containers, images, and volumes..."
     podman system prune -af
     podman volume prune -f
@@ -81,7 +81,7 @@ clean-containers:
 # Update system and reboot if needed
 [group('Maintenance')]
 update-and-reboot:
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
     source /usr/lib/ujust/ujust.sh
     echo "Updating system..."
     sudo bootc upgrade

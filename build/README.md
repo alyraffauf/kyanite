@@ -109,7 +109,7 @@ done
 ### Script Template
 
 ```bash
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 set -eoux pipefail
 
