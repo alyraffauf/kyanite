@@ -41,7 +41,7 @@ echo "::endgroup::"
 # Execute remaining build scripts in sequence
 ###############################################################################
 # Each script is checked for existence before execution
-for script in 20-packages.sh 30-workarounds.sh 40-systemd.sh 90-cleanup.sh; do
+for script in 20-packages.sh 30-workarounds.sh 40-systemd.sh 80-branding.sh 90-cleanup.sh; do
 	script_path="/ctx/build/${script}"
 	if [[ ! -x "${script_path}" ]]; then
 		echo "ERROR: Build script ${script} not found or not executable" >&2
