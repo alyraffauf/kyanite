@@ -221,7 +221,7 @@ run-maintenance:
 3. Open pull request
 4. Automated validation runs (shellcheck, YAML, Brewfile, Flatpak, etc.)
 5. Review and merge to `main`
-6. Merging triggers `:stable` image build
+6. Merging triggers `:stable` image build and automatic signing
 
 ### Local Testing
 ```bash
@@ -233,7 +233,16 @@ just run-vm-qcow2       # Test in browser-based VM
 ### Image Tags
 - `:stable` - Latest stable release from main branch
 - `:stable.YYYYMMDD` - Datestamped stable release
-- `:pr-123` - Pull request builds (for testing)
+- `:pr-123` - Pull request builds (for testing, not signed)
+
+### Image Signing
+All tagged images built from `main` branch are automatically signed using:
+- **Tool**: Sigstore Cosign v3.0.3
+- **Method**: Keyless signing with GitHub OIDC tokens
+- **Transparency**: Signatures recorded in public Rekor log
+- **Verification**: See README.md Security section for verification and switching instructions
+
+**Important**: Pull request builds are NOT signed, only builds from the `main` branch.
 
 ## Critical Rules
 
@@ -242,11 +251,12 @@ just run-vm-qcow2       # Test in browser-based VM
 3. **ALWAYS** disable COPR repositories after installation
 4. **ALWAYS** use `-y` flag for non-interactive installs
 5. **NEVER** use `dnf5` in ujust files
-6. **NEVER** commit `cosign.key` to repository
+6. **NEVER** commit `cosign.key` or private keys to repository
 7. **ALWAYS** run validation checks before committing
 8. **System packages** go in `packages.json`, not directly in scripts
 9. **Third-party software** goes in `build/20-packages.sh`
 10. **Services** are configured in `build/40-systemd.sh`
+11. **Image signing** is automatic via GitHub Actions (no manual intervention needed)
 
 ## Common Patterns
 

@@ -164,3 +164,47 @@ This image is automatically built and updated:
 - Automated security updates via Renovate
 - Build provenance tracking
 - Reproducible builds with SHA-pinned dependencies
+- **Container image signing** with Sigstore Cosign using keyless signing
+
+### Image Signing and Verification
+
+All tagged container images are cryptographically signed using [Sigstore Cosign](https://github.com/sigstore/cosign) with GitHub OIDC tokens (keyless signing). This ensures image authenticity and integrity.
+
+#### Switching from Unverified to Signed Registry
+
+If you're currently using an unverified registry transport, switch to the signed registry:
+
+```bash
+# For kyanite
+sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/alyraffauf/kyanite:stable
+sudo systemctl reboot
+
+# For kyanite-gaming
+sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/alyraffauf/kyanite-gaming:stable
+sudo systemctl reboot
+```
+
+After rebooting, verify you're using the signed transport:
+
+```bash
+rpm-ostree status
+# Should show "ostree-image-signed:" instead of "ostree-unverified-registry:"
+```
+
+#### Verifying Image Signatures
+
+To manually verify a Kyanite image signature:
+
+```bash
+# Install cosign (if not already installed)
+brew install cosign
+# or download from https://github.com/sigstore/cosign/releases
+
+# Verify the image signature
+cosign verify \
+  --certificate-identity-regexp="https://github.com/alyraffauf/kyanite/.*" \
+  --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+  ghcr.io/alyraffauf/kyanite:stable
+```
+
+A successful verification confirms the image was built by the official GitHub Actions workflow and has not been tampered with.
