@@ -1,40 +1,50 @@
+---
 name: Validate Justfiles
 permissions:
-  contents: read
+    contents: read
 
 on:
-  pull_request:
-    paths:
-      - "custom/ujust/**"
-      - "Justfile"
+    pull_request:
+        paths:
+            - "custom/ujust/**"
+            - "Justfile"
+
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+    validate:
+        name: Validate Justfiles
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Install just
-        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+            - name: Install Just
+              uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
 
-      - name: Validate Justfiles
-        shell: bash
-        run: |
-          echo "Validating justfiles in custom/ujust/ directory..."
+            - name: Validate Justfiles
+              run: |
+                  echo "Validating Justfiles..."
+                  echo ""
 
-          set -xeuo pipefail
+                  set -euo pipefail
 
-          # Validate root Justfile
-          echo "::group:: Validating Justfile"
-          just --unstable --fmt --check -f Justfile
-          echo "::endgroup::"
+                  # Validate root Justfile
+                  echo "::group::Validating Justfile"
+                  set -x
+                  just --unstable --fmt --check -f Justfile
+                  set +x
+                  echo "✓ Justfile passed validation"
+                  echo "::endgroup::"
 
-          # Validate custom ujust files
-          find "custom/ujust" -iname '*.just' -print0 | \
-            while IFS= read -r -d '' justfile ; do \
-              echo "::group:: ===$(basename "$justfile")==="
-              just --unstable --fmt --check -f "$justfile"
-              echo "::endgroup::"
-            done
+                  # Validate custom ujust files
+                  find "custom/ujust" -iname '*.just' -print0 | \
+                    while IFS= read -r -d '' justfile; do
+                      echo "::group::Validating $(basename "${justfile}")"
+                      set -x
+                      just --unstable --fmt --check -f "${justfile}"
+                      set +x
+                      echo "✓ $(basename "${justfile}") passed validation"
+                      echo "::endgroup::"
+                    done
 
-          echo "All justfiles are valid"
+                  echo ""
+                  echo "All Justfiles validated successfully"

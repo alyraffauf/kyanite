@@ -1,33 +1,29 @@
+---
 name: Renovate
 on:
-    # Run on a schedule (e.g., every 4 hours)
     schedule:
-        - cron: "0 */6 * * *"
-    # Allow manual triggering for testing
+        - cron: "0 */6 * * *" # Every 6 hours
     workflow_dispatch:
-
     push:
         branches:
             - main
-
         paths:
             - ".github/renovate.json5"
             - ".github/workflows/renovate.yml"
 
 jobs:
     renovate:
+        name: Run Renovate
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout
+            - name: Checkout Repository
               uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-            - name: Self-hosted Renovate
+            - name: Run Self-Hosted Renovate
               uses: renovatebot/github-action@a7e89c349a53ab0c9d8458eb85f4b415e55848e7 # v44.2.3
               with:
                   configurationFile: .github/renovate.json5
                   token: ${{ secrets.RENOVATE_TOKEN }}
               env:
-                  # Tell Renovate to run only on this specific repository
                   RENOVATE_REPOSITORIES: ${{ github.repository }}
-                  # Optional: helpful for debugging initially
                   LOG_LEVEL: debug

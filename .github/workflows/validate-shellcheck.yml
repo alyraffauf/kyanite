@@ -1,37 +1,44 @@
+---
 name: Validate Shell Scripts
 permissions:
-  contents: read
+    contents: read
 
 on:
-  pull_request:
-    paths:
-      - "build/**/*.sh"
+    pull_request:
+        paths:
+            - "build/*.sh"
+
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+    validate:
+        name: Validate Shell Scripts
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Install ShellCheck
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
+            - name: Install ShellCheck
+              run: |
+                  echo "Installing ShellCheck..."
+                  sudo apt-get update
+                  sudo apt-get install -y shellcheck
+                  echo "✓ ShellCheck installed successfully"
 
-      - name: Validate Shell Scripts
-        shell: bash
-        run: |
-          echo "Running shellcheck on build scripts..."
+            - name: Validate Shell Scripts
+              run: |
+                  echo "Validating shell scripts in build/ directory..."
+                  echo ""
 
-          set -xeuo pipefail
+                  set -euo pipefail
 
-          find "build" -iname '*.sh' -print0 | \
-            while IFS= read -r -d '' script ; do \
-              echo "::group:: ===$(basename "$script")==="
-              shellcheck -x "$script"
-              echo "✓ $script passed shellcheck"
-              echo "::endgroup::"
-            done
+                  find "build" -iname '*.sh' -print0 | \
+                    while IFS= read -r -d '' script; do
+                      echo "::group::Validating $(basename "${script}")"
+                      set -x
+                      shellcheck -x "${script}"
+                      set +x
+                      echo "✓ $(basename "${script}") passed shellcheck"
+                      echo "::endgroup::"
+                    done
 
-          echo "All shell scripts passed validation"
+                  echo ""
+                  echo "All shell scripts validated successfully"

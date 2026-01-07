@@ -1,35 +1,47 @@
+---
 name: Validate Renovate Config
+permissions:
+    contents: read
 
 on:
-  pull_request:
-    paths:
-      - ".github/renovate.json5"
-      - ".github/workflows/renovate.yml"
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/renovate.json5"
-      - ".github/workflows/renovate.yml"
+    pull_request:
+        paths:
+            - ".github/renovate.json5"
+            - ".github/workflows/renovate.yml"
+    push:
+        branches:
+            - main
+        paths:
+            - ".github/renovate.json5"
+            - ".github/workflows/renovate.yml"
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+    validate:
+        name: Validate Renovate Config
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
-        with:
-          node-version: latest
+            - name: Set Up Node.js
+              uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6
+              with:
+                  node-version: latest
 
-      - name: Install dependencies
-        shell: bash
-        env:
-          RENOVATE_VERSION: latest
-        run: npm install -g renovate@${RENOVATE_VERSION}
+            - name: Install Renovate
+              env:
+                  RENOVATE_VERSION: latest
+              run: |
+                  echo "Installing Renovate..."
+                  npm install -g renovate@${RENOVATE_VERSION}
+                  echo "✓ Renovate installed successfully"
 
-      - name: Validate Renovate config
-        shell: bash
-        run: renovate-config-validator --strict
+            - name: Validate Renovate Configuration
+              run: |
+                  echo "Validating Renovate configuration..."
+                  echo ""
+                  set -x
+                  renovate-config-validator --strict
+                  set +x
+                  echo ""
+                  echo "✓ Renovate configuration validated successfully"

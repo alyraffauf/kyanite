@@ -1,37 +1,47 @@
+---
 name: Validate Flatpaks
 permissions:
-  contents: read
+    contents: read
 
 on:
-  pull_request:
-    paths:
-      - "custom/flatpak/**"
+    pull_request:
+        paths:
+            - "custom/flatpaks/**"
+
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+    validate:
+        name: Validate Flatpaks
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-      - name: Set up Flathub
-        shell: bash
-        run: |
-          sudo apt install -y flatpak
-          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+            - name: Set Up Flathub
+              run: |
+                  echo "Setting up Flatpak and Flathub repository..."
+                  sudo apt-get update
+                  sudo apt-get install -y flatpak
+                  flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+                  echo "✓ Flathub repository configured"
 
-      - name: Validate Flatpaks
-        shell: bash
-        run: |
-          echo "Validating flatpak files in custom/flatpak/ directory..."
+            - name: Validate Flatpaks
+              run: |
+                  echo "Validating Flatpak files in custom/flatpaks/ directory..."
+                  echo ""
 
-          set -xeuo pipefail
+                  set -euo pipefail
 
-          find "custom/flatpak" -iname '*\.list*' -print0 | \
-            while IFS= read -r -d '' flatpaks_file ; do \
-              echo "::group:: ===$(basename "$flatpaks_file")==="
-              grep -v "#.*" "$flatpaks_file" | grep -v "^$" | \
-                while read -r flatpak ; do \
-                  flatpak remote-info --user flathub "${flatpak}"
-                done
-              echo "::endgroup::"
-            done
+                  find "custom/flatpaks" -iname '*.list*' -print0 | \
+                    while IFS= read -r -d '' flatpaks_file; do
+                      echo "::group::Validating $(basename "${flatpaks_file}")"
+                      grep -v "#.*" "${flatpaks_file}" | grep -v "^$" | \
+                        while read -r flatpak; do
+                          echo "Checking ${flatpak}..."
+                          flatpak remote-info --user flathub "${flatpak}"
+                        done
+                      echo "✓ $(basename "${flatpaks_file}") passed validation"
+                      echo "::endgroup::"
+                    done
+
+                  echo ""
+                  echo "All Flatpak files validated successfully"

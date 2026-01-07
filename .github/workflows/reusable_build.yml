@@ -1,5 +1,5 @@
 ---
-name: Build Image
+name: Reusable Build
 on:
     workflow_call:
         inputs:
@@ -28,7 +28,7 @@ env:
 
 jobs:
     build_push:
-        name: Build and push ${{ inputs.image_name }}
+        name: Build and Push ${{ inputs.image_name }}
         runs-on: ubuntu-24.04
 
         permissions:
@@ -37,18 +37,18 @@ jobs:
             id-token: write
 
         steps:
-            - name: Prepare environment
+            - name: Prepare Environment
               run: |
-                  echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
-                  echo "IMAGE_NAME=${{ inputs.image_name }}" >> ${GITHUB_ENV}
-                  echo "IMAGE_FLAVOR=${{ inputs.image_flavor }}" >> ${GITHUB_ENV}
-                  echo "IMAGE_DESC=${{ inputs.image_desc }}" >> ${GITHUB_ENV}
-                  echo "IMAGE_KEYWORDS=${{ inputs.image_keywords }}" >> ${GITHUB_ENV}
+                  echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> "${GITHUB_ENV}"
+                  echo "IMAGE_NAME=${{ inputs.image_name }}" >> "${GITHUB_ENV}"
+                  echo "IMAGE_FLAVOR=${{ inputs.image_flavor }}" >> "${GITHUB_ENV}"
+                  echo "IMAGE_DESC=${{ inputs.image_desc }}" >> "${GITHUB_ENV}"
+                  echo "IMAGE_KEYWORDS=${{ inputs.image_keywords }}" >> "${GITHUB_ENV}"
 
-            - name: Checkout
+            - name: Checkout Repository
               uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
-            - name: Mount BTRFS for podman storage
+            - name: Mount BTRFS for Podman Storage
               id: container-storage-action
               uses: ublue-os/container-storage-action@911baca08baf30c8654933e9e9723cb399892140 # main
               continue-on-error: true
@@ -56,12 +56,12 @@ jobs:
                   target-dir: /var/lib/containers
                   mount-opts: compress-force=zstd:2
 
-            - name: Get current date
+            - name: Get Current Date
               id: date
               run: |
-                  echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> $GITHUB_OUTPUT
+                  echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> "${GITHUB_OUTPUT}"
 
-            - name: Image Metadata
+            - name: Generate Image Metadata
               uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
               id: metadata
               with:
@@ -104,11 +104,14 @@ jobs:
                       IMAGE_NAME=${{ env.IMAGE_NAME }}
                       IMAGE_FLAVOR=${{ env.IMAGE_FLAVOR }}
 
-            - name: Tag for registry
+            - name: Tag Image for Registry
               run: |
+                  echo "Tagging image with metadata tags..."
                   for tag in ${{ steps.metadata.outputs.tags }}; do
-                    podman tag ${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }} ${{ env.IMAGE_NAME }}:$tag
+                    echo "  → ${tag}"
+                    podman tag ${{ env.IMAGE_NAME }}:${{ env.DEFAULT_TAG }} "${tag}"
                   done
+                  echo "✓ Image tagged successfully"
 
             - name: Login to GitHub Container Registry
               uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
@@ -118,7 +121,7 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Push To GHCR
+            - name: Push Image to GHCR
               uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2
               if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
               id: push
