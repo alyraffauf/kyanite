@@ -19,7 +19,7 @@ chmod 755 /nix
 # There is no standard API for this configuration
 # Reference: https://bugs.kde.org/show_bug.cgi?id=511560
 sed -i '/<entry name="launchers" type="StringList">/,/<\/entry>/ s/<default>[^<]*<\/default>/<default>preferred:\/\/browser,applications:org.gnome.Ptyxis.desktop,applications:io.github.kolunmi.Bazaar.desktop,preferred:\/\/filemanager<\/default>/' \
-	/usr/share/plasma/plasmoids/org.kde.plasma.taskmanager/contents/config/main.xml
+    /usr/share/plasma/plasmoids/org.kde.plasma.taskmanager/contents/config/main.xml
 
 # Force Ptyxis version opened via dbus (e.g., keyboard shortcut) to use the proper shim
 # https://github.com/ublue-os/bazzite/pull/3620

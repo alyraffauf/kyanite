@@ -65,8 +65,8 @@ if [[ -n "${SHA_HEAD_SHORT:-}" ]]; then
 fi
 
 # Add IMAGE_ID and IMAGE_VERSION (systemd 249+)
-echo "IMAGE_ID=\"$IMAGE_NAME\"" >> /usr/lib/os-release
-echo "IMAGE_VERSION=\"$VERSION\"" >> /usr/lib/os-release
+echo "IMAGE_ID=\"$IMAGE_NAME\"" >>/usr/lib/os-release
+echo "IMAGE_VERSION=\"$VERSION\"" >>/usr/lib/os-release
 
 # Fix issues caused by ID no longer being fedora
 sed -i "s|^EFIDIR=.*|EFIDIR=\"fedora\"|" /usr/sbin/grub2-switch-to-blscfg
