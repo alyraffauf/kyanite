@@ -54,11 +54,4 @@ done
 
 echo "::endgroup::"
 
-echo "::group:: Finalize Image"
-
-# Commit the ostree container
-ostree container commit
-
-echo "::endgroup::"
-
 echo "Final cleanup and configuration complete!"
