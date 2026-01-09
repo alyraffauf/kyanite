@@ -1,12 +1,7 @@
 {
     "include": [
-        "android-tools",
-        "ansible",
-        "chezmoi",
-
         "edk2-ovmf",
         "fish",
-        "flatpak-builder",
         "git",
         "ifuse",
         "inxi",
@@ -17,12 +12,9 @@
         "lm_sensors",
         "lsp-plugins-lv2",
         "lv2-bankstown",
-        "p7zip",
-        "p7zip-plugins",
         "pipewire-module-filter-chain-lv2",
         "plasma-wallpapers-dynamic",
         "podman-compose",
-        "podman-machine",
         "podman-tui",
         "ptyxis",
         "qemu",
@@ -37,10 +29,7 @@
         "rocm-hip",
         "rocm-opencl",
         "rocm-smi",
-        "syncthing",
-        "virt-manager",
-        "virt-v2v",
-        "virt-viewer"
+        "syncthing"
     ],
     "exclude": [
         "akonadi-server",
