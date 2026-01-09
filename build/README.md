@@ -30,8 +30,9 @@ This script:
 - Installs packages listed in the `include` array
 - Removes packages listed in the `exclude` array
 - Installs third-party software (Cider, Tailscale)
-- Installs COPR packages (Sunshine, krunner-bazaar)
+- Installs COPR packages (krunner-bazaar)
 - Installs Flatpak preinstall support from COPR
+- **Gaming variant only**: Installs Steam, gaming tools, and Sunshine from COPR
 
 **To add system packages**: Edit `packages.json` in the repository root:
 

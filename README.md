@@ -138,7 +138,6 @@ rpm-ostree status  # Should show "ostree-image-signed:" prefix
 
 ## Documentation
 
-- **[VARIANTS.md](VARIANTS.md)** - Variant details
 - **[AGENTS.md](AGENTS.md)** - Comprehensive build guide
 - **[BUILD.md](BUILD.md)** - Build system architecture
 - **[custom/brew/](custom/brew/)** - Homebrew package management
