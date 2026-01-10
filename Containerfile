@@ -50,12 +50,50 @@ LABEL org.opencontainers.image.flavor="${IMAGE_FLAVOR}"
 # IMAGE_FLAVOR is available to all build scripts:
 #   - "main" (default): Base kyanite
 #   - "gaming": Kyanite with Steam and gaming tools
-RUN --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
-    --mount=type=bind,from=ctx,source=/,target=/ctx \
-    --mount=type=tmpfs,dst=/tmp \
+
+# Step 1: Copy files and configure base system
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
     /ctx/build/10-build.sh
+
+# Step 2: Install Fedora packages
+RUN --mount=type=cache,dst=/var/cache/dnf \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=bind,from=ctx,source=/,target=/ctx \
+    /ctx/build/20-fedora-packages.sh
+
+# Step 3: Install third-party packages
+RUN --mount=type=cache,dst=/var/cache/dnf \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=bind,from=ctx,source=/,target=/ctx \
+    IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
+    /ctx/build/25-third-party-packages.sh
+
+# Step 4: Apply system workarounds
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    /ctx/build/30-workarounds.sh
+
+# Step 5: Configure systemd services
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    /ctx/build/40-systemd.sh
+
+# Step 6: Configure Homebrew
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    /ctx/build/50-homebrew.sh
+
+# Step 7: Apply OS branding
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
+    IMAGE_NAME="${IMAGE_NAME}" \
+    IMAGE_VENDOR="${IMAGE_VENDOR}" \
+    BASE_IMAGE_NAME="${BASE_IMAGE_NAME}" \
+    SHA_HEAD_SHORT="${SHA_HEAD_SHORT}" \
+    UBLUE_IMAGE_TAG="${UBLUE_IMAGE_TAG}" \
+    /ctx/build/80-branding.sh
+
+# Step 8: Final cleanup
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    /ctx/build/90-cleanup.sh
 
 ###############################################################################
 # FINALIZE
