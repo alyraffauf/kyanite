@@ -43,15 +43,4 @@ echo "application/vnd.flatpak.ref=io.github.kolunmi.Bazaar.desktop" >>/usr/share
 
 echo "::endgroup::"
 
-echo "::group:: Disable Third-Party Repositories"
-
-# Disable third-party repos
-for repo in negativo17-fedora-multimedia tailscale fedora-cisco-openh264; do
-    if [[ -f "/etc/yum.repos.d/${repo}.repo" ]]; then
-        sed -i 's@enabled=1@enabled=0@g' "/etc/yum.repos.d/${repo}.repo"
-    fi
-done
-
-echo "::endgroup::"
-
 echo "Final cleanup and configuration complete!"
