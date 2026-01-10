@@ -94,15 +94,69 @@ Add to [`build/20-packages.sh`](build/20-packages.sh). See existing examples for
 
 ## Building Locally
 
+### Prerequisites
+
+- [Podman](https://podman.io/) installed
+- [Just](https://just.systems/) command runner
+- Sufficient disk space (~20GB for container builds, ~10GB additional for ISOs)
+
+### Build the OCI Container Image
+
+The container image is the base for all other build artifacts:
+
 ```bash
 # Build standard variant
 just build
-just build-qcow2
-just run-vm-qcow2
 
 # Build gaming variant
 IMAGE_FLAVOR=gaming just build
+
+# Build with custom tag
+just build localhost/kyanite mytag
+```
+
+This creates a local container image at `localhost/kyanite:stable` (or `localhost/kyanite-gaming:stable` for the gaming variant).
+
+### Build Bootable Images
+
+Once you have the OCI container, you can create bootable images using [Bootc Image Builder](https://github.com/osbuild/bootc-image-builder):
+
+```bash
+# Build QCOW2 (for QEMU/KVM virtualization)
+just build-qcow2
+
+# Build RAW disk image
+just build-raw
+
+# Build ISO installer
+just build-iso
+```
+
+Output files are placed in the `output/` directory:
+- `output/qcow2/disk.qcow2` - QCOW2 virtual disk
+- `output/raw/disk.raw` - RAW disk image
+- `output/bootiso/install.iso` - Bootable ISO installer
+
+### Test in a Virtual Machine
+
+```bash
+# Build and run QCOW2 in browser-based VM
+just build-qcow2
+just run-vm-qcow2
+
+# Gaming variant
 IMAGE_FLAVOR=gaming just build-qcow2
+IMAGE_FLAVOR=gaming just run-vm-qcow2
+```
+
+### Rebuild Commands
+
+Use rebuild commands to force a fresh container build before creating bootable images:
+
+```bash
+just rebuild-qcow2
+just rebuild-raw
+just rebuild-iso
 ```
 
 ## Development Workflow
