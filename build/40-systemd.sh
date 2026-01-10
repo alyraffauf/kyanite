@@ -26,9 +26,6 @@ systemctl enable tailscaled.service
 # Enable global user services
 systemctl --global enable bazaar.service
 
-# Disable global user services
-systemctl --global disable sunshine.service
-
 echo "::endgroup::"
 
 echo "Systemd service configuration complete!"
