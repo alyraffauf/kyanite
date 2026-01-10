@@ -61,7 +61,7 @@ sed -i "s|^VERSION=.*|VERSION=\"$VERSION ($BASE_IMAGE_NAME)\"|" /usr/lib/os-rele
 sed -i "s|^OSTREE_VERSION=.*|OSTREE_VERSION=\'${VERSION}\'|" /usr/lib/os-release
 
 # Add BUILD_ID if available
-if [[ -n "${SHA_HEAD_SHORT:-}" ]]; then
+if [[ -n ${SHA_HEAD_SHORT:-} ]]; then
     echo "BUILD_ID=\"$SHA_HEAD_SHORT\"" >>/usr/lib/os-release
 fi
 
@@ -70,7 +70,7 @@ echo "IMAGE_ID=\"$IMAGE_NAME\"" >>/usr/lib/os-release
 echo "IMAGE_VERSION=\"$VERSION\"" >>/usr/lib/os-release
 
 # Fix issues caused by ID no longer being fedora
-sed -i "s|^EFIDIR=.*|EFIDIR=\"fedora\"|" /usr/sbin/grub2-switch-to-blscfg
+sed -i 's|^EFIDIR=.*|EFIDIR="fedora"|' /usr/sbin/grub2-switch-to-blscfg
 ###############################################################################
 
 echo "::endgroup::"

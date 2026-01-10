@@ -1,12 +1,12 @@
 blocklists:
-  - block:
-      - app.devsuite.Ptyxis
-      - io.github.kolunmi.Bazaar
-      - org.kde.ark
-      - org.kde.dolphin
-      - org.kde.filelight
-      - org.kde.kate
-      - org.kde.kfind
-      - org.kde.konsole
-      - org.kde.kwalletmanager
-      - org.kde.kwalletmanager5
+    - block:
+          - app.devsuite.Ptyxis
+          - io.github.kolunmi.Bazaar
+          - org.kde.ark
+          - org.kde.dolphin
+          - org.kde.filelight
+          - org.kde.kate
+          - org.kde.kfind
+          - org.kde.konsole
+          - org.kde.kwalletmanager
+          - org.kde.kwalletmanager5

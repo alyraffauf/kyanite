@@ -5,6 +5,7 @@ A custom bootable container based on Fedora Kinoite, borrowing heavily from the 
 Kyanite is built on Universal Blue's [kinoite-main](https://github.com/ublue-os/main) image, which itself derives from Fedora Kinoite with additional batteries included.
 
 **Available Variants:**
+
 - **kyanite** - Clean KDE Plasma desktop for general use and development
 - **kyanite-gaming** - Adds Steam, Gamescope, GameMode, MangoHud, and Sunshine
 
@@ -45,28 +46,34 @@ ujust --list
 ## What's Included
 
 ### Development & Containers
+
 - **Docker CE** - Full Docker with compose and buildx plugins
 - **Podman** - Rootless containers with compose support
 - **Fish Shell** - Modern, user-friendly shell
 
 ### Virtualization
+
 - **QEMU/KVM** - Full virtualization stack with libvirt
 - **AMD ROCm** - GPU compute support for AMD graphics
 
 ### Networking & Sync
+
 - **Tailscale** - Zero-config VPN (pre-installed and enabled)
 - **Syncthing** - Continuous file synchronization
 
 ### Desktop
+
 - **Ptyxis** - Modern terminal emulator
 - **Cider** - Apple Music client
 - **Dynamic Wallpapers** - Time-based wallpaper transitions
 - **Audio Enhancements** - Professional-grade PipeWire plugins
 
 ### Gaming Variant Additions
+
 - Steam, Gamescope, GameMode, MangoHud, Sunshine
 
 ### Removed Bloat
+
 Firefox (replaced with Flathub Flatpak), Akonadi, Plasma Discover, and other unwanted defaults. Use Flatpak for browsers and apps.
 
 ## Customization
@@ -133,6 +140,7 @@ just build-iso
 ```
 
 Output files are placed in the `output/` directory:
+
 - `output/qcow2/disk.qcow2` - QCOW2 virtual disk
 - `output/raw/disk.raw` - RAW disk image
 - `output/bootiso/install.iso` - Bootable ISO installer

@@ -14,7 +14,7 @@ echo "::group:: Configure Systemd Services"
 # GID 994 is typically assigned to docker group by the package
 if ! grep -q "^docker:" /usr/lib/group; then
     echo "Creating docker group in /usr/lib/group"
-    echo "docker:x:994:" >> /usr/lib/group
+    echo "docker:x:994:" >>/usr/lib/group
 fi
 
 # Enable system services

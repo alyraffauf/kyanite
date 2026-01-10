@@ -1,20 +1,68 @@
 # .pre-commit-config.yaml
 
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-        - id: check-json
-        - id: check-toml
-        - id: check-yaml
-        - id: end-of-file-fixer
-        - id: trailing-whitespace
+    # Prettier - Format YAML, JSON, Markdown, TOML
+    - repo: https://github.com/pre-commit/mirrors-prettier
+      rev: v4.0.0-alpha.8
+      hooks:
+          - id: prettier
+            types_or: [yaml, json, markdown, toml]
 
-  - repo: local
-    hooks:
-      - id: validate-brewfiles
-        name: Validate Brewfiles
-        entry: bash -c 'if command -v brew &> /dev/null; then for file in brew/*.Brewfile*; do [ -f "$file" ] || continue; brew bundle check --file="$file" || exit 1; done; else echo "⚠️  Homebrew not installed, skipping Brewfile validation"; fi'
-        language: system
-        files: '^brew/.*\.Brewfile.*$'
-        pass_filenames: false
+    # Shell script formatting and linting
+    - repo: https://github.com/scop/pre-commit-shfmt
+      rev: v3.12.0-2
+      hooks:
+          - id: shfmt
+            args: [-i, "4", -w, -s]
+
+    - repo: https://github.com/shellcheck-py/shellcheck-py
+      rev: v0.11.0.1
+      hooks:
+          - id: shellcheck
+            args: [-x, -S, error]
+
+    # Just file formatting
+    - repo: local
+      hooks:
+          - id: just-format
+            name: Format Just files
+            entry: bash -c 'for file in "$@"; do just --unstable --fmt --justfile "$file" || exit 1; done'
+            language: system
+            files: '(^Justfile$|\.just$)'
+            pass_filenames: true
+
+    # Basic validation hooks
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v6.0.0
+      hooks:
+          - id: check-json
+            exclude: ^\.devcontainer/devcontainer\.json$
+          - id: check-toml
+          - id: check-yaml
+            args: [--unsafe]
+          - id: end-of-file-fixer
+          - id: trailing-whitespace
+          - id: check-merge-conflict
+          - id: check-added-large-files
+            args: [--maxkb=1024]
+
+    # Custom validation
+    - repo: local
+      hooks:
+          - id: validate-brewfiles
+            name: Validate Brewfiles
+            entry: bash
+            args:
+                - -c
+                - >
+                    if command -v brew &> /dev/null; then
+                        for file in "$@"; do
+                            brew bundle check --file="$file" || echo "⚠️  Warning: $file has unmet dependencies";
+                        done;
+                    else
+                        echo "⚠️  Homebrew not installed, skipping Brewfile validation";
+                    fi
+                - --
+            language: system
+            files: '^custom/brew/.*\.Brewfile.*$'
+            pass_filenames: true

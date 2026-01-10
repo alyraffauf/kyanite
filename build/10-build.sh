@@ -22,7 +22,7 @@ rsync -rvKl /ctx/files/shared/ /
 rsync -rvKl /ctx/oci/brew/ /
 
 # Copy gaming-specific system files for gaming variant
-if [[ "${IMAGE_FLAVOR}" == "gaming" ]]; then
+if [[ ${IMAGE_FLAVOR} == "gaming" ]]; then
     rsync -rvKl /ctx/files/gaming/ /
 fi
 
@@ -51,7 +51,7 @@ echo "::endgroup::"
 # Each script is checked for existence before execution
 for script in 20-packages.sh 30-workarounds.sh 40-systemd.sh 80-branding.sh 90-cleanup.sh; do
     script_path="/ctx/build/${script}"
-    if [[ ! -x "${script_path}" ]]; then
+    if [[ ! -x ${script_path} ]]; then
         echo "ERROR: Build script ${script} not found or not executable" >&2
         exit 1
     fi

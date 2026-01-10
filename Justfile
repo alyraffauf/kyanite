@@ -19,27 +19,26 @@ alias run-vm := run-vm-qcow2
 default:
     @just --list
 
-# Check Just Syntax
-[group('Just')]
-check:
+# Install pre-commit hooks
+[group('Utility')]
+install-hooks:
     #!/usr/bin/env bash
-    find . -type f -name "*.just" | while read -r file; do
-    	echo "Checking syntax: $file"
-    	just --unstable --fmt --check -f $file
-    done
-    echo "Checking syntax: Justfile"
-    just --unstable --fmt --check -f Justfile
+    if ! command -v pre-commit &> /dev/null; then
+        echo "❌ pre-commit not installed. Install with: brew install pre-commit"
+        exit 1
+    fi
+    pre-commit install
+    echo "✅ Pre-commit hooks installed"
 
-# Fix Just Syntax
-[group('Just')]
-fix:
+# Check and format all files
+[group('Utility')]
+lint:
     #!/usr/bin/env bash
-    find . -type f -name "*.just" | while read -r file; do
-    	echo "Checking syntax: $file"
-    	just --unstable --fmt -f $file
-    done
-    echo "Checking syntax: Justfile"
-    just --unstable --fmt -f Justfile || { exit 1; }
+    if ! command -v pre-commit &> /dev/null; then
+        echo "❌ pre-commit not installed. Install with: brew install pre-commit"
+        exit 1
+    fi
+    pre-commit run --all-files
 
 # Clean Repo
 [group('Utility')]
@@ -324,27 +323,3 @@ spawn-vm rebuild="0" type="qcow2" ram="6G":
       --network-user-mode \
       --vsock=false --pass-ssh-key=false \
       -i ./output/**/*.{{ type }}
-
-# Runs shell check on all Bash scripts
-lint:
-    #!/usr/bin/env bash
-    set -eoux pipefail
-    # Check if shellcheck is installed
-    if ! command -v shellcheck &> /dev/null; then
-        echo "shellcheck could not be found. Please install it."
-        exit 1
-    fi
-    # Run shellcheck on all Bash scripts
-    /usr/bin/find . -iname "*.sh" -type f -exec shellcheck "{}" ';'
-
-# Runs shfmt on all Bash scripts
-format:
-    #!/usr/bin/env bash
-    set -eoux pipefail
-    # Check if shfmt is installed
-    if ! command -v shfmt &> /dev/null; then
-        echo "shellcheck could not be found. Please install it."
-        exit 1
-    fi
-    # Run shfmt on all Bash scripts
-    /usr/bin/find . -iname "*.sh" -type f -exec shfmt --write "{}" ';'

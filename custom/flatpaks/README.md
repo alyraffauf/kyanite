@@ -15,11 +15,13 @@ Flatpak preinstall is a feature that allows system administrators to define Flat
 ## Important: Installation Timing
 
 **Flatpaks are NOT included in the ISO or container image.** They are downloaded and installed after:
+
 - User completes initial system setup
 - Network connection is established
 - First boot process runs `flatpak preinstall`
 
 This means:
+
 - The ISO remains small and bootable offline
 - Users need an internet connection after installation
 - First boot may take longer while Flatpaks download and install
@@ -38,6 +40,7 @@ Branch=stable
 ```
 
 **Keys:**
+
 - `Install` - (boolean) Whether to install (default: true)
 - `Branch` - (string) Branch name (default: "master", commonly "stable")
 - `IsRuntime` - (boolean) Whether this is a runtime (default: false for apps)
@@ -55,11 +58,13 @@ See: https://docs.flatpak.org/en/latest/flatpak-command-reference.html#flatpak-p
 4. After user setup completes, Flatpaks will be automatically installed
 
 **Example Files in this directory:**
+
 - [`default.preinstall`](default.preinstall) - Core applications from Bluefin
 
 ### Finding Flatpak IDs
 
 To find the ID of a Flatpak:
+
 ```bash
 flatpak search app-name
 ```
@@ -69,11 +74,12 @@ Or browse Flathub: https://flathub.org/
 ## Customization
 
 Edit the existing file or create new ones:
+
 - **[`default.preinstall`](default.preinstall)** - Modify the default application list
 - **Create new files:**
-  - `development.preinstall` - Development tools
-  - `gaming.preinstall` - Gaming applications
-  - `media.preinstall` - Media editing tools
+    - `development.preinstall` - Development tools
+    - `gaming.preinstall` - Gaming applications
+    - `media.preinstall` - Media editing tools
 
 Each new `.preinstall` file will be automatically copied during the build process. See [`build/10-build.sh`](../../build/10-build.sh) for how files are copied.
 

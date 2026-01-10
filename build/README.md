@@ -17,6 +17,7 @@ The `Containerfile` executes `10-build.sh`, which then runs all subsequent scrip
 ### `10-build.sh` - Main Build Orchestrator
 
 This script:
+
 - Copies custom files from `/ctx/files/` to `/`
 - Copies Brewfiles to `/usr/share/ublue-os/homebrew/`
 - Consolidates ujust files to `/usr/share/ublue-os/just/60-custom.just`
@@ -26,6 +27,7 @@ This script:
 ### `20-packages.sh` - Package Management
 
 This script:
+
 - Validates and parses `packages.json`
 - Installs packages listed in the `include` array
 - Removes packages listed in the `exclude` array
@@ -38,14 +40,8 @@ This script:
 
 ```json
 {
-    "include": [
-        "vim",
-        "git",
-        "your-package-here"
-    ],
-    "exclude": [
-        "unwanted-package"
-    ]
+    "include": ["vim", "git", "your-package-here"],
+    "exclude": ["unwanted-package"]
 }
 ```
 
@@ -54,6 +50,7 @@ This script:
 ### `30-workarounds.sh` - System Workarounds
 
 Applies compatibility fixes and workarounds:
+
 - Creates `/nix` directory for Nix package manager compatibility
 - Configures default taskmanager panel applications
 - Configures Ptyxis terminal for KDE integration
@@ -62,12 +59,14 @@ Applies compatibility fixes and workarounds:
 ### `40-systemd.sh` - Service Configuration
 
 Enables and disables systemd services:
+
 - System services: `podman.socket`, `tailscaled.service`, `flatpak-preinstall.service`
 - Global user services: enables `bazaar.service`, disables `sunshine.service`
 
 ### `90-cleanup.sh` - Final Cleanup
 
 Performs final cleanup tasks:
+
 - Hides desktop files for certain applications
 - Disables/renames Plasma Discover desktop entries
 - Configures Bazaar as the Flatpak ref handler
@@ -77,6 +76,7 @@ Performs final cleanup tasks:
 ### `copr-helpers.sh` - Helper Functions
 
 Provides the `copr_install_isolated` function for safely installing packages from COPR repositories. This function:
+
 - Enables the COPR repository
 - Installs the specified package(s)
 - Disables the COPR repository (critical for security)
@@ -155,7 +155,7 @@ Containerfile
 - Flatpak preinstall files are at `/ctx/custom/flatpaks`
 - Package list is at `/ctx/packages.json`
 - The `set -eoux pipefail` flags ensure:
-  - `e` - Exit on error
-  - `o` - Exit if any command in a pipeline fails
-  - `u` - Exit on undefined variables
-  - `x` - Print each command before executing (for debugging)
+    - `e` - Exit on error
+    - `o` - Exit if any command in a pipeline fails
+    - `u` - Exit on undefined variables
+    - `x` - Print each command before executing (for debugging)

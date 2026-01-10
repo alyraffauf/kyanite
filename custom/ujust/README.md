@@ -24,12 +24,14 @@ custom/ujust/
 ```
 
 **Example Files in this directory:**
+
 - [`custom-apps.just`](custom-apps.just) - Application installation commands (Brewfiles, Flatpaks, JetBrains Toolbox)
 - [`custom-system.just`](custom-system.just) - System configuration commands (benchmarks, dev groups, maintenance)
 
 ## Example Commands
 
 ### Basic Command
+
 ```just
 # Run a system maintenance task
 run-maintenance:
@@ -38,6 +40,7 @@ run-maintenance:
 ```
 
 ### Interactive Command with gum
+
 ```just
 # Configure system setting
 configure-thing:
@@ -55,6 +58,7 @@ configure-thing:
 ```
 
 ### Command with Group
+
 ```just
 # Groups organize commands in ujust help
 [group('Apps')]
@@ -65,15 +69,17 @@ install-brewfile:
 ## Best Practices
 
 ### Naming Conventions
+
 - Use lowercase with hyphens: `install-something`
 - Use verb prefixes for clarity:
-  - `install-` - Install something
-  - `configure-` - Configure something pre-installed
-  - `setup-` - Install + configure
-  - `toggle-` - Enable/disable a feature
-  - `fix-` - Apply a fix or workaround
+    - `install-` - Install something
+    - `configure-` - Configure something pre-installed
+    - `setup-` - Install + configure
+    - `toggle-` - Enable/disable a feature
+    - `fix-` - Apply a fix or workaround
 
 ### Command Structure
+
 ```just
 # Brief description of what the command does
 [group('Category')]
@@ -84,6 +90,7 @@ command-name:
 ```
 
 ### Error Handling
+
 ```just
 install-something:
     #!/usr/bin/env bash
@@ -92,7 +99,9 @@ install-something:
 ```
 
 ### User Prompts
+
 Use `gum` for interactive prompts (included in Universal Blue images):
+
 ```just
 interactive-command:
     #!/usr/bin/env bash
@@ -104,6 +113,7 @@ interactive-command:
 ## Common Use Cases
 
 ### 1. Installing Software via Brewfiles
+
 ```just
 [group('Apps')]
 install-dev-tools:
@@ -113,6 +123,7 @@ install-dev-tools:
 **See examples in [`custom-apps.just`](custom-apps.just)** for Brewfile shortcuts.
 
 ### 2. System Configuration
+
 ```just
 [group('System')]
 configure-firewall:
@@ -124,6 +135,7 @@ configure-firewall:
 **See examples in [`custom-system.just`](custom-system.just)** for system configuration.
 
 ### 3. Development Environment Setup
+
 ```just
 [group('Development')]
 setup-nodejs:
@@ -134,6 +146,7 @@ setup-nodejs:
 ```
 
 ### 4. Maintenance Tasks
+
 ```just
 [group('Maintenance')]
 clean-containers:
@@ -148,11 +161,13 @@ clean-containers:
 **Do not install packages via dnf5/rpm in ujust commands.** Bootc images are immutable and package installation should happen at build time in [`build/10-build.sh`](../../build/10-build.sh).
 
 For runtime package installation, use:
+
 - **Brewfiles** - Create shortcuts to Brewfiles in [`custom/brew/`](../brew/)
 - **Flatpak** - Install Flatpaks for GUI applications
 - **Containers** - Use toolbox/distrobox for development environments
 
 Example Brewfile shortcut (from [`custom-apps.just`](custom-apps.just)):
+
 ```just
 [group('Apps')]
 install-fonts:
@@ -176,6 +191,7 @@ Test locally before committing:
 3. Reboot and test: `ujust your-command`
 
 Or test the just files directly:
+
 ```bash
 just --justfile custom/ujust/custom-apps.just --list
 just --justfile custom/ujust/custom-apps.just install-something
@@ -184,11 +200,13 @@ just --justfile custom/ujust/custom-apps.just install-something
 ## Customization
 
 **Start by editing the example files:**
+
 - **[`custom-apps.just`](custom-apps.just)** - Add your application installation commands
 - **[`custom-audio.just`](custom-audio.just)** - Audio DSP configuration for specific devices
 - **[`custom-system.just`](custom-system.just)** - Add your system configuration commands
 
 **Create new files** for different categories:
+
 - `custom-gaming.just` - Gaming-related commands
 - `custom-media.just` - Media editing workflows
 - `custom-dev.just` - Development environment setups
@@ -204,7 +222,7 @@ Use groups to categorize commands:
 install-app:
     echo "Installing app..."
 
-[group('System')]  
+[group('System')]
 configure-system:
     echo "Configuring system..."
 
@@ -216,11 +234,13 @@ setup-dev:
 ## Examples from Bluefin
 
 The included files provide starting examples:
+
 - **[`custom-apps.just`](custom-apps.just)** - Application installation commands
 - **[`custom-audio.just`](custom-audio.just)** - Audio DSP configuration commands
 - **[`custom-system.just`](custom-system.just)** - System configuration commands
 
 These files show how to:
+
 - Create shortcuts to Brewfiles in [`custom/brew/`](../brew/)
 - Install Flatpaks interactively
 - Configure system settings

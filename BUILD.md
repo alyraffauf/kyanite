@@ -23,6 +23,7 @@ RUN IMAGE_FLAVOR="${IMAGE_FLAVOR}" /ctx/build/10-build.sh
 ```
 
 **Key Points**:
+
 - Uses `IMAGE_FLAVOR` build argument (default: "main")
 - Same Containerfile builds both variants
 - Follows Bluefin/Aurora pattern
@@ -30,10 +31,12 @@ RUN IMAGE_FLAVOR="${IMAGE_FLAVOR}" /ctx/build/10-build.sh
 ### 2. Build Scripts
 
 **`build/10-build.sh`**:
+
 - Executes build scripts in sequence
 - Passes `IMAGE_FLAVOR` to all subsequent scripts
 
 **`build/20-packages.sh`**:
+
 - Contains conditional logic for gaming variant
 - Simple `if` statement checks `IMAGE_FLAVOR`
 - Installs Steam when `IMAGE_FLAVOR=gaming`
@@ -48,6 +51,7 @@ fi
 ### 3. GitHub Actions Workflows
 
 **Reusable Workflow** (`.github/workflows/reusable_build.yml`):
+
 - Contains all build logic (DRY principle)
 - Accepts inputs: `image_name`, `image_flavor`, `image_desc`, `image_keywords`
 - Handles: checkout, build, tag, push to registry
@@ -55,21 +59,22 @@ fi
 **Variant Workflows** (call the reusable workflow):
 
 **`.github/workflows/build.yml`**:
+
 ```yaml
 jobs:
-  build-kyanite:
-    uses: ./.github/workflows/reusable_build.yml
-    with:
-      image_name: "kyanite"
-      image_flavor: "main"
-      image_desc: "Kyanite - A clean KDE Plasma bootc image"
+    build-kyanite:
+        uses: ./.github/workflows/reusable_build.yml
+        with:
+            image_name: "kyanite"
+            image_flavor: "main"
+            image_desc: "Kyanite - A clean KDE Plasma bootc image"
 
-  build-kyanite-gaming:
-    uses: ./.github/workflows/reusable_build.yml
-    with:
-      image_name: "kyanite-gaming"
-      image_flavor: "gaming"
-      image_desc: "Kyanite Gaming - Gaming-focused variant with Steam"
+    build-kyanite-gaming:
+        uses: ./.github/workflows/reusable_build.yml
+        with:
+            image_name: "kyanite-gaming"
+            image_flavor: "gaming"
+            image_desc: "Kyanite Gaming - Gaming-focused variant with Steam"
 ```
 
 ### Benefits of This Design
@@ -83,6 +88,7 @@ jobs:
 ## Local Development
 
 ### Build Standard Kyanite
+
 ```bash
 just build
 # or explicitly:
@@ -90,6 +96,7 @@ just build kyanite stable main
 ```
 
 ### Build Gaming Variant
+
 ```bash
 IMAGE_FLAVOR=gaming just build
 # or explicitly:
@@ -97,6 +104,7 @@ just build kyanite stable gaming
 ```
 
 ### Build VM Images
+
 ```bash
 # Standard
 just build-qcow2
@@ -106,6 +114,7 @@ IMAGE_FLAVOR=gaming just build-qcow2
 ```
 
 ### Direct Podman Build
+
 ```bash
 # Standard
 podman build -t localhost/kyanite:latest .
@@ -123,26 +132,27 @@ podman build \
 
 1. **Trigger**: Push to main or manual workflow dispatch
 2. **Jobs**: Both variants build in parallel within `build.yml`
-   - `build-kyanite` job with `IMAGE_FLAVOR=main`
-   - `build-kyanite-gaming` job with `IMAGE_FLAVOR=gaming`
+    - `build-kyanite` job with `IMAGE_FLAVOR=main`
+    - `build-kyanite-gaming` job with `IMAGE_FLAVOR=gaming`
 3. **Reusable Workflow**: Executes build steps
 4. **Conditional Logic**: `20-packages.sh` checks `IMAGE_FLAVOR`
 5. **Output**: Two images pushed to registry
-   - `ghcr.io/alyraffauf/kyanite:stable`
-   - `ghcr.io/alyraffauf/kyanite-gaming:stable`
+    - `ghcr.io/alyraffauf/kyanite:stable`
+    - `ghcr.io/alyraffauf/kyanite-gaming:stable`
 
 ### IMAGE_FLAVOR Values
 
-| Value | Image Name | Description | Steam Installed |
-|-------|------------|-------------|-----------------|
-| `main` | kyanite | Base image | ❌ No |
-| `gaming` | kyanite-gaming | Gaming variant | ✅ Yes |
+| Value    | Image Name     | Description    | Steam Installed |
+| -------- | -------------- | -------------- | --------------- |
+| `main`   | kyanite        | Base image     | ❌ No           |
+| `gaming` | kyanite-gaming | Gaming variant | ✅ Yes          |
 
 ## Adding New Variants
 
 To add a new variant (e.g., `kyanite-dev`):
 
 1. **Add conditional logic** in `build/20-packages.sh`:
+
 ```bash
 if [[ "${IMAGE_FLAVOR}" == "dev" ]]; then
     dnf5 -y install \
@@ -153,19 +163,20 @@ fi
 ```
 
 2. **Add new job** to `.github/workflows/build.yml`:
+
 ```yaml
-  build-kyanite-dev:
+build-kyanite-dev:
     name: Build Kyanite Dev
     uses: ./.github/workflows/reusable_build.yml
     permissions:
-      contents: read
-      packages: write
-      id-token: write
+        contents: read
+        packages: write
+        id-token: write
     with:
-      image_name: "kyanite-dev"
-      image_flavor: "dev"
-      image_desc: "Kyanite Dev - Development variant"
-      image_keywords: "bootc,ublue,kde,development"
+        image_name: "kyanite-dev"
+        image_flavor: "dev"
+        image_desc: "Kyanite Dev - Development variant"
+        image_keywords: "bootc,ublue,kde,development"
 ```
 
 3. **Done!** New variant builds automatically
@@ -192,12 +203,14 @@ kyanite/
 ## Debugging
 
 ### Check Build Arguments
+
 ```bash
 # During build, check IMAGE_FLAVOR
 echo "IMAGE_FLAVOR: ${IMAGE_FLAVOR}"
 ```
 
 ### Check Installed Packages
+
 ```bash
 # Verify Steam installation
 rpm -q steam

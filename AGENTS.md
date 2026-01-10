@@ -5,6 +5,7 @@ Kyanite is a bootc OS based on Fedora Kinoite (KDE Plasma). This guide covers cr
 ## PRE-COMMIT CHECKLIST ⚠️
 
 **Execute before EVERY commit:**
+
 1. **Conventional Commits** - Required format: `type(scope): description`
 2. **Shellcheck** - Run on all modified `.sh` files
 3. **YAML validation** - Validate all modified `.yml` files
@@ -28,25 +29,27 @@ Kyanite is a bootc OS based on Fedora Kinoite (KDE Plasma). This guide covers cr
 
 ## QUICK REFERENCE
 
-| Task | Location | Command/Format |
-|------|----------|----------------|
-| Add system package | `packages.json` | Add to `"include"` array |
-| Remove package | `packages.json` | Add to `"exclude"` array |
-| Add 3rd-party RPM | `build/20-packages.sh` | See Docker/Cider/Tailscale examples |
-| Add COPR package | `build/20-packages.sh` | `copr_install_isolated "owner/repo" "pkg"` |
-| Enable service | `build/40-systemd.sh` | `systemctl enable service.name` |
-| Add Homebrew package | `custom/brew/*.Brewfile` | `brew "package-name"` |
-| Add Flatpak | `custom/flatpaks/*.preinstall` | `[Flatpak Preinstall app.id]` |
-| Add ujust command | `custom/ujust/*.just` | Just recipe syntax |
-| Test locally | Terminal | `just build && just build-qcow2 && just run-vm-qcow2` |
+| Task                 | Location                       | Command/Format                                        |
+| -------------------- | ------------------------------ | ----------------------------------------------------- |
+| Add system package   | `packages.json`                | Add to `"include"` array                              |
+| Remove package       | `packages.json`                | Add to `"exclude"` array                              |
+| Add 3rd-party RPM    | `build/20-packages.sh`         | See Docker/Cider/Tailscale examples                   |
+| Add COPR package     | `build/20-packages.sh`         | `copr_install_isolated "owner/repo" "pkg"`            |
+| Enable service       | `build/40-systemd.sh`          | `systemctl enable service.name`                       |
+| Add Homebrew package | `custom/brew/*.Brewfile`       | `brew "package-name"`                                 |
+| Add Flatpak          | `custom/flatpaks/*.preinstall` | `[Flatpak Preinstall app.id]`                         |
+| Add ujust command    | `custom/ujust/*.just`          | Just recipe syntax                                    |
+| Test locally         | Terminal                       | `just build && just build-qcow2 && just run-vm-qcow2` |
 
 ## IMAGE VARIANTS
 
 Two variants built from single Containerfile using `IMAGE_FLAVOR`:
+
 - **main** (default) → `kyanite` - Base KDE Plasma
 - **gaming** → `kyanite-gaming` - Adds Steam, Gamescope, GameMode, MangoHud, Sunshine
 
 Conditional logic in `build/20-packages.sh`:
+
 ```bash
 if [[ "${IMAGE_FLAVOR}" == "gaming" ]]; then
     # Gaming-specific packages
@@ -67,12 +70,14 @@ Details: See `build/README.md`
 ## WHERE TO ADD THINGS
 
 ### Build-time (Baked into image)
+
 - **System packages** → `packages.json`
 - **Third-party RPMs** → `build/20-packages.sh`
 - **System services** → `build/40-systemd.sh`
 - **System files** → `files/shared/` or `files/gaming/`
 
 ### Runtime (User installs after deployment)
+
 - **CLI tools** → `custom/brew/*.Brewfile`
 - **GUI apps** → `custom/flatpaks/*.preinstall`
 - **User commands** → `custom/ujust/*.just`
@@ -80,6 +85,7 @@ Details: See `build/README.md`
 ## COMMON PATTERNS
 
 ### Add Third-Party RPM Repository
+
 ```bash
 # In build/20-packages.sh
 dnf5 config-manager addrepo --from-repofile=https://example.com/repo.repo
@@ -88,6 +94,7 @@ dnf5 -y install --enablerepo='example-repo' package-name
 ```
 
 ### Add COPR Package
+
 ```bash
 # In build/20-packages.sh
 source /ctx/build/copr-helpers.sh
@@ -95,6 +102,7 @@ copr_install_isolated "owner/repo" "package-name"
 ```
 
 ### Enable Services
+
 ```bash
 # In build/40-systemd.sh
 systemctl enable podman.socket
@@ -103,6 +111,7 @@ systemctl disable --global sunshine.service
 ```
 
 ### Add Brewfile Shortcut
+
 ```just
 # In custom/ujust/custom-apps.just
 [group('Apps')]
@@ -145,6 +154,7 @@ IMAGE_FLAVOR=gaming just build-qcow2
 **Development**: Branch → PR → Auto-validation → Merge → Build `:stable` + Sign
 
 **Image Tags**:
+
 - `:stable` - Latest from main
 - `:stable.YYYYMMDD` - Datestamped
 - `:pr-123` - PR builds (unsigned)
@@ -176,12 +186,13 @@ rpm -q package-name
 
 - **BUILD.md** - Build system architecture details
 - **build/README.md** - Build scripts reference
-- **custom/*/README.md** - Homebrew/Flatpak/ujust guides
+- **custom/\*/README.md** - Homebrew/Flatpak/ujust guides
 - **README.md** - User-facing overview
 
 ## WHEN UPDATING PACKAGES
 
 Update README.md "What's Included" section to reflect:
+
 - Added packages/apps
 - Removed packages
 - Service changes

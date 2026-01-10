@@ -23,7 +23,7 @@ fi
 readarray -t INCLUDED_PACKAGES < <(jq -r '.include | sort | unique[]' /ctx/packages.json)
 
 # Install Packages
-if [[ "${#INCLUDED_PACKAGES[@]}" -gt 0 ]]; then
+if [[ ${#INCLUDED_PACKAGES[@]} -gt 0 ]]; then
     dnf5 -y install \
         "${INCLUDED_PACKAGES[@]}"
 else
@@ -34,7 +34,7 @@ fi
 # build list of all packages requested for exclusion
 readarray -t EXCLUDED_PACKAGES < <(jq -r '.exclude | sort | unique[]' /ctx/packages.json)
 
-if [[ "${#EXCLUDED_PACKAGES[@]}" -gt 0 ]]; then
+if [[ ${#EXCLUDED_PACKAGES[@]} -gt 0 ]]; then
     INSTALLED_EXCLUDED=()
     for pkg in "${EXCLUDED_PACKAGES[@]}"; do
         if rpm -q "$pkg" &>/dev/null; then
@@ -45,7 +45,7 @@ if [[ "${#EXCLUDED_PACKAGES[@]}" -gt 0 ]]; then
 fi
 
 # remove any excluded packages which are still present on image
-if [[ "${#EXCLUDED_PACKAGES[@]}" -gt 0 ]]; then
+if [[ ${#EXCLUDED_PACKAGES[@]} -gt 0 ]]; then
     dnf5 -y remove \
         "${EXCLUDED_PACKAGES[@]}"
 else
@@ -117,7 +117,7 @@ dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test install flat
 
 echo "::endgroup::"
 
-if [[ "${IMAGE_FLAVOR}" == "gaming" ]]; then
+if [[ ${IMAGE_FLAVOR} == "gaming" ]]; then
     echo "::group:: Install Steam and Gaming Tools"
 
     dnf5 -y --setopt=install_weak_deps=False install \

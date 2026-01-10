@@ -1,0 +1,25 @@
+{
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "es5",
+    "printWidth": 80,
+    "proseWrap": "preserve",
+    "endOfLine": "lf",
+    "overrides": [
+        {
+            "files": ["*.json", "*.yml", "*.yaml"],
+            "options": {
+                "tabWidth": 4
+            }
+        },
+        {
+            "files": "*.md",
+            "options": {
+                "tabWidth": 4,
+                "proseWrap": "preserve"
+            }
+        }
+    ]
+}

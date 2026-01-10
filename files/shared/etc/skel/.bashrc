@@ -1,4 +1,5 @@
 # .bashrc
+# shellcheck shell=bash
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -6,7 +7,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # User specific environment
-if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
+if ! [[ $PATH =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
     PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 fi
 export PATH
@@ -56,18 +57,18 @@ if [ "$TERM_PROGRAM" = "ghostty" ]; then
     export TERM=xterm-256color
 fi
 
-if command -v direnv &> /dev/null; then
+if command -v direnv &>/dev/null; then
     eval "$(direnv hook bash)"
 fi
 
-if command -v fzf &> /dev/null; then
+if command -v fzf &>/dev/null; then
     eval "$(fzf --bash)"
 fi
 
-if command -v starship &> /dev/null; then
+if command -v starship &>/dev/null; then
     eval "$(starship init bash)"
 fi
 
-if command -v zoxide &> /dev/null; then
+if command -v zoxide &>/dev/null; then
     eval "$(zoxide init bash --cmd cd)"
 fi

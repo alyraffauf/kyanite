@@ -1,5 +1,5 @@
 blocklists:
-  - block:
-      - app.devsuite.Ptyxis
-      - com.valvesoftware.Steam
-      - dev.lizardbyte.app.Sunshine
+    - block:
+          - app.devsuite.Ptyxis
+          - com.valvesoftware.Steam
+          - dev.lizardbyte.app.Sunshine
