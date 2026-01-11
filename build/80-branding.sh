@@ -15,7 +15,7 @@ IMAGE_PRETTY_NAME="Kyanite"
 IMAGE_LIKE="fedora"
 IMAGE_VENDOR="alyraffauf"
 IMAGE_NAME="${IMAGE_NAME:-kyanite}"
-IMAGE_FLAVOR="${IMAGE_NAME}"
+IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 IMAGE_TAG="${UBLUE_IMAGE_TAG:-stable}"
 BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
 FEDORA_VERSION="43"
@@ -92,6 +92,7 @@ if [[ -f $KDE_ABOUT_RC ]]; then
         echo "Set KDE Variant to: DESKTOP"
     fi
 fi
+
 ###############################################################################
 
 echo "::endgroup::"
