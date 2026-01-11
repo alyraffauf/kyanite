@@ -169,3 +169,43 @@ change-shell:
     echo ""
     echo "Shell changed successfully to $SHELL_PATH"
     echo "Please log out and log back in for changes to take effect."
+
+# Rebase to a different Kyanite flavor
+[group('System')]
+rebase-helper:
+    #!/usr/bin/env bash
+    source /usr/lib/ujust/ujust.sh
+
+    # Detect current flavor
+    CURRENT_FLAVOR=$(grep '^IMAGE_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
+    echo "Current Kyanite flavor: $CURRENT_FLAVOR."
+
+    # Define all flavors and images
+    declare -A IMAGES=(
+        ["kyanite"]="ghcr.io/alyraffauf/kyanite:stable"
+        ["kyanite-dx"]="ghcr.io/alyraffauf/kyanite-dx:stable"
+        ["kyanite-gaming"]="ghcr.io/alyraffauf/kyanite-gaming:stable"
+        ["kyanite-dx-gaming"]="ghcr.io/alyraffauf/kyanite-dx-gaming:stable"
+    )
+
+    # Build choices, excluding current flavor
+    CHOICES=()
+    for flavor in "${!IMAGES[@]}"; do
+        if [[ "$flavor" != "$CURRENT_FLAVOR" ]]; then
+            CHOICES+=("$flavor")
+        fi
+    done
+    CHOICES+=("Cancel")
+
+    # Prompt user
+    echo "Select the flavor you want to rebase to."
+    FLAVOR=$(Choose "${CHOICES[@]}")
+    if [[ "$FLAVOR" == "Cancel" ]]; then
+        echo "No changes made."
+        exit 0
+    fi
+
+    IMAGE="${IMAGES[$FLAVOR]}"
+    echo "Rebasing to $FLAVOR..."
+    sudo rpm-ostree rebase ostree-image-signed:docker://$IMAGE
+    echo "Rebase complete! Please reboot to apply changes."
