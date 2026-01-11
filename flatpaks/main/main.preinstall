@@ -1,55 +1,27 @@
 [Flatpak Preinstall com.github.tchx84.Flatseal]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall com.ranfdev.DistroShelf]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall io.github.kolunmi.Bazaar]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall it.mijorus.gearlever]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.fedoraproject.MediaWriter]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.kde.gwenview]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.kde.haruna]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.kde.kcalc]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.kde.kclock]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.kde.kweather]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.kde.okular]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.kde.skanpage]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.mozilla.firefox]
-Branch=stable
-IsRuntime=false
 
 [Flatpak Preinstall org.mozilla.Thunderbird]
-Branch=stable
-IsRuntime=false

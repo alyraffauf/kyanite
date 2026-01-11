@@ -6,7 +6,7 @@ permissions:
 on:
     pull_request:
         paths:
-            - "custom/flatpaks/**"
+            - "flatpaks/**"
 
 jobs:
     validate:
@@ -26,15 +26,17 @@ jobs:
 
             - name: Validate Flatpaks
               run: |
-                  echo "Validating Flatpak files in custom/flatpaks/ directory..."
+                  echo "Validating Flatpak files in flatpaks/ directory..."
                   echo ""
 
                   set -euo pipefail
 
-                  find "custom/flatpaks" -iname '*.list*' -print0 | \
+                  find "flatpaks" -iname '*.preinstall' -print0 | \
                     while IFS= read -r -d '' flatpaks_file; do
                       echo "::group::Validating $(basename "${flatpaks_file}")"
-                      grep -v "#.*" "${flatpaks_file}" | grep -v "^$" | \
+                      # Extract Flatpak IDs from [Flatpak Preinstall NAME] sections
+                      grep -E '^\[Flatpak Preinstall ' "${flatpaks_file}" | \
+                        sed 's/\[Flatpak Preinstall \(.*\)\]/\1/' | \
                         while read -r flatpak; do
                           echo "Checking ${flatpak}..."
                           flatpak remote-info --user flathub "${flatpak}"

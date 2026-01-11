@@ -43,9 +43,19 @@ cp /ctx/custom/brew/*.Brewfile /usr/share/ublue-os/homebrew/
 mkdir -p /usr/share/ublue-os/just/
 find /ctx/custom/ujust -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >>/usr/share/ublue-os/just/60-custom.just
 
-# Copy Flatpak preinstall files
-mkdir -p /etc/flatpak/preinstall.d/
-cp /ctx/custom/flatpaks/*.preinstall /etc/flatpak/preinstall.d/
+# Copy Flatpak preinstall files for each flavor
+mkdir -p /usr/share/flatpak/preinstall.d/
+for variant_dir in /ctx/flatpaks/*/; do
+    variant=$(basename "$variant_dir")
+    # Check if this variant is in the IMAGE_FLAVOR (exact match)
+    for flavor in "${FLAVOR_PARTS[@]}"; do
+        if [[ $variant == "$flavor" ]]; then
+            echo "Installing Flatpak preinstall for variant: ${variant}"
+            cp "/ctx/flatpaks/${variant}/${variant}.preinstall" "/usr/share/flatpak/preinstall.d/kyanite-${variant}.preinstall"
+            break
+        fi
+    done
+done
 
 echo "::endgroup::"
 

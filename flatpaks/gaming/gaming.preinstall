@@ -1,8 +1,5 @@
 [Flatpak Preinstall com.heroicgameslauncher.hgl]
-Branch=stable
 
 [Flatpak Preinstall net.davidotek.pupgui2]
-Branch=stable
 
 [Flatpak Preinstall net.lutris.Lutris]
-Branch=stable
