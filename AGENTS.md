@@ -52,25 +52,60 @@ Kyanite is a bootc OS based on Fedora Kinoite (KDE Plasma). This guide covers cr
 
 ## IMAGE VARIANTS
 
-Two variants built from single Containerfile using `IMAGE_FLAVOR`:
+Multiple variants can be built from single Containerfile using `IMAGE_FLAVOR`:
 
-- **main** (default) → `kyanite` - Base KDE Plasma
+- **main** (default) → `kyanite` - Base KDE Plasma desktop
 - **gaming** → `kyanite-gaming` - Adds Steam, Gamescope, GameMode, MangoHud, Sunshine
+- **Combined variants** → `kyanite-gaming-dx-nvidia` - Multiple features combined
 
-Variant packages are defined in `packages.json` and automatically installed:
+### Variant Architecture
+
+All variants use **exact matching** (not substring matching) by splitting `IMAGE_FLAVOR` on hyphens:
+
+- `IMAGE_FLAVOR=main` → `["main"]` → Installs main-specific packages/services/files
+- `IMAGE_FLAVOR=gaming` → `["gaming"]` → Installs gaming-specific packages/services/files
+- `IMAGE_FLAVOR=gaming-dx` → `["gaming", "dx"]` → Installs both gaming AND dx packages/services/files
+
+### Four Declarative Layers
+
+**1. Packages** (`packages.json`):
 
 ```json
 {
-  "variants": {
-    "gaming": {
-      "include": ["steam", "gamescope", "mangohud.x86_64", ...],
-      "exclude": []
+    "include": ["common-package"],
+    "variants": {
+        "gaming": {
+            "include": ["steam", "gamescope"],
+            "exclude": []
+        }
     }
-  }
 }
 ```
 
-Build script uses pattern matching to support combined variants (e.g., `gaming-dx-nvidia`).
+**2. Services** (`services.json`):
+
+```json
+{
+    "system": { "enable": ["docker.socket"] },
+    "variants": {
+        "gaming": {
+            "system": { "disable": ["sunshine.service"] }
+        }
+    }
+}
+```
+
+**3. Files** (`files/{variant}/`):
+
+- `files/shared/` → Always copied
+- `files/main/` → Copied when `IMAGE_FLAVOR` contains "main"
+- `files/gaming/` → Copied when `IMAGE_FLAVOR` contains "gaming"
+
+**4. KDE Branding** (dynamic):
+
+- `IMAGE_FLAVOR=main` → Shows "Variant=DESKTOP" in KDE About
+- `IMAGE_FLAVOR=gaming` → Shows "Variant=GAMING"
+- `IMAGE_FLAVOR=gaming-dx-nvidia` → Shows "Variant=DX+GAMING+NVIDIA" (alphabetically sorted)
 
 ## BUILD SCRIPTS (Execution Order)
 
@@ -187,8 +222,10 @@ kyanite/
 ├── build/                # Build scripts (see build/README.md)
 ├── files/                # System files
 │   ├── shared/          # All variants (always copied)
-│   ├── gaming/          # Gaming variant (copied if IMAGE_FLAVOR =~ gaming)
-│   └── {variant}/       # Any variant dir auto-detected and copied if matched
+│   ├── main/            # Main variant only (exact match)
+│   ├── gaming/          # Gaming variant (exact match)
+│   ├── dx/              # DX variant (exact match)
+│   └── {variant}/       # Any variant dir auto-detected via exact matching
 ├── custom/               # Runtime customizations
 │   ├── brew/            # Brewfiles
 │   ├── flatpaks/        # Preinstall configs
@@ -206,6 +243,10 @@ just run-vm-qcow2            # Test in browser VM
 # Gaming variant
 IMAGE_FLAVOR=gaming just build
 IMAGE_FLAVOR=gaming just build-qcow2
+
+# Combined variants
+IMAGE_FLAVOR=gaming-dx just build
+IMAGE_FLAVOR=dx-gaming-nvidia just build
 ```
 
 ## WORKFLOWS
@@ -258,6 +299,15 @@ Update README.md "What's Included" section to reflect:
 - Configuration changes
 
 Keep descriptions brief and user-focused.
+
+## VARIANT SYSTEM BENEFITS
+
+✅ **Declarative** - Everything in JSON/directories, not hardcoded bash
+✅ **Scalable** - Add new variants without modifying build scripts
+✅ **Flexible** - Combine any variants (gaming-dx-nvidia)
+✅ **Consistent** - Same pattern across packages, services, files, and branding
+✅ **Efficient** - Single loop, single install command
+✅ **Automatic** - Exact matching prevents false matches (main ≠ domain)
 
 ## REFERENCES
 

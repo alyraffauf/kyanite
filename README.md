@@ -6,10 +6,24 @@ Kyanite is a custom bootable container based on Fedora Kinoite, borrowing heavil
 
 Kyanite is built on Universal Blue's [kinoite-main](https://github.com/ublue-os/main) image, which itself derives from Fedora Kinoite with additional batteries included.
 
+## Variant System
+
+Kyanite uses a flexible variant system where you can combine features using hyphen-separated names:
+
 **Available Variants:**
 
-- **kyanite** - Clean KDE Plasma desktop for general use and development
+- **kyanite** (main) - Clean KDE Plasma desktop for general use and development
 - **kyanite-gaming** - Adds Steam, Gamescope, GameMode, MangoHud, and Sunshine
+- **Combined variants** - Mix and match features (e.g., `kyanite-gaming-dx-nvidia`)
+
+Each variant is defined declaratively in JSON configuration files:
+
+- **Packages** → `packages.json` defines what gets installed
+- **Services** → `services.json` defines what gets enabled
+- **Files** → `files/{variant}/` directories contain variant-specific system files
+- **Branding** → KDE About dialog shows which variants are active (e.g., "GAMING+DX")
+
+**Note:** Only `main` and `gaming` variants are currently built in CI. To use combined or custom variants, you'll need to build locally with `IMAGE_FLAVOR=gaming-dx just build`.
 
 ## Quick Start
 
@@ -82,18 +96,57 @@ Firefox (replaced with Flathub Flatpak), Akonadi, Plasma Discover, and other unw
 
 ### System Packages (Build-Time)
 
-Edit [`packages.json`](packages.json):
+Edit [`packages.json`](packages.json) to add common packages or variant-specific packages:
 
 ```json
 {
     "include": ["vim", "htop"],
-    "exclude": ["unwanted-package"]
+    "exclude": ["unwanted-package"],
+    "variants": {
+        "gaming": {
+            "include": ["steam", "gamescope"],
+            "exclude": []
+        },
+        "dx": {
+            "include": ["gcc", "make"],
+            "exclude": []
+        }
+    }
+}
+```
+
+### System Services (Build-Time)
+
+Edit [`services.json`](services.json) to configure systemd units:
+
+```json
+{
+    "system": {
+        "enable": ["docker.socket"],
+        "disable": []
+    },
+    "variants": {
+        "gaming": {
+            "system": {
+                "disable": ["sunshine.service"]
+            }
+        }
+    }
 }
 ```
 
 ### Third-Party Software (Build-Time)
 
-Add to [`build/20-packages.sh`](build/20-packages.sh). See existing examples for Docker, Cider, and Tailscale.
+Add to [`build/25-third-party-packages.sh`](build/25-third-party-packages.sh). See existing examples for Docker, Cider, and Tailscale.
+
+### Variant-Specific Files (Build-Time)
+
+Place files in `files/{variant}/` directories:
+
+- `files/shared/` - Copied to all variants
+- `files/main/` - Only copied when building main variant
+- `files/gaming/` - Only copied when building gaming variant
+- `files/dx/` - Only copied when building dx variant (if created)
 
 ### Runtime Applications
 
@@ -119,6 +172,10 @@ just build
 
 # Build gaming variant
 IMAGE_FLAVOR=gaming just build
+
+# Build combined variants
+IMAGE_FLAVOR=gaming-dx just build
+IMAGE_FLAVOR=dx-gaming-nvidia just build
 
 # Build with custom tag
 just build localhost/kyanite mytag
@@ -157,6 +214,10 @@ just run-vm-qcow2
 # Gaming variant
 IMAGE_FLAVOR=gaming just build-qcow2
 IMAGE_FLAVOR=gaming just run-vm-qcow2
+
+# Combined variants
+IMAGE_FLAVOR=gaming-dx just build-qcow2
+IMAGE_FLAVOR=gaming-dx just run-vm-qcow2
 ```
 
 ### Rebuild Commands
@@ -200,13 +261,53 @@ sudo systemctl reboot
 rpm-ostree status  # Should show "ostree-image-signed:" prefix
 ```
 
+## Adding New Variants
+
+To add a new variant (e.g., "dx" for developer experience):
+
+1. **Add packages** to `packages.json`:
+
+    ```json
+    "variants": {
+      "dx": {
+        "include": ["gcc", "make", "git-lfs"],
+        "exclude": []
+      }
+    }
+    ```
+
+2. **Add services** to `services.json`:
+
+    ```json
+    "variants": {
+      "dx": {
+        "system": {"enable": ["some-service.service"], "disable": []}
+      }
+    }
+    ```
+
+3. **Add files** (optional) in `files/dx/` directory
+
+4. **Build**: `IMAGE_FLAVOR=dx just build`
+
+The variant will be automatically detected and:
+
+- Packages from `variants.dx.include` will be installed
+- Services from `variants.dx.system.enable` will be enabled
+- Files from `files/dx/` will be copied
+- KDE About will show "Variant=DX"
+
+You can also combine it: `IMAGE_FLAVOR=gaming-dx just build` installs both gaming and dx packages!
+
 ## Documentation
 
-- **[AGENTS.md](AGENTS.md)** - Comprehensive build guide
-- **[BUILD.md](BUILD.md)** - Build system architecture
+- **[AGENTS.md](AGENTS.md)** - Comprehensive build guide and agent instructions
+- **[BUILD.md](BUILD.md)** - Build system architecture details
 - **[custom/brew/](custom/brew/)** - Homebrew package management
 - **[custom/flatpaks/](custom/flatpaks/)** - Flatpak configuration
 - **[custom/ujust/](custom/ujust/)** - User commands
+- **[packages.json](packages.json)** - Package definitions
+- **[services.json](services.json)** - Service configurations
 
 ## Resources
 
