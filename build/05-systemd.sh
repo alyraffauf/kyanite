@@ -11,33 +11,42 @@ set -eoux pipefail
 
 echo "::group:: Build Service Lists"
 
-# Build lists of common system and user services
-readarray -t SYSTEM_ENABLE < <(jq -r '.system.enable | sort | unique[]' /ctx/services.json)
-readarray -t SYSTEM_DISABLE < <(jq -r '.system.disable | sort | unique[]' /ctx/services.json)
-readarray -t USER_ENABLE < <(jq -r '.user.enable | sort | unique[]' /ctx/services.json)
-readarray -t USER_DISABLE < <(jq -r '.user.disable | sort | unique[]' /ctx/services.json)
+# Initialize service arrays
+SYSTEM_ENABLE=()
+SYSTEM_DISABLE=()
+USER_ENABLE=()
+USER_DISABLE=()
 
-# Add variant-specific services based on IMAGE_FLAVOR
-# Supports combined variants (e.g., "gaming-dx-nvidia")
-VARIANT_NAMES=$(jq -r '.variants | keys[]' /ctx/services.json)
+# Split IMAGE_FLAVOR into array of variant names (e.g., "gaming-dx" -> ["gaming", "dx"])
+# Always includes "main" as the base
+IFS='-' read -ra FLAVOR_PARTS <<<"${IMAGE_FLAVOR}"
 
-for variant in ${VARIANT_NAMES}; do
-    if [[ ${IMAGE_FLAVOR} =~ ${variant} ]]; then
-        echo "Detected variant: ${variant}"
+for variant in main "${FLAVOR_PARTS[@]}"; do
+    # Check if variant exists in services.json
+    if jq -e ".variants.${variant}" /ctx/services.json >/dev/null 2>&1; then
+        echo "Processing services for variant: ${variant}"
 
-        # Add variant-specific system services
-        readarray -t VARIANT_SYSTEM_ENABLE < <(jq -r ".variants.${variant}.system.enable | sort | unique[]" /ctx/services.json)
-        SYSTEM_ENABLE+=("${VARIANT_SYSTEM_ENABLE[@]}")
+        # Add variant-specific system services if they exist
+        if jq -e ".variants.${variant}.system.enable" /ctx/services.json >/dev/null 2>&1; then
+            readarray -t VARIANT_SYSTEM_ENABLE < <(jq -r ".variants.${variant}.system.enable | sort | unique[]" /ctx/services.json)
+            SYSTEM_ENABLE+=("${VARIANT_SYSTEM_ENABLE[@]}")
+        fi
 
-        readarray -t VARIANT_SYSTEM_DISABLE < <(jq -r ".variants.${variant}.system.disable | sort | unique[]" /ctx/services.json)
-        SYSTEM_DISABLE+=("${VARIANT_SYSTEM_DISABLE[@]}")
+        if jq -e ".variants.${variant}.system.disable" /ctx/services.json >/dev/null 2>&1; then
+            readarray -t VARIANT_SYSTEM_DISABLE < <(jq -r ".variants.${variant}.system.disable | sort | unique[]" /ctx/services.json)
+            SYSTEM_DISABLE+=("${VARIANT_SYSTEM_DISABLE[@]}")
+        fi
 
-        # Add variant-specific user services
-        readarray -t VARIANT_USER_ENABLE < <(jq -r ".variants.${variant}.user.enable | sort | unique[]" /ctx/services.json)
-        USER_ENABLE+=("${VARIANT_USER_ENABLE[@]}")
+        # Add variant-specific user services if they exist
+        if jq -e ".variants.${variant}.user.enable" /ctx/services.json >/dev/null 2>&1; then
+            readarray -t VARIANT_USER_ENABLE < <(jq -r ".variants.${variant}.user.enable | sort | unique[]" /ctx/services.json)
+            USER_ENABLE+=("${VARIANT_USER_ENABLE[@]}")
+        fi
 
-        readarray -t VARIANT_USER_DISABLE < <(jq -r ".variants.${variant}.user.disable | sort | unique[]" /ctx/services.json)
-        USER_DISABLE+=("${VARIANT_USER_DISABLE[@]}")
+        if jq -e ".variants.${variant}.user.disable" /ctx/services.json >/dev/null 2>&1; then
+            readarray -t VARIANT_USER_DISABLE < <(jq -r ".variants.${variant}.user.disable | sort | unique[]" /ctx/services.json)
+            USER_DISABLE+=("${VARIANT_USER_DISABLE[@]}")
+        fi
     fi
 done
 

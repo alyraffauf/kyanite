@@ -1,17 +1,19 @@
 {
-    "system": {
-        "enable": [
-            "flatpak-preinstall.service",
-            "podman.socket",
-            "tailscaled.service"
-        ],
-        "disable": []
-    },
-    "user": {
-        "enable": ["bazaar.service"],
-        "disable": []
-    },
     "variants": {
+        "main": {
+            "system": {
+                "enable": [
+                    "flatpak-preinstall.service",
+                    "podman.socket",
+                    "tailscaled.service"
+                ],
+                "disable": []
+            },
+            "user": {
+                "enable": ["bazaar.service"],
+                "disable": []
+            }
+        },
         "dx": {
             "system": {
                 "enable": ["docker.socket"],
