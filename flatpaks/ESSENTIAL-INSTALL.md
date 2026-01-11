@@ -16,19 +16,22 @@ A two-tier Flatpak installation system:
 ### Tier 1: Essential Apps (flatpak-essential-install.service)
 
 Installs **critical** applications before user login:
+
 - **Firefox** - Web browser for internet access
 - **Bazaar** - Flatpak store for managing applications
 
 This service:
+
 - Runs on first boot after network is available
 - Completes **before** the graphical login screen appears
-- Uses a flag file (`/var/lib/systemd/flatpak-essential-installed`) to run only once
+- Uses a flag file (`/var/lib/flatpak/essential-installed`) to run only once
 - Has retry logic for network failures (3 retries over 10 minutes)
 - Has a 5-minute timeout per installation attempt
 
 ### Tier 2: Additional Apps (flatpak-preinstall.service)
 
 Installs **all other** applications defined in `.preinstall` files:
+
 - Runs after essential apps are installed
 - Can run in parallel with user login (non-blocking)
 - Users can work while additional apps install in the background
@@ -64,21 +67,23 @@ graphical.target (user login)
 ### Failure Modes
 
 1. **No network on first boot**:
-   - Essential install service waits for network
-   - Retries 3 times over 10 minutes
-   - If still no network, service fails gracefully
-   - On next boot with network, service runs (flag file not created)
+
+    - Essential install service waits for network
+    - Retries 3 times over 10 minutes
+    - If still no network, service fails gracefully
+    - On next boot with network, service runs (flag file not created)
 
 2. **Network fails during installation**:
-   - Service retries with 60-second backoff
-   - Up to 3 retry attempts
-   - If all fail, service fails but system is usable
-   - Manual retry: `sudo systemctl restart flatpak-essential-install.service`
+
+    - Service retries with 60-second backoff
+    - Up to 3 retry attempts
+    - If all fail, service fails but system is usable
+    - Manual retry: `sudo systemctl restart flatpak-essential-install.service`
 
 3. **Flathub is down**:
-   - Same retry logic as network failure
-   - System remains usable
-   - Manual retry possible
+    - Same retry logic as network failure
+    - System remains usable
+    - Manual retry possible
 
 ## Maintenance
 
@@ -91,6 +96,7 @@ To add more apps to the essential tier:
 3. Consider timeout implications (more apps = longer timeout needed)
 
 Example:
+
 ```ini
 ExecStart=/usr/bin/flatpak install --system --noninteractive -y flathub org.mozilla.firefox
 ExecStart=/usr/bin/flatpak install --system --noninteractive -y flathub io.github.kolunmi.Bazaar
@@ -100,6 +106,7 @@ ExecStart=/usr/bin/flatpak install --system --noninteractive -y flathub org.gnom
 ### Adjusting Timeout
 
 The current timeout is 300 seconds (5 minutes). This is calculated as:
+
 - ~2 minutes per app on slow connections
 - 2 apps × 2 minutes = 4 minutes
 - +1 minute buffer = 5 minutes
@@ -128,4 +135,4 @@ To test the service:
 
 - [Flatpak Documentation](https://docs.flatpak.org/)
 - [systemd.service Documentation](https://www.freedesktop.org/software/systemd/man/systemd.service.html)
-- [Issue #XX](https://github.com/alyraffauf/kyanite/issues/XX) - Original issue report
+- Original issue: Flatpaks not available during first boot after installing from ISO
