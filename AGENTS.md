@@ -34,9 +34,9 @@ Valid types: `feat`, `fix`, `docs`, `chore`, `build`, `ci`, `refactor`, `test`
 | Enable variant service | `services.json`                | `"variants.{name}.system.enable"` array    |
 | Add 3rd-party RPM      | `build/25-third-party-*.sh`    | See examples                               |
 | Add COPR package       | `build/25-third-party-*.sh`    | `copr_install_isolated "owner/repo" "pkg"` |
-| Add Homebrew package   | `custom/brew/*.Brewfile`       | `brew "package-name"`                      |
-| Add Flatpak            | `custom/flatpaks/*.preinstall` | `[Flatpak Preinstall app.id]`              |
-| Add ujust command      | `custom/ujust/*.just`          | Just recipe syntax                         |
+| Add Homebrew package   | `brew/*.Brewfile`              | `brew "package-name"`                      |
+| Add Flatpak            | `flatpaks/{flavor}.preinstall` | `[Flatpak Preinstall app.id]`              |
+| Add ujust command      | `ujust/{flavor}/*.just`        | Just recipe syntax                         |
 
 ## VARIANTS
 
@@ -73,8 +73,9 @@ Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
 
 **3. Files** (`files/{variant}/`):
 
-- `files/shared/` → Always copied
+- `files/main/` → Always copied (base for all images)
 - `files/gaming/` → Copied when variant contains "gaming"
+- `files/dx/` → Copied when variant contains "dx"
 
 **4. Branding** (automatic):
 
@@ -101,13 +102,18 @@ kyanite/
 ├── services.json          # Service configuration
 ├── build/                 # Build scripts
 ├── files/                 # System files
-│   ├── shared/           # All variants
-│   └── {variant}/        # Variant-specific
-├── custom/                # Runtime customizations
-│   ├── brew/             # Brewfiles
-│   ├── flatpaks/         # Flatpak configs
-│   └── ujust/            # User commands
-└── .github/workflows/    # CI/CD
+│   ├── main/             # All variants (base)
+│   ├── dx/               # Developer variant
+│   └── gaming/           # Gaming variant
+├── brew/                  # Homebrew Brewfiles
+├── flatpaks/              # Flatpak preinstall files
+│   ├── main.preinstall
+│   └── gaming.preinstall
+├── ujust/                 # User commands by flavor
+│   ├── main/             # Commands for all images
+│   ├── dx/               # Developer commands
+│   └── gaming/           # Gaming commands
+└── .github/workflows/     # CI/CD
 ```
 
 ## LOCAL TESTING

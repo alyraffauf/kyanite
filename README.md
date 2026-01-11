@@ -58,10 +58,10 @@ Kyanite uses a declarative configuration system:
 
 - **[packages.json](packages.json)** - Define packages per variant
 - **[services.json](services.json)** - Configure systemd units
-- **files/{variant}/** - Variant-specific system files
-- **[custom/brew/](custom/brew/)** - Homebrew packages (runtime)
-- **[custom/flatpaks/](custom/flatpaks/)** - Flatpak apps (runtime)
-- **[custom/ujust/](custom/ujust/)** - Custom commands
+- **files/{variant}/** - Variant-specific system files (main, gaming, dx)
+- **[brew/](brew/)** - Homebrew packages (runtime installation)
+- **[flatpaks/](flatpaks/)** - Flatpak preinstall files by flavor
+- **[ujust/](ujust/)** - Custom commands organized by flavor
 
 See the documentation files for detailed configuration options.
 

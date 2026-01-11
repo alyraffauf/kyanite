@@ -1,15 +1,15 @@
 # Flatpak Preinstall Integration
 
-This directory contains Flatpak preinstall configuration files organized by flavor (variant).
+This directory contains Flatpak preinstall configuration files for each image flavor.
 
-## Directory Structure
+## Files
 
-Each subdirectory corresponds to an image flavor:
+Each `.preinstall` file corresponds to an image flavor:
 
-- `main/` - Base flavor flatpaks (applies to all kyanite images)
-- `gaming/` - Gaming flavor flatpaks (applies to kyanite-gaming and kyanite-dx-gaming)
+- `main.preinstall` - Base flavor flatpaks (applies to all kyanite images)
+- `gaming.preinstall` - Gaming flavor flatpaks (applies to kyanite-gaming and kyanite-dx-gaming)
 
-Each flavor directory contains a `{flavor}.preinstall` file that will be copied to `/usr/share/flatpak/preinstall.d/kyanite-{flavor}.preinstall` in the built image based on the `IMAGE_FLAVOR` variable during the build.
+Files are copied to `/usr/share/flatpak/preinstall.d/kyanite-{flavor}.preinstall` in the built image based on the `IMAGE_FLAVOR` variable during the build.
 
 ## What is Flatpak Preinstall?
 
@@ -61,11 +61,10 @@ See: https://docs.flatpak.org/en/latest/flatpak-command-reference.html#flatpak-p
 
 ### Adding Flatpaks to Your Image
 
-1. Navigate to the appropriate flavor directory (e.g., `main/` or `gaming/`)
-2. Edit the `{flavor}.preinstall` file
-3. Add Flatpak references in INI format with `[Flatpak Preinstall NAME]` sections
-4. Build your image - the files will be copied to `/usr/share/flatpak/preinstall.d/` based on the image flavor
-5. After user setup completes, Flatpaks will be automatically installed
+1. Edit the appropriate `.preinstall` file (e.g., `main.preinstall` or `gaming.preinstall`)
+2. Add Flatpak references in INI format with `[Flatpak Preinstall NAME]` sections
+3. Build your image - the files will be copied to `/usr/share/flatpak/preinstall.d/` based on the image flavor
+4. After user setup completes, Flatpaks will be automatically installed
 
 **Note:** The `dx` flavor does not have its own flatpak preinstall file - it inherits from other flavors only.
 
@@ -83,14 +82,13 @@ Or browse Flathub: https://flathub.org/
 
 To add a new flavor:
 
-1. Create a new directory: `flatpaks/{flavor}/`
-2. Create a preinstall file: `flatpaks/{flavor}/{flavor}.preinstall`
-3. Add your Flatpak definitions using the INI format
-4. The build script will automatically detect and copy the file if the flavor is in `IMAGE_FLAVOR`
+1. Create a new preinstall file: `flatpaks/{flavor}.preinstall`
+2. Add your Flatpak definitions using the INI format
+3. The build script will automatically detect and copy the file if the flavor is in `IMAGE_FLAVOR`
 
 ## Important Notes
 
-- Files must be named `{flavor}.preinstall` where `{flavor}` matches the directory name
+- Files must be named `{flavor}.preinstall` matching the flavor name
 - Comments can be added with `#`
 - Empty lines are ignored
 - **Flatpaks are downloaded from Flathub on first boot** - not embedded in the image
