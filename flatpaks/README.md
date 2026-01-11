@@ -23,28 +23,21 @@ Flatpak preinstall is a feature that allows system administrators to define Flat
 
 ## Important: Installation Timing
 
-**Most Flatpaks are downloaded on first boot, but essential apps are installed before user login:**
+**Flatpaks are NOT included in the ISO or container image.** They are downloaded and installed after:
 
-**Installed before first login (via `flatpak-essential-install.service`):**
+- User completes initial system setup
+- Network connection is established
+- First boot process runs `flatpak preinstall`
 
-- Firefox (web browser)
-- Bazaar (Flatpak store)
+**The `flatpak-preinstall.service` runs before the graphical login screen appears**, ensuring all Flatpaks are installed before the user can log in. This prevents a race condition where users might log in before apps are ready.
 
-These essential apps are installed on first boot after network is available but before the graphical login screen appears, ensuring they're ready when the user logs in.
+This means:
 
-**Installed on first boot after login (via `flatpak-preinstall.service`):**
-
-- All other apps listed in the `.preinstall` files
-- Downloaded after the flatpak-essential-install service completes
-- Network connection required
-
-This hybrid approach means:
-
-- Essential apps (browser, app store) are always available on first login if network connectivity exists
 - The ISO remains small and bootable offline
-- Users without internet on first boot will see essential apps once they connect to the internet
-- Additional apps install in the background on first boot and may take longer
-- The installation process is non-blocking - users can log in while additional apps install
+- Users need an internet connection after installation for Flatpaks to install
+- First boot may take slightly longer as Flatpaks install before login
+- All applications are ready when the user reaches the login screen
+- If offline during first boot, the service will wait for network or timeout gracefully
 
 ## File Format
 
