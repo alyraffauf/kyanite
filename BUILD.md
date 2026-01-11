@@ -25,7 +25,7 @@ RUN IMAGE_FLAVOR="${IMAGE_FLAVOR}" /ctx/build/10-build.sh
 **Key Points**:
 
 - Uses `IMAGE_FLAVOR` build argument (default: "main")
-- Same Containerfile builds both variants
+- Same Containerfile builds all variants (supports combining features)
 - Follows Bluefin/Aurora pattern
 
 ### 2. Build Scripts
@@ -35,16 +35,27 @@ RUN IMAGE_FLAVOR="${IMAGE_FLAVOR}" /ctx/build/10-build.sh
 - Executes build scripts in sequence
 - Passes `IMAGE_FLAVOR` to all subsequent scripts
 
-**`build/20-packages.sh`**:
+**`build/20-fedora-packages.sh`**:
 
 - Contains conditional logic for gaming variant
-- Simple `if` statement checks `IMAGE_FLAVOR`
-- Installs Steam when `IMAGE_FLAVOR=gaming`
+- Uses pattern matching (`=~`) instead of exact equality (`==`)
+- Installs Steam when `IMAGE_FLAVOR` contains "gaming"
+- Supports future combined variants (e.g., "gaming-dx-nvidia")
 
 ```bash
-if [[ "${IMAGE_FLAVOR}" == "gaming" ]]; then
+if [[ "${IMAGE_FLAVOR}" =~ gaming ]]; then
     # Install Steam and gaming tools
     dnf5 -y install steam gamescope mangohud...
+fi
+
+if [[ "${IMAGE_FLAVOR}" =~ dx ]]; then
+    # Install DX-specific packages
+    dnf5 -y install development-tools...
+fi
+
+if [[ "${IMAGE_FLAVOR}" =~ nvidia ]]; then
+    # Install NVIDIA-specific packages
+    dnf5 -y install nvidia-driver...
 fi
 ```
 
@@ -154,7 +165,7 @@ To add a new variant (e.g., `kyanite-dev`):
 1. **Add conditional logic** in `build/20-packages.sh`:
 
 ```bash
-if [[ "${IMAGE_FLAVOR}" == "dev" ]]; then
+if [[ "${IMAGE_FLAVOR}" =~ dev ]]; then
     dnf5 -y install \
         development-tools \
         gcc \

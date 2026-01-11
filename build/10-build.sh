@@ -15,7 +15,7 @@ echo "::group:: Copy Custom Files"
 rsync -rvKl /ctx/files/shared/ /
 
 # Copy gaming-specific system files for gaming variant
-if [[ ${IMAGE_FLAVOR} == "gaming" ]]; then
+if [[ ${IMAGE_FLAVOR} =~ gaming ]]; then
     rsync -rvKl /ctx/files/gaming/ /
 fi
 

@@ -45,7 +45,7 @@ fi
 
 echo "::endgroup::"
 
-if [[ ${IMAGE_FLAVOR} == "gaming" ]]; then
+if [[ ${IMAGE_FLAVOR} =~ gaming ]]; then
     echo "::group:: Install Steam and Gaming Tools"
 
     dnf5 -y --setopt=install_weak_deps=False install \

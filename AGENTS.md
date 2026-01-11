@@ -48,10 +48,10 @@ Two variants built from single Containerfile using `IMAGE_FLAVOR`:
 - **main** (default) → `kyanite` - Base KDE Plasma
 - **gaming** → `kyanite-gaming` - Adds Steam, Gamescope, GameMode, MangoHud, Sunshine
 
-Conditional logic in `build/20-packages.sh`:
+Conditional logic in `build/20-packages.sh` uses pattern matching (supports future combined variants):
 
 ```bash
-if [[ "${IMAGE_FLAVOR}" == "gaming" ]]; then
+if [[ "${IMAGE_FLAVOR}" =~ gaming ]]; then
     # Gaming-specific packages
 fi
 ```

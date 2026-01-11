@@ -82,7 +82,7 @@ dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test install flat
 
 echo "::endgroup::"
 
-if [[ ${IMAGE_FLAVOR} == "gaming" ]]; then
+if [[ ${IMAGE_FLAVOR} =~ gaming ]]; then
     echo "::group:: Add Gaming COPRs"
 
     copr_install_isolated "lizardbyte/beta" \
