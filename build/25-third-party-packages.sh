@@ -74,8 +74,9 @@ if [[ ${IMAGE_FLAVOR} =~ gaming ]]; then
         "sunshine"
 
     echo "::endgroup::"
+fi
 
-elif [[ ${IMAGE_FLAVOR} =~ dx ]]; then
+if [[ ${IMAGE_FLAVOR} =~ dx ]]; then
     echo "::group:: Add Developer Packages from COPR"
 
     dnf5 config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
