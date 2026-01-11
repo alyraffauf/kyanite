@@ -23,28 +23,28 @@ Flatpak preinstall is a feature that allows system administrators to define Flat
 
 ## Important: Installation Timing
 
-**Most Flatpaks are downloaded on first boot, but essential apps are pre-installed during ISO installation:**
+**Most Flatpaks are downloaded on first boot, but essential apps are installed before user login:**
 
-**Pre-installed during ISO installation (via kickstart %post):**
+**Installed before first login (via `flatpak-essential-install.service`):**
 
 - Firefox (web browser)
 - Bazaar (Flatpak store)
 
-These essential apps are installed during the Anaconda installation process if network is available, ensuring they're ready on first boot even if the user later loses internet connectivity.
+These essential apps are installed on first boot after network is available but before the graphical login screen appears, ensuring they're ready when the user logs in.
 
-**Installed on first boot (via `flatpak preinstall`):**
+**Installed on first boot after login (via `flatpak-preinstall.service`):**
 
 - All other apps listed in the `.preinstall` files
-- Downloaded after user setup completes
+- Downloaded after the flatpak-essential-install service completes
 - Network connection required
 
 This hybrid approach means:
 
-- Essential apps (browser, app store) are available immediately after installation if network was available during install
+- Essential apps (browser, app store) are always available on first login if network connectivity exists
 - The ISO remains small and bootable offline
-- Users who install without internet will get the essential apps on first boot when they connect
-- Additional apps install on first boot and may take longer while Flatpaks download
-- Users without internet on first boot will have Firefox and Bazaar but other apps will wait until network is available
+- Users without internet on first boot will see essential apps once they connect to the internet
+- Additional apps install in the background on first boot and may take longer
+- The installation process is non-blocking - users can log in while additional apps install
 
 ## File Format
 

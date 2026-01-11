@@ -3,6 +3,7 @@
         "main": {
             "system": {
                 "enable": [
+                    "flatpak-essential-install.service",
                     "flatpak-preinstall.service",
                     "podman.socket",
                     "tailscaled.service"
