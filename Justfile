@@ -116,6 +116,11 @@ build target_image=image_name tag=default_tag flavor=image_flavor:
     BUILD_ARGS+=("--build-arg" "IMAGE_NAME={{ target_image }}")
     BUILD_ARGS+=("--build-arg" "IMAGE_FLAVOR={{ flavor }}")
 
+    # Pass through base image overrides if set
+    [[ -n "${BASE_IMAGE:-}" ]] && BUILD_ARGS+=("--build-arg" "BASE_IMAGE=${BASE_IMAGE}")
+    [[ -n "${BASE_IMAGE_NAME:-}" ]] && BUILD_ARGS+=("--build-arg" "BASE_IMAGE_NAME=${BASE_IMAGE_NAME}")
+    [[ -n "${BASE_IMAGE_SHA:-}" ]] && BUILD_ARGS+=("--build-arg" "BASE_IMAGE_SHA=${BASE_IMAGE_SHA}")
+
     echo "Building image: ${FINAL_IMAGE}:{{ tag }} (flavor: {{ flavor }})"
 
     podman build \

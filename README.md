@@ -183,6 +183,28 @@ just build localhost/kyanite mytag
 
 This creates a local container image at `localhost/kyanite:stable` (or `localhost/kyanite-gaming:stable` for the gaming variant).
 
+### Build with a Different Base Image
+
+You can override the base image at build time using environment variables:
+
+```bash
+# Get the SHA for the image you want to use
+BASE_IMAGE_SHA=$(skopeo inspect docker://ghcr.io/ublue-os/kinoite-nvidia:latest --format '{{.Digest}}')
+
+# Build with NVIDIA drivers pre-installed
+BASE_IMAGE=ghcr.io/ublue-os/kinoite-nvidia:latest \
+BASE_IMAGE_SHA=$BASE_IMAGE_SHA \
+just build
+
+# Combined with flavor variants
+BASE_IMAGE=ghcr.io/ublue-os/kinoite-nvidia:latest \
+BASE_IMAGE_SHA=$BASE_IMAGE_SHA \
+IMAGE_FLAVOR=gaming \
+just build
+```
+
+This is useful for building Kyanite on top of other Universal Blue variants with support for your hardware.
+
 ### Build Bootable Images
 
 Once you have the OCI container, you can create bootable images using [Bootc Image Builder](https://github.com/osbuild/bootc-image-builder):

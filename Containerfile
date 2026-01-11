@@ -9,7 +9,7 @@ ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 # SHA pinning enables Renovate to automatically update dependencies
 # See: https://docs.renovatebot.com/docker/#digest-pinning
 ARG BASE_IMAGE_SHA="sha256:00f20c5ccc31e6c9861eeb73e9de8858329c843cde301d1970e251aee245ece0"
-ARG BREW_IMAGE_SHA="sha256:f9637549a24a7e02315c28db04cc0827dfc04bb74cea3be5c187f10c262c30d2"
+ARG BREW_IMAGE_SHA="sha256:abe58f2012bc433e75579ef75caef8278ed3d774f59783ed7ff02b3eae26f694"
 
 ###############################################################################
 # IMPORT STAGES
@@ -55,32 +55,32 @@ LABEL org.opencontainers.image.flavor="${IMAGE_FLAVOR}"
 # Step 1: Copy files and configure base system
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
-    /ctx/build/10-build.sh
+    /ctx/build/01-build.sh
 
 # Step 2: Install Fedora packages
 RUN --mount=type=cache,dst=/var/cache/dnf \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build/20-fedora-packages.sh
+    /ctx/build/02-fedora-packages.sh
 
 # Step 3: Install third-party packages
 RUN --mount=type=cache,dst=/var/cache/dnf \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
-    /ctx/build/25-third-party-packages.sh
+    /ctx/build/03-third-party-packages.sh
 
 # Step 4: Apply system workarounds
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build/30-workarounds.sh
+    /ctx/build/04-workarounds.sh
 
 # Step 5: Configure systemd services
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build/40-systemd.sh
+    /ctx/build/05-systemd.sh
 
 # Step 6: Configure Homebrew
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build/50-homebrew.sh
+    /ctx/build/06-homebrew.sh
 
 # Step 7: Apply OS branding
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
@@ -90,11 +90,11 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     BASE_IMAGE_NAME="${BASE_IMAGE_NAME}" \
     SHA_HEAD_SHORT="${SHA_HEAD_SHORT}" \
     UBLUE_IMAGE_TAG="${UBLUE_IMAGE_TAG}" \
-    /ctx/build/80-branding.sh
+    /ctx/build/07-branding.sh
 
 # Step 8: Final cleanup
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build/90-cleanup.sh
+    /ctx/build/08-cleanup.sh
 
 ###############################################################################
 # FINALIZE
