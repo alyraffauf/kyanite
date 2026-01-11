@@ -21,6 +21,7 @@ COPY /build /build
 COPY /files /files
 COPY /custom /custom
 COPY /packages.json /packages.json
+COPY /services.json /services.json
 
 # Import Homebrew files
 COPY --from=brew /system_files /oci/brew

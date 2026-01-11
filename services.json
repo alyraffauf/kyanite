@@ -1,0 +1,36 @@
+{
+    "system": {
+        "enable": [
+            "flatpak-preinstall.service",
+            "podman.socket",
+            "tailscaled.service"
+        ],
+        "disable": []
+    },
+    "user": {
+        "enable": ["bazaar.service"],
+        "disable": []
+    },
+    "variants": {
+        "dx": {
+            "system": {
+                "enable": ["docker.socket"],
+                "disable": []
+            },
+            "user": {
+                "enable": [],
+                "disable": []
+            }
+        },
+        "gaming": {
+            "system": {
+                "enable": [],
+                "disable": []
+            },
+            "user": {
+                "enable": [],
+                "disable": []
+            }
+        }
+    }
+}

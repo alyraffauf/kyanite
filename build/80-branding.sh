@@ -71,6 +71,27 @@ echo "IMAGE_VERSION=\"$VERSION\"" >>/usr/lib/os-release
 
 # Fix issues caused by ID no longer being fedora
 sed -i 's|^EFIDIR=.*|EFIDIR="fedora"|' /usr/sbin/grub2-switch-to-blscfg
+
+# Update KDE About dialog variant string based on IMAGE_FLAVOR
+KDE_ABOUT_RC="/usr/share/kde-settings/kde-profile/default/xdg/kcm-about-distrorc"
+if [[ -f $KDE_ABOUT_RC ]]; then
+    if [[ ${IMAGE_FLAVOR} != "main" ]]; then
+        # Split IMAGE_FLAVOR by hyphen, sort, uppercase, and join with +
+        IFS='-' read -ra FLAVOR_PARTS <<<"${IMAGE_FLAVOR}"
+        # Sort the array
+        mapfile -t SORTED_FLAVORS < <(printf '%s\n' "${FLAVOR_PARTS[@]}" | sort)
+        # Convert to uppercase and join with +
+        VARIANT_STRING=$(printf '%s\n' "${SORTED_FLAVORS[@]}" | tr '[:lower:]' '[:upper:]' | paste -sd '+')
+
+        # Append Variant= line to KDE About dialog
+        echo "Variant=${VARIANT_STRING}" >>"$KDE_ABOUT_RC"
+        echo "Set KDE Variant to: ${VARIANT_STRING}"
+    else
+        # For main variant, set to "DESKTOP"
+        echo "Variant=DESKTOP" >>"$KDE_ABOUT_RC"
+        echo "Set KDE Variant to: DESKTOP"
+    fi
+fi
 ###############################################################################
 
 echo "::endgroup::"

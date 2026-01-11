@@ -9,7 +9,7 @@ Kyanite is a bootc OS based on Fedora Kinoite (KDE Plasma). This guide covers cr
 1. **Conventional Commits** - Required format: `type(scope): description`
 2. **Shellcheck** - Run on all modified `.sh` files
 3. **YAML validation** - Validate all modified `.yml` files
-4. **JSON validation** - Run `jq empty packages.json` to validate
+4. **JSON validation** - Run `jq empty packages.json services.json` to validate
 5. **Justfile syntax** - Run `just --list` to verify
 6. **User confirmation** - Always confirm before committing
 
@@ -24,27 +24,31 @@ Kyanite is a bootc OS based on Fedora Kinoite (KDE Plasma). This guide covers cr
 3. **ALWAYS** disable COPR repos after installation via `copr_install_isolated`
 4. **NEVER** use `dnf5` in ujust files (immutable system)
 5. **NEVER** commit secrets or private keys
-6. **NEVER** hardcode variant packages in build scripts
+6. **NEVER** hardcode variant packages or services in build scripts
 7. System packages → `packages.json` under `"include"`
 8. Variant packages → `packages.json` under `"variants.{name}.include"`
-9. Third-party software → `build/25-third-party-packages.sh`
-10. Services → `build/40-systemd.sh`
+9. System services → `services.json` under `"system.enable"`
+10. Variant services → `services.json` under `"variants.{name}.system.enable"`
+11. Third-party software → `build/25-third-party-packages.sh`
 
 ## QUICK REFERENCE
 
-| Task                 | Location                       | Command/Format                                        |
-| -------------------- | ------------------------------ | ----------------------------------------------------- |
-| Add system package   | `packages.json`                | Add to `"include"` array                              |
-| Add variant package  | `packages.json`                | Add to `"variants.{name}.include"` array              |
-| Remove package       | `packages.json`                | Add to `"exclude"` array                              |
-| Remove variant pkg   | `packages.json`                | Add to `"variants.{name}.exclude"` array              |
-| Add 3rd-party RPM    | `build/25-third-party-*.sh`    | See Docker/Cider/Tailscale examples                   |
-| Add COPR package     | `build/25-third-party-*.sh`    | `copr_install_isolated "owner/repo" "pkg"`            |
-| Enable service       | `build/40-systemd.sh`          | `systemctl enable service.name`                       |
-| Add Homebrew package | `custom/brew/*.Brewfile`       | `brew "package-name"`                                 |
-| Add Flatpak          | `custom/flatpaks/*.preinstall` | `[Flatpak Preinstall app.id]`                         |
-| Add ujust command    | `custom/ujust/*.just`          | Just recipe syntax                                    |
-| Test locally         | Terminal                       | `just build && just build-qcow2 && just run-vm-qcow2` |
+| Task                  | Location                       | Command/Format                                        |
+| --------------------- | ------------------------------ | ----------------------------------------------------- |
+| Add system package    | `packages.json`                | Add to `"include"` array                              |
+| Add variant package   | `packages.json`                | Add to `"variants.{name}.include"` array              |
+| Remove package        | `packages.json`                | Add to `"exclude"` array                              |
+| Remove variant pkg    | `packages.json`                | Add to `"variants.{name}.exclude"` array              |
+| Enable system service | `services.json`                | Add to `"system.enable"` array                        |
+| Enable user service   | `services.json`                | Add to `"user.enable"` array                          |
+| Enable variant svc    | `services.json`                | Add to `"variants.{name}.system.enable"` array        |
+| Disable service       | `services.json`                | Add to `"system.disable"` or `"user.disable"` array   |
+| Add 3rd-party RPM     | `build/25-third-party-*.sh`    | See Docker/Cider/Tailscale examples                   |
+| Add COPR package      | `build/25-third-party-*.sh`    | `copr_install_isolated "owner/repo" "pkg"`            |
+| Add Homebrew package  | `custom/brew/*.Brewfile`       | `brew "package-name"`                                 |
+| Add Flatpak           | `custom/flatpaks/*.preinstall` | `[Flatpak Preinstall app.id]`                         |
+| Add ujust command     | `custom/ujust/*.just`          | Just recipe syntax                                    |
+| Test locally          | Terminal                       | `just build && just build-qcow2 && just run-vm-qcow2` |
 
 ## IMAGE VARIANTS
 
@@ -70,12 +74,12 @@ Build script uses pattern matching to support combined variants (e.g., `gaming-d
 
 ## BUILD SCRIPTS (Execution Order)
 
-1. `10-build.sh` - Copies files, orchestrates build
+1. `10-build.sh` - Copies files, orchestrates build (dynamic variant file detection)
 2. `20-fedora-packages.sh` - Fedora packages (reads `packages.json` for variants)
 3. `25-third-party-packages.sh` - Third-party repos (Docker, Tailscale, COPR)
 4. `30-workarounds.sh` - System compatibility fixes
-5. `40-systemd.sh` - Service configuration
-6. `80-branding.sh` - OS release branding
+5. `40-systemd.sh` - Service configuration (reads `services.json` for variants)
+6. `80-branding.sh` - OS release branding + dynamic KDE variant display
 7. `90-cleanup.sh` - Final cleanup
 
 Details: See `build/README.md`
@@ -86,9 +90,11 @@ Details: See `build/README.md`
 
 - **System packages** → `packages.json` (`"include"` array)
 - **Variant packages** → `packages.json` (`"variants.{name}.include"`)
+- **System services** → `services.json` (`"system.enable"` / `"user.enable"`)
+- **Variant services** → `services.json` (`"variants.{name}.system.enable"`)
 - **Third-party RPMs** → `build/25-third-party-packages.sh`
-- **System services** → `build/40-systemd.sh`
-- **System files** → `files/shared/` or `files/gaming/`
+- **System files (all variants)** → `files/shared/`
+- **Variant-specific files** → `files/{variant}/` (auto-detected from directory names)
 
 ### Runtime (User installs after deployment)
 
@@ -116,6 +122,34 @@ Details: See `build/README.md`
 }
 ```
 
+### Enable Systemd Services
+
+```json
+// In services.json
+{
+    "system": {
+        "enable": ["docker.socket", "podman.socket"],
+        "disable": []
+    },
+    "user": {
+        "enable": ["bazaar.service"],
+        "disable": []
+    },
+    "variants": {
+        "gaming": {
+            "system": {
+                "enable": [],
+                "disable": ["sunshine.service"]
+            },
+            "user": {
+                "enable": [],
+                "disable": []
+            }
+        }
+    }
+}
+```
+
 ### Add Third-Party RPM Repository
 
 ```bash
@@ -131,15 +165,6 @@ dnf5 -y install --enablerepo='example-repo' package-name
 # In build/25-third-party-packages.sh
 source /ctx/build/copr-helpers.sh
 copr_install_isolated "owner/repo" "package-name"
-```
-
-### Enable Services
-
-```bash
-# In build/40-systemd.sh
-systemctl enable podman.socket
-systemctl enable --global bazaar.service
-systemctl disable --global sunshine.service
 ```
 
 ### Add Brewfile Shortcut
@@ -158,10 +183,12 @@ kyanite/
 ├── Containerfile          # Build definition
 ├── Justfile              # Local automation
 ├── packages.json         # Package lists
+├── services.json         # Systemd unit configuration
 ├── build/                # Build scripts (see build/README.md)
 ├── files/                # System files
-│   ├── shared/          # All variants
-│   └── gaming/          # Gaming variant only
+│   ├── shared/          # All variants (always copied)
+│   ├── gaming/          # Gaming variant (copied if IMAGE_FLAVOR =~ gaming)
+│   └── {variant}/       # Any variant dir auto-detected and copied if matched
 ├── custom/               # Runtime customizations
 │   ├── brew/            # Brewfiles
 │   ├── flatpaks/        # Preinstall configs

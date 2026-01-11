@@ -1,34 +1,20 @@
 {
     "include": [
-        "edk2-ovmf",
         "fish",
         "git",
         "ifuse",
         "inxi",
         "kcm-fcitx5",
         "ksystemlog",
-        "libvirt",
-        "libvirt-nss",
         "lm_sensors",
         "lsp-plugins-lv2",
         "lv2-bankstown",
         "pipewire-module-filter-chain-lv2",
         "plasma-wallpapers-dynamic",
         "podman-compose",
+        "podman-machine",
         "podman-tui",
         "ptyxis",
-        "qemu",
-        "qemu-char-spice",
-        "qemu-device-display-virtio-gpu",
-        "qemu-device-display-virtio-vga",
-        "qemu-device-usb-redirect",
-        "qemu-img",
-        "qemu-system-x86-core",
-        "qemu-user-binfmt",
-        "qemu-user-static",
-        "rocm-hip",
-        "rocm-opencl",
-        "rocm-smi",
         "syncthing"
     ],
     "exclude": [
@@ -51,6 +37,28 @@
         "plasma-welcome-fedora"
     ],
     "variants": {
+        "dx": {
+            "include": [
+                "android-tools",
+                "edk2-ovmf",
+                "flatpak-builder",
+                "libvirt",
+                "libvirt-nss",
+                "qemu",
+                "qemu-char-spice",
+                "qemu-device-display-virtio-gpu",
+                "qemu-device-display-virtio-vga",
+                "qemu-device-usb-redirect",
+                "qemu-img",
+                "qemu-system-x86-core",
+                "qemu-user-binfmt",
+                "qemu-user-static",
+                "rocm-hip",
+                "rocm-opencl",
+                "rocm-smi"
+            ],
+            "exclude": ["podman-docker"]
+        },
         "gaming": {
             "include": [
                 "steam",
