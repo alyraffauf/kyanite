@@ -49,5 +49,17 @@
         "mariadb-errmsg",
         "plasma-discover-kns",
         "plasma-welcome-fedora"
-    ]
+    ],
+    "variants": {
+        "gaming": {
+            "include": [
+                "steam",
+                "gamescope",
+                "mangohud.x86_64",
+                "mangohud.i686",
+                "gamemode"
+            ],
+            "exclude": []
+        }
+    }
 }

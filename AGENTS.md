@@ -9,8 +9,9 @@ Kyanite is a bootc OS based on Fedora Kinoite (KDE Plasma). This guide covers cr
 1. **Conventional Commits** - Required format: `type(scope): description`
 2. **Shellcheck** - Run on all modified `.sh` files
 3. **YAML validation** - Validate all modified `.yml` files
-4. **Justfile syntax** - Run `just --list` to verify
-5. **User confirmation** - Always confirm before committing
+4. **JSON validation** - Run `jq empty packages.json` to validate
+5. **Justfile syntax** - Run `just --list` to verify
+6. **User confirmation** - Always confirm before committing
 
 **Valid commit types**: `feat`, `fix`, `docs`, `chore`, `build`, `ci`, `refactor`, `test`
 
@@ -23,18 +24,22 @@ Kyanite is a bootc OS based on Fedora Kinoite (KDE Plasma). This guide covers cr
 3. **ALWAYS** disable COPR repos after installation via `copr_install_isolated`
 4. **NEVER** use `dnf5` in ujust files (immutable system)
 5. **NEVER** commit secrets or private keys
-6. System packages → `packages.json` (not build scripts)
-7. Third-party software → `build/20-packages.sh`
-8. Services → `build/40-systemd.sh`
+6. **NEVER** hardcode variant packages in build scripts
+7. System packages → `packages.json` under `"include"`
+8. Variant packages → `packages.json` under `"variants.{name}.include"`
+9. Third-party software → `build/25-third-party-packages.sh`
+10. Services → `build/40-systemd.sh`
 
 ## QUICK REFERENCE
 
 | Task                 | Location                       | Command/Format                                        |
 | -------------------- | ------------------------------ | ----------------------------------------------------- |
 | Add system package   | `packages.json`                | Add to `"include"` array                              |
+| Add variant package  | `packages.json`                | Add to `"variants.{name}.include"` array              |
 | Remove package       | `packages.json`                | Add to `"exclude"` array                              |
-| Add 3rd-party RPM    | `build/20-packages.sh`         | See Docker/Cider/Tailscale examples                   |
-| Add COPR package     | `build/20-packages.sh`         | `copr_install_isolated "owner/repo" "pkg"`            |
+| Remove variant pkg   | `packages.json`                | Add to `"variants.{name}.exclude"` array              |
+| Add 3rd-party RPM    | `build/25-third-party-*.sh`    | See Docker/Cider/Tailscale examples                   |
+| Add COPR package     | `build/25-third-party-*.sh`    | `copr_install_isolated "owner/repo" "pkg"`            |
 | Enable service       | `build/40-systemd.sh`          | `systemctl enable service.name`                       |
 | Add Homebrew package | `custom/brew/*.Brewfile`       | `brew "package-name"`                                 |
 | Add Flatpak          | `custom/flatpaks/*.preinstall` | `[Flatpak Preinstall app.id]`                         |
@@ -48,22 +53,30 @@ Two variants built from single Containerfile using `IMAGE_FLAVOR`:
 - **main** (default) → `kyanite` - Base KDE Plasma
 - **gaming** → `kyanite-gaming` - Adds Steam, Gamescope, GameMode, MangoHud, Sunshine
 
-Conditional logic in `build/20-packages.sh` uses pattern matching (supports future combined variants):
+Variant packages are defined in `packages.json` and automatically installed:
 
-```bash
-if [[ "${IMAGE_FLAVOR}" =~ gaming ]]; then
-    # Gaming-specific packages
-fi
+```json
+{
+  "variants": {
+    "gaming": {
+      "include": ["steam", "gamescope", "mangohud.x86_64", ...],
+      "exclude": []
+    }
+  }
+}
 ```
+
+Build script uses pattern matching to support combined variants (e.g., `gaming-dx-nvidia`).
 
 ## BUILD SCRIPTS (Execution Order)
 
 1. `10-build.sh` - Copies files, orchestrates build
-2. `20-packages.sh` - Package management + variant logic
-3. `30-workarounds.sh` - System compatibility fixes
-4. `40-systemd.sh` - Service configuration
-5. `80-branding.sh` - OS release branding
-6. `90-cleanup.sh` - Final cleanup
+2. `20-fedora-packages.sh` - Fedora packages (reads `packages.json` for variants)
+3. `25-third-party-packages.sh` - Third-party repos (Docker, Tailscale, COPR)
+4. `30-workarounds.sh` - System compatibility fixes
+5. `40-systemd.sh` - Service configuration
+6. `80-branding.sh` - OS release branding
+7. `90-cleanup.sh` - Final cleanup
 
 Details: See `build/README.md`
 
@@ -71,8 +84,9 @@ Details: See `build/README.md`
 
 ### Build-time (Baked into image)
 
-- **System packages** → `packages.json`
-- **Third-party RPMs** → `build/20-packages.sh`
+- **System packages** → `packages.json` (`"include"` array)
+- **Variant packages** → `packages.json` (`"variants.{name}.include"`)
+- **Third-party RPMs** → `build/25-third-party-packages.sh`
 - **System services** → `build/40-systemd.sh`
 - **System files** → `files/shared/` or `files/gaming/`
 
@@ -84,10 +98,28 @@ Details: See `build/README.md`
 
 ## COMMON PATTERNS
 
+### Add Variant Packages
+
+```json
+// In packages.json
+{
+    "variants": {
+        "gaming": {
+            "include": ["steam", "gamescope"],
+            "exclude": []
+        },
+        "dx": {
+            "include": ["dev-tools", "gcc"],
+            "exclude": ["firefox"]
+        }
+    }
+}
+```
+
 ### Add Third-Party RPM Repository
 
 ```bash
-# In build/20-packages.sh
+# In build/25-third-party-packages.sh
 dnf5 config-manager addrepo --from-repofile=https://example.com/repo.repo
 dnf5 config-manager setopt example-repo.enabled=0
 dnf5 -y install --enablerepo='example-repo' package-name
@@ -96,7 +128,7 @@ dnf5 -y install --enablerepo='example-repo' package-name
 ### Add COPR Package
 
 ```bash
-# In build/20-packages.sh
+# In build/25-third-party-packages.sh
 source /ctx/build/copr-helpers.sh
 copr_install_isolated "owner/repo" "package-name"
 ```

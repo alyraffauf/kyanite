@@ -37,26 +37,37 @@ RUN IMAGE_FLAVOR="${IMAGE_FLAVOR}" /ctx/build/10-build.sh
 
 **`build/20-fedora-packages.sh`**:
 
-- Contains conditional logic for gaming variant
-- Uses pattern matching (`=~`) instead of exact equality (`==`)
-- Installs Steam when `IMAGE_FLAVOR` contains "gaming"
-- Supports future combined variants (e.g., "gaming-dx-nvidia")
+- Reads variant-specific packages from `packages.json`
+- Uses pattern matching (`=~`) to detect variants in `IMAGE_FLAVOR`
+- Automatically installs packages for all matching variants
+- Supports combined variants (e.g., "gaming-dx-nvidia")
 
 ```bash
-if [[ "${IMAGE_FLAVOR}" =~ gaming ]]; then
-    # Install Steam and gaming tools
-    dnf5 -y install steam gamescope mangohud...
-fi
+# Dynamically reads variants from packages.json
+VARIANT_NAMES=$(jq -r '.variants | keys[]' /ctx/packages.json)
 
-if [[ "${IMAGE_FLAVOR}" =~ dx ]]; then
-    # Install DX-specific packages
-    dnf5 -y install development-tools...
-fi
+for variant in ${VARIANT_NAMES}; do
+    if [[ ${IMAGE_FLAVOR} =~ ${variant} ]]; then
+        # Install packages from .variants.{variant}.include
+        readarray -t VARIANT_PACKAGES < <(jq -r ".variants.${variant}.include[]" /ctx/packages.json)
+        dnf5 -y install "${VARIANT_PACKAGES[@]}"
+    fi
+done
+```
 
-if [[ "${IMAGE_FLAVOR}" =~ nvidia ]]; then
-    # Install NVIDIA-specific packages
-    dnf5 -y install nvidia-driver...
-fi
+**`packages.json`** structure:
+
+```json
+{
+    "include": ["common", "packages"],
+    "exclude": ["unwanted", "packages"],
+    "variants": {
+        "gaming": {
+            "include": ["steam", "gamescope", "mangohud.x86_64", "gamemode"],
+            "exclude": []
+        }
+    }
+}
 ```
 
 ### 3. GitHub Actions Workflows
@@ -162,15 +173,22 @@ podman build \
 
 To add a new variant (e.g., `kyanite-dev`):
 
-1. **Add conditional logic** in `build/20-packages.sh`:
+1. **Add variant packages** to `packages.json`:
 
-```bash
-if [[ "${IMAGE_FLAVOR}" =~ dev ]]; then
-    dnf5 -y install \
-        development-tools \
-        gcc \
-        make
-fi
+```json
+{
+  "variants": {
+    "gaming": { ... },
+    "dev": {
+      "include": [
+        "development-tools",
+        "gcc",
+        "make"
+      ],
+      "exclude": []
+    }
+  }
+}
 ```
 
 2. **Add new job** to `.github/workflows/build.yml`:

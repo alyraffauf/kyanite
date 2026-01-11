@@ -45,23 +45,40 @@ fi
 
 echo "::endgroup::"
 
-if [[ ${IMAGE_FLAVOR} =~ gaming ]]; then
-    echo "::group:: Install Steam and Gaming Tools"
+# Install variant-specific packages based on IMAGE_FLAVOR
+# Supports combined variants (e.g., "gaming-dx-nvidia")
+VARIANT_NAMES=$(jq -r '.variants | keys[]' /ctx/packages.json)
 
-    dnf5 -y --setopt=install_weak_deps=False install \
-        steam \
-        gamescope \
-        mangohud.x86_64 \
-        mangohud.i686 \
-        gamemode
+for variant in ${VARIANT_NAMES}; do
+    if [[ ${IMAGE_FLAVOR} =~ ${variant} ]]; then
+        echo "::group:: Install ${variant} variant packages"
 
-    echo "::endgroup::"
-fi
+        # Get variant-specific packages
+        readarray -t VARIANT_PACKAGES < <(jq -r ".variants.${variant}.include | sort | unique[]" /ctx/packages.json)
+
+        if [[ ${#VARIANT_PACKAGES[@]} -gt 0 ]]; then
+            dnf5 -y --setopt=install_weak_deps=False install \
+                "${VARIANT_PACKAGES[@]}"
+        else
+            echo "No packages to install for ${variant} variant."
+        fi
+
+        echo "::endgroup::"
+    fi
+done
 
 echo "::group:: Remove Excluded Packages"
 
-# build list of all packages requested for exclusion
+# Build list of all packages requested for exclusion (common)
 readarray -t EXCLUDED_PACKAGES < <(jq -r '.exclude | sort | unique[]' /ctx/packages.json)
+
+# Add variant-specific exclusions
+for variant in ${VARIANT_NAMES}; do
+    if [[ ${IMAGE_FLAVOR} =~ ${variant} ]]; then
+        readarray -t VARIANT_EXCLUDED < <(jq -r ".variants.${variant}.exclude | sort | unique[]" /ctx/packages.json)
+        EXCLUDED_PACKAGES+=("${VARIANT_EXCLUDED[@]}")
+    fi
+done
 
 if [[ ${#EXCLUDED_PACKAGES[@]} -gt 0 ]]; then
     INSTALLED_EXCLUDED=()
@@ -73,7 +90,7 @@ if [[ ${#EXCLUDED_PACKAGES[@]} -gt 0 ]]; then
     EXCLUDED_PACKAGES=("${INSTALLED_EXCLUDED[@]}")
 fi
 
-# remove any excluded packages which are still present on image
+# Remove any excluded packages which are still present on image
 if [[ ${#EXCLUDED_PACKAGES[@]} -gt 0 ]]; then
     dnf5 -y remove \
         "${EXCLUDED_PACKAGES[@]}"
