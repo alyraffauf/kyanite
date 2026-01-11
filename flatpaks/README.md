@@ -26,12 +26,14 @@ Flatpak preinstall is a feature that allows system administrators to define Flat
 **Most Flatpaks are downloaded on first boot, but essential apps are pre-installed during ISO installation:**
 
 **Pre-installed during ISO installation (via kickstart %post):**
+
 - Firefox (web browser)
 - Bazaar (Flatpak store)
 
 These essential apps are installed during the Anaconda installation process if network is available, ensuring they're ready on first boot even if the user later loses internet connectivity.
 
 **Installed on first boot (via `flatpak preinstall`):**
+
 - All other apps listed in the `.preinstall` files
 - Downloaded after user setup completes
 - Network connection required
