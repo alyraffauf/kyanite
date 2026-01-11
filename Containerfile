@@ -22,6 +22,8 @@ COPY /files /files
 COPY /brew /brew
 COPY /flatpaks /flatpaks
 COPY /ujust /ujust
+COPY /packages.json /packages.json
+COPY /services.json /services.json
 
 # Import Homebrew files
 COPY --from=brew /system_files /oci/brew
