@@ -5,10 +5,10 @@ After=network-online.target
 Before=flatpak-preinstall.service graphical.target
 Wants=network-online.target
 ConditionPathExists=/usr/bin/flatpak
-ConditionPathExists=!/var/lib/flatpak/.essential-installed
+ConditionPathExists=!/var/lib/systemd/flatpak-essential-installed
 Documentation=https://github.com/alyraffauf/kyanite
-# Limit retries to avoid infinite loops
-StartLimitIntervalSec=0
+# Limit retries to avoid infinite loops - matches flatpak-preinstall
+StartLimitIntervalSec=600
 StartLimitBurst=3
 
 [Service]
@@ -18,12 +18,12 @@ ExecStartPre=/usr/bin/flatpak remote-add --if-not-exists --system flathub https:
 ExecStart=/usr/bin/flatpak install --system --noninteractive -y flathub org.mozilla.firefox
 ExecStart=/usr/bin/flatpak install --system --noninteractive -y flathub io.github.kolunmi.Bazaar
 # Mark as complete so this only runs once
-ExecStartPost=/usr/bin/touch /var/lib/flatpak/.essential-installed
+ExecStartPost=/usr/bin/touch /var/lib/systemd/flatpak-essential-installed
 RemainAfterExit=yes
 # Retry on failure (e.g., network issues)
 Restart=on-failure
 RestartSec=60
-TimeoutStartSec=600
+TimeoutStartSec=300
 
 [Install]
 WantedBy=multi-user.target
