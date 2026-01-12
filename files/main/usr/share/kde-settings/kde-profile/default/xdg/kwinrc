@@ -4,3 +4,4 @@ VirtualKeyboardEnabled=true
 
 [Plugins]
 blurEnabled=true
+translucencyEnabled=true
