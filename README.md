@@ -1,29 +1,30 @@
 # Kyanite
 
-Kyanite is a custom bootable container based on Fedora Kinoite featuring KDE Plasma, essential development tools, gaming-ready variants with Steam and performance tools, and hardware optimizations. Built with [Universal Blue](https://universal-blue.org/).
+Kyanite is a custom bootable container based on Fedora Kinoite focusing on minimal branding, sane defaults, and clean behavior. Built with [Universal Blue](https://universal-blue.org/).
 
 ![](./_img/kyanite-logo.png)
 
-## What We Changed
+## What Changed
 
-Kyanite is built on Universal Blue's [kinoite-main](https://github.com/ublue-os/main) image, which itself derives from Fedora Kinoite with additional batteries included.
+Kyanite is built on Universal Blue's [kinoite-main](https://github.com/ublue-os/main) image, which itself derives from Fedora Kinoite.
 
-Kyanite improves Fedora Kinoite by:
+Kyanite improves Fedora Kinoite with:
 
-- **Removing bloat** - Firefox, Akonadi, Discover, and other unwanted defaults
-- **Adding containers** - Docker CE with buildx/compose, enhanced Podman
-- **Developer tools** - Fish shell, modern terminal, comprehensive tooling
-- **Better defaults** - Tailscale VPN, Syncthing, dynamic wallpapers
-- **Audio enhancements** - Professional PipeWire plugins and filters
-- **Flexible variants** - Mix and match features declaratively
+- **Saner defaults** - Mozilla's official Flatpak build of Firefox, Discover swapped for Bazaar, Flathub out of the box, and modernized KDE Plasma settings.
+- **Full container workflows** - Docker CE with buildx/compose, enhanced Podman.
+- **Developer tools** - Fish shell, modern terminal, comprehensive tooling.
+- **Nice to haves** - Tailscale VPN, Syncthing, dynamic wallpapers.
+- **Gaming necessities** - Steam, Gamescope, MangoHud, etc.
+- **Audio enhancements** - Improved audio DSPs for select hardware.
+- **Flexible variants** - Declarative flavors you can mix and match.
 
-## Available Images
+## Available Flavors
 
 All images are built and published automatically:
 
-- **kyanite** - Clean KDE desktop (Fish, Docker, Podman, Syncthing, Tailscale).
-- **kyanite-dx** - Developer experience (+ QEMU/KVM, ROCm, Android tools, Flatpak builder).
-- **kyanite-gaming** - Gaming focused (+ Steam, Gamescope, GameMode, MangoHud).
+- **kyanite** - Clean, modern, featureful KDE desktop for normal people.
+- **kyanite-dx** - Developer experience with Docker CE, QEMU/KVM, ROCm, Android tools, Flatpak builder, etc.
+- **kyanite-gaming** - Gaming experience with Steam, Gamescope, ProtonUp-Qt, Heroic Game Launcher, etc.
 - **kyanite-dx-gaming** - Everything combined.
 
 ## Quick Start
@@ -56,12 +57,12 @@ ujust --list
 
 Kyanite uses a declarative configuration system:
 
-- **[packages.json](packages.json)** - Define packages per variant
-- **[services.json](services.json)** - Configure systemd units
-- **files/{variant}/** - Variant-specific system files (main, gaming, dx)
-- **[brew/](brew/)** - Homebrew packages (runtime installation)
-- **[flatpaks/](flatpaks/)** - Flatpak preinstall files by flavor
-- **[ujust/](ujust/)** - Custom commands organized by flavor
+- **[packages.json](packages.json)** - Define packages per flavor.
+- **[services.json](services.json)** - Configure systemd units.
+- **files/{variant}/** - Flavor-specific system files (main, gaming, dx).
+- **[brew/](brew/)** - Homebrew packages (runtime installation).
+- **[flatpaks/](flatpaks/)** - Flatpak preinstall files by flavor.
+- **[ujust/](ujust/)** - Custom `ujust` commands by flavor.
 
 See the documentation files for detailed configuration options.
 
