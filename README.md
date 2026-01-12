@@ -29,6 +29,8 @@ All images are built and published automatically:
 
 ## Quick Start
 
+If you're already on a bootc-based system (like Kinoite or Aurora), switching is easy:
+
 ```bash
 # Standard variant
 sudo bootc switch ghcr.io/alyraffauf/kyanite:stable
@@ -47,6 +49,8 @@ sudo bootc switch ghcr.io/alyraffauf/kyanite-dx-gaming:stable
 sudo systemctl reboot
 ```
 
+Please be advised that some defaults in `/etc/skel` will not be copied over automatically and may need to be manually migrated. Also, rebasing across desktop environments (e.g., GNOME to KDE) is not recommended unless you knwo what you're doing.
+
 After first boot, explore available commands:
 
 ```bash
@@ -58,13 +62,13 @@ ujust --list
 Kyanite uses a declarative configuration system:
 
 - **[packages.json](packages.json)** - Define packages per variant.
-- **[services.json](services.json)** - Configure systemd units.
+- **[services.json](services.json)** - Configure systemd units by variant.
 - **files/{variant}/** - Variant-specific system files (main, gaming, dx).
 - **[brew/](brew/)** - Homebrew packages (runtime installation).
 - **[flatpaks/](flatpaks/)** - Flatpak preinstall files by variant.
 - **[ujust/](ujust/)** - Custom `ujust` commands by variant.
 
-See the documentation files for detailed configuration options.
+Stacking variants are composed at build time. It is trivial to fork this repository and create your own Kyanite variants. See below for build options.
 
 ## Building Locally
 
@@ -93,6 +97,16 @@ just build-raw
 ```
 
 Output appears in `output/` directory.
+
+## Building Your Own ISO
+
+While the build system supports ISO generation (`just build-iso`), I don't yet provide pre-built ISOs for download. Your best bet is to install Fedora Kinoite and rebase from there. However, if you'd like to skip the middleman, you may buid an install ISO locally:
+
+```bash
+just build-iso  # Requires ~10GB disk space and 30+ minutes
+```
+
+The generated ISO will be in the `output/` directory.
 
 ## Security
 
