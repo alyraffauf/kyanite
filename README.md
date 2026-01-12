@@ -2,7 +2,7 @@
 
 Kyanite is a custom bootable container based on Fedora Kinoite focusing on minimal branding, sane defaults, and clean behavior. Built with [Universal Blue](https://universal-blue.org/).
 
-![](./_img/kyanite-logo.png)
+![](./_img/screenshot.png)
 
 ## What Changed
 
@@ -27,6 +27,10 @@ All images are built and published automatically:
 - **kyanite-gaming** - Gaming experience with Steam, Gamescope, ProtonUp-Qt, Heroic Game Launcher, etc.
 - **kyanite-dx-gaming** - Everything combined.
 
+## State of the Project
+
+Kyanite is quite usable as-is, and it's my daily driver. However, it's still under active development with frequent changes. Also, while the word-branding of the distribution has been changed, Fedora defaults persist in many places (Kickoff logo, `fastfetch`, wallpapers). I'm a photographer at best, not a graphics designer.
+
 ## Quick Start
 
 If you're already on a bootc-based system (like Kinoite or Aurora), switching is easy:
@@ -49,7 +53,7 @@ sudo bootc switch ghcr.io/alyraffauf/kyanite-dx-gaming:stable
 sudo systemctl reboot
 ```
 
-Please be advised that some defaults in `/etc/skel` will not be copied over automatically and may need to be manually migrated. Also, rebasing across desktop environments (e.g., GNOME to KDE) is not recommended unless you knwo what you're doing.
+Please be advised that some defaults in `/etc/skel` will not be copied over automatically and may need to be manually migrated. Also, rebasing across desktop environments (e.g., GNOME to KDE) is not recommended unless you know what you're doing.
 
 After first boot, explore available commands:
 

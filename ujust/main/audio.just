@@ -108,14 +108,14 @@ _toggle_laptop_dsp DEVICE_NAME PROFILE_DIR FILTER_FILE CONF_FILE DEFAULT_DEVICE:
 # Toggle PipeWire DSP for HP OmniBook Ultra (FH0xxx)
 [group('Audio')]
 toggle-dsp-omnibook-fh0xxx:
-    @just --justfile {{justfile()}} _toggle_laptop_dsp "HP OmniBook Ultra (FH0xxx)" "omnibook-fh0xxx" "omnibook-fh0xxx-filter-chain.json" "99-omnibook.conf" "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Speaker__sink"
+    @just --justfile {{ justfile() }} _toggle_laptop_dsp "HP OmniBook Ultra (FH0xxx)" "omnibook-fh0xxx" "omnibook-fh0xxx-filter-chain.json" "99-omnibook.conf" "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Speaker__sink"
 
 # Toggle PipeWire DSP for ThinkPad X1 Carbon Gen 7
 [group('Audio')]
 toggle-dsp-thinkpad-x1-gen7:
-    @just --justfile {{justfile()}} _toggle_laptop_dsp "ThinkPad X1 Carbon Gen 7" "thinkpad-x1-gen7" "x1c-gen7-filter-chain.json" "99-x1c.conf" "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Speaker__sink"
+    @just --justfile {{ justfile() }} _toggle_laptop_dsp "ThinkPad X1 Carbon Gen 7" "thinkpad-x1-gen7" "x1c-gen7-filter-chain.json" "99-x1c.conf" "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Speaker__sink"
 
 # Toggle PipeWire DSP for ThinkPad X1 Carbon Gen 9
 [group('Audio')]
 toggle-dsp-thinkpad-x1-gen9:
-    @just --justfile {{justfile()}} _toggle_laptop_dsp "ThinkPad X1 Carbon Gen 9" "thinkpad-x1-gen9" "x1c-gen9-filter-chain.json" "99-x1c.conf" "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Speaker__sink"
+    @just --justfile {{ justfile() }} _toggle_laptop_dsp "ThinkPad X1 Carbon Gen 9" "thinkpad-x1-gen9" "x1c-gen9-filter-chain.json" "99-x1c.conf" "alsa_output.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Speaker__sink"
