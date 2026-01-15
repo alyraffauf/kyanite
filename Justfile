@@ -94,7 +94,8 @@ sudoif command *args:
 # Usage: just build [target_image] [tag] [variant]
 # Examples:
 #   just build                          # builds kyanite:stable (main variant)
-#   just build kyanite stable gaming    # builds kyanite-gaming:stable
+
+# just build kyanite stable gaming    # builds kyanite-gaming:stable
 build target_image=image_name tag=default_tag flavor=image_flavor:
     #!/usr/bin/env bash
 
@@ -227,7 +228,8 @@ _rebuild-bib $target_image $tag $type $config: (build target_image tag) && (_bui
 # Usage: just build-qcow2 [target_image] [tag] [variant]
 # Examples:
 #   just build-qcow2                                    # builds kyanite (main)
-#   just build-qcow2 localhost/kyanite stable gaming    # builds kyanite-gaming
+
+# just build-qcow2 localhost/kyanite stable gaming    # builds kyanite-gaming
 [group('Build Virtal Machine Image')]
 build-qcow2 target_image=("localhost/" + _full_image_name) tag=default_tag flavor=image_flavor: (build ("localhost/" + image_name) tag flavor) && (_build-bib target_image tag "qcow2" "iso/disk.toml")
 
@@ -294,6 +296,7 @@ _run-vm $target_image $tag $type $config:
     podman run "${run_args[@]}"
 
 # Run a virtual machine from a QCOW2 image
+
 # Usage: just run-vm-qcow2 [target_image] [tag] [variant]
 [group('Run Virtal Machine')]
 run-vm-qcow2 target_image=("localhost/" + _full_image_name) tag=default_tag flavor=image_flavor: && (_run-vm target_image tag "qcow2" "iso/disk.toml")
