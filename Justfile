@@ -1,7 +1,7 @@
 export image_name := env("IMAGE_NAME", "kyanite")
 export image_flavor := env("IMAGE_FLAVOR", "main")
 export default_tag := env("DEFAULT_TAG", "stable")
-export bib_image := env("BIB_IMAGE", "quay.io/centos-bootc/bootc-image-builder:latest@sha256:773019f6b11766ca48170a4a7bf898be4268f3c2acfd0ec1db612408b3092a90")
+export bib_image := env("BIB_IMAGE", "quay.io/centos-bootc/bootc-image-builder:latest@sha256:d93f28c21ebbea38eedd72a6a02fae17df5b4cf4be2f4112a7698c4f1fc2aea6")
 export qemu_image := env("QEMU_IMAGE", "docker.io/qemux/qemu:latest@sha256:a2a76a6b5d2304a132c7fda832670af972c1e1437d48b4bc3dea08d001b08eba")
 
 # Construct the full image name with optional variant suffix
@@ -94,7 +94,8 @@ sudoif command *args:
 # Usage: just build [target_image] [tag] [variant]
 # Examples:
 #   just build                          # builds kyanite:stable (main variant)
-#   just build kyanite stable gaming    # builds kyanite-gaming:stable
+
+# just build kyanite stable gaming    # builds kyanite-gaming:stable
 build target_image=image_name tag=default_tag flavor=image_flavor:
     #!/usr/bin/env bash
 
@@ -227,7 +228,8 @@ _rebuild-bib $target_image $tag $type $config: (build target_image tag) && (_bui
 # Usage: just build-qcow2 [target_image] [tag] [variant]
 # Examples:
 #   just build-qcow2                                    # builds kyanite (main)
-#   just build-qcow2 localhost/kyanite stable gaming    # builds kyanite-gaming
+
+# just build-qcow2 localhost/kyanite stable gaming    # builds kyanite-gaming
 [group('Build Virtal Machine Image')]
 build-qcow2 target_image=("localhost/" + _full_image_name) tag=default_tag flavor=image_flavor: (build ("localhost/" + image_name) tag flavor) && (_build-bib target_image tag "qcow2" "iso/disk.toml")
 
@@ -294,6 +296,7 @@ _run-vm $target_image $tag $type $config:
     podman run "${run_args[@]}"
 
 # Run a virtual machine from a QCOW2 image
+
 # Usage: just run-vm-qcow2 [target_image] [tag] [variant]
 [group('Run Virtal Machine')]
 run-vm-qcow2 target_image=("localhost/" + _full_image_name) tag=default_tag flavor=image_flavor: && (_run-vm target_image tag "qcow2" "iso/disk.toml")
