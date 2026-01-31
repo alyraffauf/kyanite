@@ -20,7 +20,7 @@ jobs:
               uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
             - name: Run Self-Hosted Renovate
-              uses: renovatebot/github-action@98c8f1b0835e163b9fdfc7c86dff40dadc7162ee # v45.0.3
+              uses: renovatebot/github-action@957af03d760b2c87fc65cb95628f6d5f95d9c578 # v46.0.0
               with:
                   configurationFile: .github/renovate.json5
                   token: ${{ secrets.RENOVATE_TOKEN }}
