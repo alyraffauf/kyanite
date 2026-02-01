@@ -5,8 +5,8 @@ ColorScheme=BreezeDark
 widgetStyle=Breeze
 
 [General]
-TerminalApplication=kde-ptyxis
-TerminalService=org.gnome.Ptyxis.desktop
+TerminalApplication=ghostty
+TerminalService=com.mitchellh.ghostty
 desktopFont=Noto Sans,10,-1,5,50,0,0,0,0,0
 fixed=Monospace,10,-1,5,50,0,0,0,0,0
 font=Noto Sans,10,-1,5,50,0,0,0,0,0
