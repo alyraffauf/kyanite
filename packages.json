@@ -17,7 +17,6 @@
                 "podman-compose",
                 "podman-machine",
                 "podman-tui",
-                "ptyxis",
                 "syncthing",
                 "uxplay"
             ],
