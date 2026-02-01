@@ -12,6 +12,7 @@
                 "lm_sensors",
                 "lsp-plugins-lv2",
                 "lv2-bankstown",
+                "nodejs",
                 "pipewire-module-filter-chain-lv2",
                 "plasma-wallpapers-dynamic",
                 "podman-compose",
