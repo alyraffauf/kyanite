@@ -47,8 +47,7 @@ echo "::endgroup::"
 
 echo "::group:: Install COPR Packages"
 
-# Example of COPR package installation (currently disabled)
-# copr_install_isolated scottames/ghostty "ghostty"
+copr_install_isolated scottames/ghostty "ghostty"
 
 copr_install_isolated "ublue-os/packages" \
     "krunner-bazaar"
