@@ -47,7 +47,9 @@ echo "::endgroup::"
 
 echo "::group:: Install COPR Packages"
 
-copr_install_isolated scottames/ghostty "ghostty"
+copr_install_isolated "scottames/ghostty" "ghostty"
+
+copr_install_isolated "scottames/vicinae" "vicinae"
 
 copr_install_isolated "ublue-os/packages" \
     "krunner-bazaar"
