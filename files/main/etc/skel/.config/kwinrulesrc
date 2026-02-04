@@ -1,3 +1,17 @@
+[0e6b54b7-30cc-45cd-8d1e-b22ff33b4d3c]
+Description=Fix for Helium Picture-in-Picture
+above=true
+aboverule=3
+desktops=\\0
+desktopsrule=3
+skiptaskbar=true
+skiptaskbarrule=3
+title=Picture in picture
+titlematch=1
+types=1
+wmclass=helium
+wmclassmatch=1
+
 [9d1a91c3-cadb-4c4f-b191-9daae0a597d9]
 Description=Fix for Firefox Picture-in-Picture
 above=true
