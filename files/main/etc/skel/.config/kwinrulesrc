@@ -30,12 +30,26 @@ wmclassmatch=1
 count=4
 rules=d4fd9650-8d41-4814-bc26-42faf8850a2e,9d1a91c3-cadb-4c4f-b191-9daae0a597d9,c29e90b5-d922-4093-a021-8adb1401eb26,c84664c3-758d-4ee7-85ab-8d95b6cba84e
 
+[572338a8-c1ca-4070-acfc-4a46b562dd96]
+Description=Window Icon Fix for Obsidian
+desktopfile=md.obsidian.Obsidian
+desktopfilerule=3
+wmclass=obsidian
+wmclassmatch=1
+
 [c29e90b5-d922-4093-a021-8adb1401eb26]
 Description=Window Icon Fix for Steam Flatpak
 desktopfile=com.valvesoftware.Steam
 desktopfilerule=3
 wmclass=steamwebhelper SDL Application
 wmclasscomplete=true
+wmclassmatch=1
+
+[b3d3f045-42d7-4bca-b3fe-7515377136a2]
+Description=Window Icon Fix for Vesktop
+desktopfile=dev.vencord.Vesktop
+desktopfilerule=3
+wmclass=vesktop
 wmclassmatch=1
 
 [c84664c3-758d-4ee7-85ab-8d95b6cba84e]
