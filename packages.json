@@ -3,6 +3,8 @@
         "main": {
             "include": [
                 "cachefilesd",
+                "curl",
+                "file",
                 "fish",
                 "git",
                 "ifuse",
@@ -18,6 +20,7 @@
                 "podman-compose",
                 "podman-machine",
                 "podman-tui",
+                "procps-ng",
                 "syncthing",
                 "uxplay"
             ],

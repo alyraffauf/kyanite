@@ -97,4 +97,11 @@ fi
 
 echo "::endgroup::"
 
+echo "::group:: Add Build Tools"
+
+dnf5 group install 'Development Tools'
+
+echo "::endgroup"
+
+
 echo "Fedora package installation complete!"
