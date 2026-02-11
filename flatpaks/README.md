@@ -29,12 +29,15 @@ Flatpak preinstall is a feature that allows system administrators to define Flat
 - Network connection is established
 - First boot process runs `flatpak preinstall`
 
+**The `flatpak-preinstall.service` runs before the graphical login screen appears**, ensuring all Flatpaks are installed before the user can log in. This prevents a race condition where users might log in before apps are ready.
+
 This means:
 
 - The ISO remains small and bootable offline
-- Users need an internet connection after installation
-- First boot may take longer while Flatpaks download and install
-- This is NOT an offline ISO with pre-embedded applications
+- Users need an internet connection after installation for Flatpaks to install
+- First boot may take slightly longer as Flatpaks install before login
+- All applications are ready when the user reaches the login screen
+- If offline during first boot, the service will wait for network or timeout gracefully
 
 ## File Format
 
