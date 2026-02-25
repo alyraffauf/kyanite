@@ -10,7 +10,7 @@ ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 # See: https://docs.renovatebot.com/docker/#digest-pinning
 
 ARG BASE_IMAGE_SHA="sha256:2ab44e32d2638b76f4e993c4e04ca2f1410b16b8aa366c7a0546522df60978a5"
-ARG BREW_IMAGE_SHA="sha256:d589a2a9e423e420dbe97de02efff1379d9a3d5ad84c1431db935cc62dc5eeb2"
+ARG BREW_IMAGE_SHA="sha256:3efdc1a5844a7db38bb241419fef190e026fb245e9c6f6915e626276cebe5770"
 
 ###############################################################################
 # IMPORT STAGES
