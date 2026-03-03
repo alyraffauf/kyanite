@@ -9,6 +9,7 @@
                 "git",
                 "ifuse",
                 "inxi",
+                "iio-sensor-proxy",
                 "kcm-fcitx5",
                 "ksystemlog",
                 "lm_sensors",
