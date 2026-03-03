@@ -9,7 +9,10 @@ ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 # SHA pinning enables Renovate to automatically update dependencies
 # See: https://docs.renovatebot.com/docker/#digest-pinning
 
-ARG BASE_IMAGE_SHA="sha256:2ab44e32d2638b76f4e993c4e04ca2f1410b16b8aa366c7a0546522df60978a5"
+# Base Image @ ublue-os/main
+ARG BASE_IMAGE_SHA="sha256:64d46e1ec5ac8bee5330d745cbd48108622739395e7fa812e3bf60fe354db801"
+
+# Brew Image
 ARG BREW_IMAGE_SHA="sha256:ca91068f51ce663d495ccfc829352d6621ec95f6c7db447ade55023b222f9762"
 
 ###############################################################################
