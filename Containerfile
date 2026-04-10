@@ -10,7 +10,7 @@ ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 # See: https://docs.renovatebot.com/docker/#digest-pinning
 
 # Base Image @ ublue-os/main
-ARG BASE_IMAGE_SHA="sha256:6b13fd1bfabbb7fd1fb9b5db037cab579270c439c6071966f50a6322effd7b20"
+ARG BASE_IMAGE_SHA="sha256:be1cfbd4567a76a39c172a3dd0b8582bb3aa22c40dac635c9542a177531d535b"
 
 # Brew Image
 ARG BREW_IMAGE_SHA="sha256:54ffbbc124702e3ff7a9e8b2410d8e4a512d9a53077a97e82453aa7b27be3c93"
