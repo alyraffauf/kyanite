@@ -4,13 +4,13 @@
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
 ARG SOURCE_IMAGE="${BASE_IMAGE_NAME}-main"
 # Static value enables Renovate to detect and update the base image
-ARG BASE_IMAGE="ghcr.io/ublue-os/kinoite-main:43"
+ARG BASE_IMAGE="ghcr.io/ublue-os/kinoite-main:44"
 ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 # SHA pinning enables Renovate to automatically update dependencies
 # See: https://docs.renovatebot.com/docker/#digest-pinning
 
 # Base Image @ ublue-os/main
-ARG BASE_IMAGE_SHA="sha256:7c0eee6c27ed148e5c83e6a5a0416f29974ce2d02b9f147f98b65c1894162ce3"
+ARG BASE_IMAGE_SHA="sha256:e2f7358fc5302e1a0f6a9ef3286201fba69ce75face0ad3cb1942793088f793f"
 
 # Brew Image
 ARG BREW_IMAGE_SHA="sha256:615439b696bc0d9756850506f803e77a88cae032af1f933b876dddc2bd62d1f7"
