@@ -10,13 +10,17 @@
                 "disable": []
             },
             "user": {
-                "enable": ["bazaar.service", "vicinae.service"],
+                "enable": [
+                    "bazaar.service"
+                ],
                 "disable": []
             }
         },
         "dx": {
             "system": {
-                "enable": ["docker.socket"],
+                "enable": [
+                    "docker.socket"
+                ],
                 "disable": []
             },
             "user": {
