@@ -27,8 +27,8 @@ sed -i 's@Keywords=@Keywords=konsole;console;@g' /usr/share/applications/com.mit
 cp /usr/share/applications/com.mitchellh.ghostty.desktop /usr/share/kglobalaccel/
 
 # Configure Vicinae launcher for KDE (Super+Space to toggle)
-sed -i 's@\[Desktop Action toggle\]@\[Desktop Action toggle\]\nX-KDE-Shortcuts=Meta+Space@g' /usr/share/applications/vicinae.desktop
-cp /usr/share/applications/vicinae.desktop /usr/share/kglobalaccel/
+# sed -i 's@\[Desktop Action toggle\]@\[Desktop Action toggle\]\nX-KDE-Shortcuts=Meta+Space@g' /usr/share/applications/vicinae.desktop
+# cp /usr/share/applications/vicinae.desktop /usr/share/kglobalaccel/
 
 # # Force Ptyxis version opened via dbus (e.g., keyboard shortcut) to use the proper shim
 # # https://github.com/ublue-os/bazzite/pull/3620

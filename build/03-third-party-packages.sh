@@ -49,24 +49,24 @@ echo "::group:: Install COPR Packages"
 
 copr_install_isolated "scottames/ghostty" "ghostty"
 
-copr_install_isolated "scottames/vicinae" "vicinae"
+# copr_install_isolated "quadratech188/vicinae" "vicinae"
 
 copr_install_isolated "ublue-os/packages" \
     "krunner-bazaar"
 
 echo "::endgroup::"
 
-echo "::group:: Install Flatpak Preinstall Support"
+# echo "::group:: Install Flatpak Preinstall Support"
 
-# TODO: Remove this section when flatpak preinstall is available in Fedora stable
-dnf5 -y copr enable ublue-os/flatpak-test
-dnf5 -y copr disable ublue-os/flatpak-test
-dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak flatpak
-dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak-libs flatpak-libs
-dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak-session-helper flatpak-session-helper
-dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test install flatpak-debuginfo flatpak-libs-debuginfo flatpak-session-helper-debuginfo
+# # TODO: Remove this section when flatpak preinstall is available in Fedora stable
+# dnf5 -y copr enable ublue-os/flatpak-test
+# dnf5 -y copr disable ublue-os/flatpak-test
+# dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak flatpak
+# dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak-libs flatpak-libs
+# dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak-session-helper flatpak-session-helper
+# dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test install flatpak-debuginfo flatpak-libs-debuginfo flatpak-session-helper-debuginfo
 
-echo "::endgroup::"
+# echo "::endgroup::"
 
 if [[ ${IMAGE_FLAVOR} =~ gaming ]]; then
     echo "::group:: Add Gaming Packages from COPR"
