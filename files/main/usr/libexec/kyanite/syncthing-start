@@ -12,4 +12,5 @@ mkdir -p "$(dirname "$QUADLET_DEST")"
 [ -f "$QUADLET_DEST" ] || cp "$QUADLET_SRC" "$QUADLET_DEST"
 
 systemctl --user daemon-reload
-systemctl --user enable --now syncthing.service
+systemctl --user unmask syncthing.service 2>/dev/null || true
+systemctl --user start syncthing.service

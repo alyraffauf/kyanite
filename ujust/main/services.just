@@ -11,13 +11,14 @@ enable-syncthing:
     /usr/libexec/kyanite/syncthing-start
     echo "Syncthing running at http://127.0.0.1:8384"
 
-# Disable and stop the containerized Syncthing service
+# Stop the containerized Syncthing service and prevent autostart at next login
 [group('Services')]
 disable-syncthing:
     #!/usr/bin/env bash
     set -euo pipefail
-    systemctl --user disable --now syncthing.service 2>/dev/null || true
-    echo "Syncthing service disabled."
+    systemctl --user stop syncthing.service 2>/dev/null || true
+    systemctl --user mask syncthing.service
+    echo "Syncthing service stopped and masked."
 
 # Enable the CPU/generic Ollama service (uses the official ollama:latest image)
 [group('Services')]
@@ -28,7 +29,8 @@ enable-ollama:
     cp -n /usr/share/kyanite/quadlets/ollama.container \
         "$HOME/.config/containers/systemd/ollama.container"
     systemctl --user daemon-reload
-    systemctl --user enable --now ollama.service
+    systemctl --user unmask ollama.service 2>/dev/null || true
+    systemctl --user start ollama.service
     echo "Ollama running at http://127.0.0.1:11434"
 
 # Enable the AMD ROCm Ollama service (uses the official ollama:rocm image).
@@ -42,7 +44,8 @@ enable-ollama-rocm:
     cp -n /usr/share/kyanite/quadlets/ollama-rocm.container \
         "$HOME/.config/containers/systemd/ollama-rocm.container"
     systemctl --user daemon-reload
-    systemctl --user enable --now ollama-rocm.service
+    systemctl --user unmask ollama-rocm.service 2>/dev/null || true
+    systemctl --user start ollama-rocm.service
     echo "Ollama (ROCm) running at http://127.0.0.1:11434"
 
 # Enable the Vulkan Ollama service (uses the official ollama:latest image).
@@ -56,15 +59,17 @@ enable-ollama-vulkan:
     cp -n /usr/share/kyanite/quadlets/ollama-vulkan.container \
         "$HOME/.config/containers/systemd/ollama-vulkan.container"
     systemctl --user daemon-reload
-    systemctl --user enable --now ollama-vulkan.service
+    systemctl --user unmask ollama-vulkan.service 2>/dev/null || true
+    systemctl --user start ollama-vulkan.service
     echo "Ollama (Vulkan) running at http://127.0.0.1:11434"
 
-# Disable and stop any Ollama service
+# Stop any Ollama service and prevent autostart at next login
 [group('Services')]
 disable-ollama:
     #!/usr/bin/env bash
     set -euo pipefail
     for svc in ollama.service ollama-rocm.service ollama-vulkan.service; do
-        systemctl --user disable --now "$svc" 2>/dev/null || true
+        systemctl --user stop "$svc" 2>/dev/null || true
+        systemctl --user mask "$svc"
     done
-    echo "Ollama services disabled."
+    echo "Ollama services stopped and masked."
