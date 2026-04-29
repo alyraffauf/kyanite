@@ -11,17 +11,13 @@
                 "disable": []
             },
             "user": {
-                "enable": [
-                    "bazaar.service"
-                ],
+                "enable": ["bazaar.service", "podman-auto-update.timer"],
                 "disable": []
             }
         },
         "dx": {
             "system": {
-                "enable": [
-                    "docker.socket"
-                ],
+                "enable": ["docker.socket"],
                 "disable": []
             },
             "user": {
