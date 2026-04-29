@@ -1,6 +1,9 @@
 [Flatpak Preinstall com.heroicgameslauncher.hgl]
 Branch=stable
 
+[Flatpak Preinstall com.valvesoftware.Steam]
+Branch=stable
+
 [Flatpak Preinstall net.davidotek.pupgui2]
 Branch=stable
 
