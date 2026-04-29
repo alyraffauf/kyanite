@@ -1,3 +1,0 @@
-yaml-blocklist-paths:
-    - /run/host/etc/bazaar/blocklist.yaml
-    - /run/host/etc/bazaar/blocklist-gaming.yaml
