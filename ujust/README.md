@@ -81,6 +81,7 @@ install-brewfile:
     - `configure-` - Configure something pre-installed
     - `setup-` - Install + configure
     - `toggle-` - Enable/disable a feature
+    - `enable-` / `disable-` - Start/stop a Quadlet-shipped systemd service (see Quadlet Services below)
     - `fix-` - Apply a fix or workaround
 
 ### Command Structure
@@ -114,6 +115,74 @@ interactive-command:
     OPTION=$(Choose "Option 1" "Option 2" "Cancel")
     echo "You chose: $OPTION"
 ```
+
+## Quadlet Services
+
+Kyanite ships containerized services as [Podman Quadlet](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html) templates. The convention has two halves:
+
+1. **Catalog templates** in the OS image at `/usr/share/kyanite/quadlets/<name>.container`. These ship in `files/<variant>/usr/share/kyanite/quadlets/`, are owned by the image, and are never auto-loaded by systemd. They serve as immutable, OS-update-tracked source-of-truth templates.
+2. **Matching `enable-<name>` / `disable-<name>` recipes** in a `services.just` file. The `enable-<name>` recipe copies the template into the user's `~/.config/containers/systemd/<name>.container` (where systemd actually loads it from) and starts the service. The `disable-<name>` recipe stops it.
+
+This split means OS updates can refresh the template without ever clobbering a user's customizations to the running copy. Users edit their `~/.config/containers/systemd/<name>.container` freely; the catalog stays canonical.
+
+### Conventions
+
+- **Every shipped quadlet has matching `enable-X` and `disable-X` recipes.** No exceptions — that's the contract that makes the catalog discoverable via `ujust --list`.
+- Use the `[group('Services')]` group label so all containerized services cluster together in `ujust --list`.
+- The `enable-X` recipe should:
+    - `mkdir -p` the user's quadlet directory
+    - `cp -n` (no-clobber) the catalog template — never overwrite user edits
+    - `systemctl --user daemon-reload`
+    - `systemctl --user start <name>.service`
+- Set `AutoUpdate=registry` in the quadlet so `podman-auto-update.timer` (enabled globally in `services.json`) refreshes the image nightly.
+- For mutually-exclusive backends (e.g. multiple `ollama-*` variants on the same port), use `Conflicts=` in the `[Unit]` section so starting one stops the others.
+
+### Example
+
+Catalog template at `files/main/usr/share/kyanite/quadlets/example.container`:
+
+```ini
+[Unit]
+Description=Example service (containerized)
+
+[Container]
+Image=docker.io/example/example:latest
+ContainerName=example
+AutoUpdate=registry
+PublishPort=127.0.0.1:8080:8080
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+```
+
+Matching recipes in `ujust/main/services.just`:
+
+```just
+# Enable the containerized example service
+[group('Services')]
+enable-example:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p "$HOME/.config/containers/systemd"
+    cp -n /usr/share/kyanite/quadlets/example.container \
+        "$HOME/.config/containers/systemd/example.container"
+    systemctl --user daemon-reload
+    systemctl --user start example.service
+
+# Stop the containerized example service
+[group('Services')]
+disable-example:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    systemctl --user stop example.service 2>/dev/null || true
+```
+
+### Documenting prerequisites
+
+If a quadlet needs the user in particular groups (e.g. `render`/`video` for GPU passthrough), document that in a comment above the recipe and direct the user to the relevant `configure-*-groups` recipe — **don't** auto-fix groups inside `enable-X`. Single-purpose recipes compose better than recipes that quietly do system setup.
 
 ## Common Use Cases
 
