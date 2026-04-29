@@ -68,15 +68,6 @@ echo "::endgroup::"
 
 # echo "::endgroup::"
 
-if [[ ${IMAGE_FLAVOR} =~ gaming ]]; then
-    echo "::group:: Add Gaming Packages from COPR"
-
-    copr_install_isolated "lizardbyte/beta" \
-        "sunshine"
-
-    echo "::endgroup::"
-fi
-
 if [[ ${IMAGE_FLAVOR} =~ dx ]]; then
     echo "::group:: Add Developer Packages"
 
