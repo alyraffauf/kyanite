@@ -13,30 +13,28 @@ Valid types: `feat`, `fix`, `docs`, `chore`, `build`, `ci`, `refactor`, `test`
 
 ## CRITICAL RULES
 
-1. Use `dnf5 -y` exclusively (never `dnf`, `yum`, `rpm-ostree`)
+1. Use `dnf5 -y` exclusively in build scripts (never `dnf`, `yum`, `rpm-ostree`)
 2. Disable COPR repos after install via `copr_install_isolated`
 3. Never use `dnf5` in ujust files (immutable system)
 4. Never hardcode variant packages/services in build scripts
-5. System packages → `packages.json` `"include"`
-6. Variant packages → `packages.json` `"variants.{name}.include"`
-7. System services → `services.json` `"system.enable"`
-8. Variant services → `services.json` `"variants.{name}.system.enable"`
-9. Third-party software → `build/25-third-party-packages.sh`
+5. All packages live under `packages.json` `"variants.{name}.include"` — the `main` variant is the base applied to every image
+6. All services live under `services.json` `"variants.{name}.system.enable"` (or `.user.enable`) — same rule, `main` is the base
+7. Third-party software → `build/03-third-party-packages.sh`
 
 ## QUICK REFERENCE
 
-| Task                   | Location                        | Format                                     |
-| ---------------------- | ------------------------------- | ------------------------------------------ |
-| Add system package     | `packages.json`                 | `"include"` array                          |
-| Add variant package    | `packages.json`                 | `"variants.{name}.include"` array          |
-| Remove package         | `packages.json`                 | `"exclude"` array                          |
-| Enable system service  | `services.json`                 | `"system.enable"` array                    |
-| Enable variant service | `services.json`                 | `"variants.{name}.system.enable"` array    |
-| Add 3rd-party RPM      | `build/25-third-party-*.sh`     | See examples                               |
-| Add COPR package       | `build/25-third-party-*.sh`     | `copr_install_isolated "owner/repo" "pkg"` |
-| Add Homebrew package   | `brew/*.Brewfile`               | `brew "package-name"`                      |
-| Add Flatpak            | `flatpaks/{variant}.preinstall` | `[Flatpak Preinstall app.id]`              |
-| Add ujust command      | `ujust/{variant}/*.just`        | Just recipe syntax                         |
+| Task                   | Location                          | Format                                     |
+| ---------------------- | --------------------------------- | ------------------------------------------ |
+| Add base package       | `packages.json`                   | `"variants.main.include"` array            |
+| Add variant package    | `packages.json`                   | `"variants.{name}.include"` array          |
+| Remove package         | `packages.json`                   | `"variants.{name}.exclude"` array          |
+| Enable base service    | `services.json`                   | `"variants.main.system.enable"` array      |
+| Enable variant service | `services.json`                   | `"variants.{name}.system.enable"` array    |
+| Add 3rd-party RPM      | `build/03-third-party-packages.sh`| See examples                               |
+| Add COPR package       | `build/03-third-party-packages.sh`| `copr_install_isolated "owner/repo" "pkg"` |
+| Add Homebrew package   | `brew/{variant}/*.Brewfile`       | `brew "package-name"`                      |
+| Add Flatpak            | `flatpaks/{variant}.preinstall`   | `[Flatpak Preinstall app.id]`              |
+| Add ujust command      | `ujust/{variant}/*.just`          | Just recipe syntax                         |
 
 ## VARIANTS
 
@@ -53,8 +51,8 @@ Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
 
 ```json
 {
-    "include": ["common-pkg"],
     "variants": {
+        "main": { "include": ["common-pkg"], "exclude": [] },
         "gaming": { "include": ["steam"], "exclude": [] }
     }
 }
@@ -64,9 +62,14 @@ Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
 
 ```json
 {
-    "system": { "enable": ["docker.socket"], "disable": [] },
     "variants": {
-        "gaming": { "system": { "disable": ["sunshine.service"] } }
+        "main": {
+            "system": { "enable": ["podman.socket"], "disable": [] },
+            "user": { "enable": [], "disable": [] }
+        },
+        "gaming": {
+            "system": { "enable": [], "disable": [] }
+        }
     }
 }
 ```
@@ -83,15 +86,14 @@ Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
 
 ## BUILD SCRIPTS (Order)
 
-1. `10-build.sh` - Orchestration, file copying
-2. `20-fedora-packages.sh` - Packages from packages.json
-3. `25-third-party-packages.sh` - Docker, Tailscale, COPR
-4. `30-workarounds.sh` - Compatibility fixes
-5. `40-systemd.sh` - Services from services.json
-6. `80-branding.sh` - OS release + KDE branding
-7. `90-cleanup.sh` - Cleanup
-
-See `build/README.md` for details.
+1. `01-build.sh` - Orchestration, file/Brewfile/ujust/flatpak-preinstall copying per variant
+2. `02-fedora-packages.sh` - Packages from `packages.json` (also pins `plasma-desktop` and installs `development-tools` group)
+3. `03-third-party-packages.sh` - Cider, Tailscale, COPR; Docker CE + VSCode for `dx`; Sunshine for `gaming`
+4. `04-workarounds.sh` - Compatibility fixes (e.g. Ghostty KDE shortcut)
+5. `05-systemd.sh` - Services from `services.json`
+6. `06-homebrew.sh` - Homebrew system files + service presets
+7. `07-branding.sh` - OS release + KDE branding
+8. `08-cleanup.sh` - Hide unused desktop entries, fix bootc lint, `ostree container commit`
 
 ## STRUCTURE
 
@@ -133,7 +135,7 @@ IMAGE_FLAVOR=dx-gaming just build
 ### Add Third-Party RPM
 
 ```bash
-# In build/25-third-party-packages.sh
+# In build/03-third-party-packages.sh
 dnf5 config-manager addrepo --from-repofile=https://example.com/repo.repo
 dnf5 config-manager setopt example-repo.enabled=0
 dnf5 -y install --enablerepo='example-repo' package-name
@@ -142,7 +144,7 @@ dnf5 -y install --enablerepo='example-repo' package-name
 ### Add COPR Package
 
 ```bash
-# In build/25-third-party-packages.sh
+# In build/03-third-party-packages.sh
 source /ctx/build/copr-helpers.sh
 copr_install_isolated "owner/repo" "package-name"
 ```
@@ -156,10 +158,10 @@ copr_install_isolated "owner/repo" "package-name"
 
 ## DOCUMENTATION
 
-- **BUILD.md** - Build system architecture
-- **build/README.md** - Build scripts reference
-- **custom/\*/README.md** - Runtime customization guides
-- **README.md** - User overview
+- **README.md** - User overview, install/build instructions
+- **brew/README.md** - Homebrew Brewfile conventions
+- **flatpaks/README.md** - Flatpak preinstall format
+- **ujust/README.md** - Custom ujust recipe conventions
 
 ## REFERENCES
 
