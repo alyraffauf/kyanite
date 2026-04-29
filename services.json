@@ -3,6 +3,7 @@
         "main": {
             "system": {
                 "enable": [
+                    "flatpak-nuke-fedora.service",
                     "flatpak-preinstall.service",
                     "podman.socket",
                     "tailscaled.service"
