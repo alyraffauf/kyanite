@@ -70,8 +70,6 @@
         "gaming": {
             "include": [
                 "gamescope",
-                "mangohud.x86_64",
-                "mangohud.i686",
                 "gamemode"
             ],
             "exclude": []
