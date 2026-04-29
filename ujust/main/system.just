@@ -27,15 +27,15 @@ benchmark:
     stress-ng --matrix 0 -t 1m --times
     popd > /dev/null
 
-# Configure docker and libvirt groups for development
+# Configure render and video groups for GPU access
 [group('System')]
-configure-dev-groups:
+configure-gpu-groups:
     #!/usr/bin/pkexec bash
     CURRENT_USER="{{ `id -un` }}"
-    echo "Adding $CURRENT_USER to docker and libvirt groups..."
+    echo "Adding $CURRENT_USER to render and video groups..."
 
     # Ensure groups exist in /etc/group
-    for group in docker libvirt; do
+    for group in render video; do
         if ! grep -q "^$group:" /etc/group; then
             echo "Adding $group to /etc/group"
             grep "^$group:" /usr/lib/group | tee -a /etc/group > /dev/null

@@ -13,7 +13,7 @@ Kyanite improves Fedora Kinoite with:
 - **Saner defaults** - Mozilla's official Flatpak build of Firefox, Discover swapped for Bazaar, Flathub out of the box, and modernized KDE Plasma settings.
 - **Full container workflows** - Docker CE with buildx/compose, enhanced Podman.
 - **Developer tools** - Fish shell, modern terminal, comprehensive tooling.
-- **Nice to haves** - Tailscale VPN, Syncthing, dynamic wallpapers.
+- **Nice to haves** - Tailscale VPN, containerized Syncthing, dynamic wallpapers.
 - **Gaming necessities** - Steam, Gamescope, MangoHud, etc.
 - **Audio enhancements** - Improved audio DSPs for select hardware.
 - **Flexible variants** - Declarative variants you can mix and match.
@@ -23,7 +23,7 @@ Kyanite improves Fedora Kinoite with:
 All images are built and published automatically:
 
 - **kyanite** - Clean, modern, featureful KDE desktop for normal people.
-- **kyanite-dx** - Developer experience with Docker CE, QEMU/KVM, Android tools, Flatpak builder, containerized Ollama (CPU + AMD ROCm), etc.
+- **kyanite-dx** - Developer experience with Docker CE, QEMU/KVM, Android tools, Flatpak builder, etc.
 - **kyanite-gaming** - Gaming experience with Steam, Gamescope, ProtonUp-Qt, Heroic Game Launcher, etc.
 - **kyanite-dx-gaming** - Everything combined.
 
@@ -61,27 +61,43 @@ After first boot, explore available commands:
 ujust --list
 ```
 
-## Local LLMs (Ollama, dx variants)
+## Local LLMs (Ollama)
 
-The `kyanite-dx` and `kyanite-dx-gaming` variants ship three Podman Quadlet units for running [Ollama](https://ollama.com/) as a user-level systemd service, using the official upstream container images. GPU runtimes (ROCm, Vulkan ICDs) live inside the container, not the host.
+All variants ship three Podman Quadlet units for running [Ollama](https://ollama.com/) as a user-level systemd service, using the official upstream container images. GPU runtimes (ROCm, Vulkan ICDs) live inside the container, not the host.
 
 ```bash
 # CPU (or NVIDIA, on a kinoite-nvidia base)
 ujust enable-ollama
 
 # AMD GPU via ROCm — fastest on officially-supported AMD cards
-# (RX 6800/6900, 7000-series). Run `ujust configure-dev-groups` first.
+# (RX 6800/6900, 7000-series). Run `ujust configure-gpu-groups` first.
 ujust enable-ollama-rocm
 
 # AMD GPU via Vulkan — works on any modern AMD GPU, including
 # cards not in ollama:rocm's bundled rocBLAS (e.g. RX 6700 XT / gfx1031).
-# Run `ujust configure-dev-groups` first.
+# Run `ujust configure-gpu-groups` first.
 ujust enable-ollama-vulkan
 ```
 
 All three backends listen on `127.0.0.1:11434` and share an `ollama-data` volume, so any client (Continue, claude-code, opencode, the `ollama` CLI from Homebrew, etc.) just works and model weights persist when you switch backends. The services are mutually exclusive — starting one stops the others.
 
 **Which to pick:** start with `ollama-rocm` if you have an officially-supported AMD card (RDNA1/2 high-end, RDNA3, CDNA). If `ollama list` shows your model running on CPU, your card isn't covered by the bundled rocBLAS — switch to `ollama-vulkan` instead.
+
+## Syncthing
+
+Syncthing ships as a Quadlet rather than a system RPM, so you always get the latest upstream version without bloating the OS image. It reuses an existing `~/.local/state/syncthing/` config if present, so peer devices and folder lists migrate transparently.
+
+```bash
+ujust enable-syncthing
+```
+
+GUI is locked to `http://127.0.0.1:8384`; sync and discovery ports (22000/21027) bind to all interfaces as syncthing requires for LAN/relay peer discovery.
+
+## Quadlet Catalog
+
+Available service templates live in `/usr/share/kyanite/quadlets/`. The `ujust enable-X` recipes copy the chosen template into `~/.config/containers/systemd/`, leaving the catalog untouched so your edits never get clobbered by an OS update. Customize the user copy (e.g. uncomment `HSA_OVERRIDE_GFX_VERSION` in `ollama-rocm.container`), then `systemctl --user daemon-reload && systemctl --user restart <service>`.
+
+`podman-auto-update.timer` is enabled by default for all users, so quadlets with `AutoUpdate=registry` (which all Kyanite-shipped templates have) refresh nightly without manual intervention.
 
 ## Customization
 

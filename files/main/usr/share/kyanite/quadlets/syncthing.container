@@ -1,0 +1,21 @@
+[Unit]
+Description=Syncthing (containerized)
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=docker.io/syncthing/syncthing:latest
+ContainerName=syncthing
+AutoUpdate=registry
+UserNS=keep-id
+SecurityLabelDisable=true
+Network=host
+Volume=%h:%h:rw
+Environment=STGUIADDRESS=127.0.0.1:8384
+Exec=serve --no-browser --home=%h/.local/state/syncthing
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

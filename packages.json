@@ -22,7 +22,6 @@
                 "podman-machine",
                 "podman-tui",
                 "procps-ng",
-                "syncthing",
                 "uxplay"
             ],
             "exclude": [
@@ -65,10 +64,7 @@
             "exclude": ["podman-docker"]
         },
         "gaming": {
-            "include": [
-                "gamescope",
-                "gamemode"
-            ],
+            "include": ["gamescope", "gamemode"],
             "exclude": []
         }
     }
