@@ -60,10 +60,7 @@
                 "qemu-img",
                 "qemu-system-x86-core",
                 "qemu-user-binfmt",
-                "qemu-user-static",
-                "rocm-hip",
-                "rocm-opencl",
-                "rocm-smi"
+                "qemu-user-static"
             ],
             "exclude": ["podman-docker"]
         },

@@ -3,15 +3,15 @@
 ### system.just
 #######################
 
-# Configure docker and libvirt groups for development
+# Configure docker, libvirt, render, and video groups for development
 [group('System')]
 configure-dev-groups:
     #!/usr/bin/pkexec bash
     CURRENT_USER="{{ `id -un` }}"
-    echo "Adding $CURRENT_USER to docker and libvirt groups..."
+    echo "Adding $CURRENT_USER to docker, libvirt, render, and video groups..."
 
     # Ensure groups exist in /etc/group
-    for group in docker libvirt; do
+    for group in docker libvirt render video; do
         if ! grep -q "^$group:" /etc/group; then
             echo "Adding $group to /etc/group"
             grep "^$group:" /usr/lib/group | tee -a /etc/group > /dev/null

@@ -23,7 +23,7 @@ Kyanite improves Fedora Kinoite with:
 All images are built and published automatically:
 
 - **kyanite** - Clean, modern, featureful KDE desktop for normal people.
-- **kyanite-dx** - Developer experience with Docker CE, QEMU/KVM, ROCm, Android tools, Flatpak builder, etc.
+- **kyanite-dx** - Developer experience with Docker CE, QEMU/KVM, Android tools, Flatpak builder, containerized Ollama (CPU + AMD ROCm), etc.
 - **kyanite-gaming** - Gaming experience with Steam, Gamescope, ProtonUp-Qt, Heroic Game Launcher, etc.
 - **kyanite-dx-gaming** - Everything combined.
 
@@ -60,6 +60,28 @@ After first boot, explore available commands:
 ```bash
 ujust --list
 ```
+
+## Local LLMs (Ollama, dx variants)
+
+The `kyanite-dx` and `kyanite-dx-gaming` variants ship three Podman Quadlet units for running [Ollama](https://ollama.com/) as a user-level systemd service, using the official upstream container images. GPU runtimes (ROCm, Vulkan ICDs) live inside the container, not the host.
+
+```bash
+# CPU (or NVIDIA, on a kinoite-nvidia base)
+ujust enable-ollama
+
+# AMD GPU via ROCm — fastest on officially-supported AMD cards
+# (RX 6800/6900, 7000-series). Run `ujust configure-dev-groups` first.
+ujust enable-ollama-rocm
+
+# AMD GPU via Vulkan — works on any modern AMD GPU, including
+# cards not in ollama:rocm's bundled rocBLAS (e.g. RX 6700 XT / gfx1031).
+# Run `ujust configure-dev-groups` first.
+ujust enable-ollama-vulkan
+```
+
+All three backends listen on `127.0.0.1:11434` and share an `ollama-data` volume, so any client (Continue, claude-code, opencode, the `ollama` CLI from Homebrew, etc.) just works and model weights persist when you switch backends. The services are mutually exclusive — starting one stops the others.
+
+**Which to pick:** start with `ollama-rocm` if you have an officially-supported AMD card (RDNA1/2 high-end, RDNA3, CDNA). If `ollama list` shows your model running on CPU, your card isn't covered by the bundled rocBLAS — switch to `ollama-vulkan` instead.
 
 ## Customization
 

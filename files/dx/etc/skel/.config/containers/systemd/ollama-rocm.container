@@ -1,0 +1,26 @@
+[Unit]
+Description=Ollama (containerized, AMD ROCm)
+After=network-online.target
+Wants=network-online.target
+Conflicts=ollama.service ollama-vulkan.service
+
+[Container]
+Image=docker.io/ollama/ollama:rocm
+ContainerName=ollama-rocm
+AutoUpdate=registry
+PublishPort=127.0.0.1:11434:11434
+Volume=ollama-data:/root/.ollama
+AddDevice=/dev/kfd
+AddDevice=/dev/dri
+GroupAdd=keep-groups
+
+# Uncomment if your AMD GPU isn't officially supported by ROCm.
+# Common values: 9.0.0 (Vega), 10.3.0 (RDNA2), 11.0.0 (RDNA3).
+# Environment=HSA_OVERRIDE_GFX_VERSION=10.3.0
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=900
+
+[Install]
+WantedBy=default.target
