@@ -11,6 +11,8 @@ UserNS=keep-id
 SecurityLabelDisable=true
 Network=host
 Volume=%h:%h:rw
+Volume=/run/media:/run/media:rshared
+Volume=/mnt:/mnt:rshared
 Environment=STGUIADDRESS=127.0.0.1:8384
 Exec=serve --no-browser --home=%h/.local/state/syncthing
 
