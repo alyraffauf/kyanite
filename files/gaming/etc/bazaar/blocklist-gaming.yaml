@@ -1,4 +1,3 @@
 blocklists:
     - block:
-          - app.devsuite.Ptyxis
           - com.valvesoftware.Steam

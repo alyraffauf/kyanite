@@ -1,6 +1,5 @@
 blocklists:
     - block:
-          - app.devsuite.Ptyxis
           - io.github.kolunmi.Bazaar
           - org.kde.ark
           - org.kde.dolphin
