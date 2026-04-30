@@ -76,11 +76,6 @@ if [[ ${IMAGE_FLAVOR} =~ dx ]]; then
         echo "docker:x:994:" >>/usr/lib/group
     fi
 
-    dnf5 config-manager addrepo --from-repofile=https://packages.microsoft.com/yumrepos/vscode/config.repo --save-filename=vscode
-    sed -i "s/enabled=.*/enabled=0/g" /etc/yum.repos.d/vscode.repo
-    dnf5 -y install --enablerepo=vscode-yum \
-        code
-
     echo "::endgroup::"
 fi
 

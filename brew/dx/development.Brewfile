@@ -1,7 +1,8 @@
 # Brewfile for development tools
 # Uncomment packages you want to install
 
-# brew "android-platform-tools"
+# Taps
+# tap "ublue-os/tap"
 
 # Container and orchestration tools
 # brew "kind"           # Kubernetes in Docker
@@ -18,6 +19,12 @@
 # brew "node"           # Node.js
 # brew "python@3.12"    # Python
 # brew "rust"           # Rust programming language
+
+# Mobile development
+# brew "android-platform-tools"   # adb, fastboot, etc.
+
+# Editors and IDEs
+# cask "ublue-os/tap/visual-studio-code-linux"
 
 # Build tools
 # brew "cmake"          # Cross-platform build system
