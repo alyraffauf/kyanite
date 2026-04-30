@@ -33,6 +33,7 @@ jobs:
             NAME: ${{ inputs.name || 'rocm' }}
             ARCH: x86-64
             VERSION: ${{ github.run_number }}
+            KEEP_VERSIONS: 3
         steps:
             - uses: actions/checkout@v4
 
@@ -53,6 +54,7 @@ jobs:
               run: |
                   cd output/sysexts
                   ASSET="${NAME}-${VERSION}-${ARCH}.raw"
+                  RAW_RE="${NAME}-[0-9]+-${ARCH}\\.raw"
                   mv "${NAME}.raw" "$ASSET"
                   cp "../../sysexts/sysupdate.d/${NAME}.transfer" .
 
@@ -61,8 +63,15 @@ jobs:
                       --pattern SHA256SUMS --output prev.sums 2>/dev/null \
                       || : > prev.sums
                   sha256sum "$ASSET" "${NAME}.transfer" > new.sums
-                  cat new.sums prev.sums | awk '!seen[$2]++' | sort -k2 > SHA256SUMS
+                  cat new.sums prev.sums | awk '!seen[$2]++' | sort -k2 > all.sums
                   rm new.sums prev.sums
+
+                  # Keep last N raw versions plus everything else (e.g. .transfer).
+                  {
+                      grep -vE "  ${RAW_RE}$" all.sums
+                      grep -E "  ${RAW_RE}$" all.sums | sort -V -k2 | tail -n "$KEEP_VERSIONS"
+                  } | sort -k2 > SHA256SUMS
+                  rm all.sums
 
             - name: Publish to rolling release
               uses: softprops/action-gh-release@v2
@@ -79,3 +88,15 @@ jobs:
                       Latest build: `${{ env.VERSION }}` (${{ env.ARCH }})
 
                       Install via `ujust install-${{ env.NAME }}-sysext` on kyanite-dx.
+
+            - name: Prune assets dropped from SHA256SUMS
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  KEEP=$( { awk '{print $2}' output/sysexts/SHA256SUMS; echo SHA256SUMS; } | sort -u)
+                  gh release view "sysext-${NAME}" --json assets --jq '.assets[].name' \
+                      | while read -r f; do
+                          printf '%s\n' "$KEEP" | grep -qFx "$f" && continue
+                          echo "Pruning $f"
+                          gh release delete-asset "sysext-${NAME}" "$f" --yes
+                      done
