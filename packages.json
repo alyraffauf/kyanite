@@ -15,6 +15,7 @@
                 "lm_sensors",
                 "lsp-plugins-lv2",
                 "lv2-bankstown",
+                "mkosi",
                 "nodejs",
                 "pipewire-module-filter-chain-lv2",
                 "plasma-wallpapers-dynamic",
@@ -46,21 +47,7 @@
         },
         "dx": {
             "include": [
-                "edk2-ovmf",
-                "flatpak-builder",
-                "libvirt",
-                "libvirt-nss",
-                "mkosi",
-                "qemu-audio-pipewire",
-                "qemu-char-spice",
-                "qemu-device-display-virtio-gpu",
-                "qemu-device-display-virtio-vga",
-                "qemu-device-uefi-vars",
-                "qemu-device-usb-redirect",
-                "qemu-pr-helper",
-                "qemu-system-x86-core",
-                "qemu-user-binfmt",
-                "qemu-user-static"
+                "flatpak-builder"
             ],
             "exclude": ["podman-docker"]
         }
