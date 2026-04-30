@@ -42,12 +42,13 @@
                 "mariadb-common",
                 "mariadb-errmsg",
                 "plasma-discover-kns",
-                "plasma-welcome-fedora"
+                "plasma-welcome-fedora",
+                "podman-docker"
             ]
         },
         "dx": {
             "include": [],
-            "exclude": ["podman-docker"]
+            "exclude": []
         }
     }
 }

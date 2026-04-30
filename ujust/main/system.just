@@ -183,7 +183,6 @@ rebase-helper:
     # Define all variants and images
     declare -A IMAGES=(
         ["kyanite"]="ghcr.io/alyraffauf/kyanite:stable"
-        ["kyanite-dx"]="ghcr.io/alyraffauf/kyanite-dx:stable"
     )
 
     # Build choices, excluding current variant
@@ -215,11 +214,17 @@ configure-dev-groups:
     CURRENT_USER="{{ `id -un` }}"
     echo "Adding $CURRENT_USER to docker and libvirt groups..."
 
-    # Ensure groups exist in /etc/group
+    # Ensure groups exist in /etc/group. Source order:
+    #   1. /usr/lib/group (package- or sysext-provided entry)
+    #   2. groupadd -r    (fallback for packages with no group seed,
+    #                      e.g. third-party Docker CE RPMs)
     for group in docker libvirt; do
         if ! grep -q "^$group:" /etc/group; then
-            echo "Adding $group to /etc/group"
-            grep "^$group:" /usr/lib/group | tee -a /etc/group > /dev/null
+            if grep -q "^$group:" /usr/lib/group; then
+                grep "^$group:" /usr/lib/group | tee -a /etc/group > /dev/null
+            else
+                groupadd -r "$group"
+            fi
         fi
         usermod -aG $group $CURRENT_USER
     done

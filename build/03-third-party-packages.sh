@@ -10,7 +10,6 @@ source /ctx/build/copr-helpers.sh
 # Third-Party Package Installation
 ###############################################################################
 # This script optionally installs packages from third-party repositories:
-# - Docker CE
 # - Cider
 # - Tailscale
 # - COPR repositories
@@ -55,29 +54,6 @@ copr_install_isolated "ublue-os/packages" \
     "krunner-bazaar"
 
 echo "::endgroup::"
-
-if [[ ${IMAGE_FLAVOR} =~ dx ]]; then
-    echo "::group:: Add Developer Packages"
-
-    dnf5 config-manager addrepo --from-repofile=https://download.docker.com/linux/fedora/docker-ce.repo
-    sed -i "s/enabled=.*/enabled=0/g" /etc/yum.repos.d/docker-ce.repo
-    dnf5 -y install --enablerepo=docker-ce-stable \
-        containerd.io \
-        docker-buildx-plugin \
-        docker-ce \
-        docker-ce-cli \
-        docker-compose-plugin \
-        docker-model-plugin
-
-    # Create docker group manually in /usr/lib/group if it doesn't exist
-    # GID 994 is typically assigned to docker group by the package
-    if ! grep -q "^docker:" /usr/lib/group; then
-        echo "Creating docker group in /usr/lib/group"
-        echo "docker:x:994:" >>/usr/lib/group
-    fi
-
-    echo "::endgroup::"
-fi
 
 echo "::group:: Disable Third-Party Repositories"
 

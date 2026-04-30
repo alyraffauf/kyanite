@@ -17,7 +17,7 @@
         },
         "dx": {
             "system": {
-                "enable": ["docker.socket"],
+                "enable": [],
                 "disable": []
             },
             "user": {
