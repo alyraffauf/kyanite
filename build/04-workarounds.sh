@@ -15,6 +15,17 @@ mkdir -p /nix
 chown root:root /nix
 chmod 755 /nix
 
+# systemd-sysupdate.timer SELinux gap on F44: relabel its state dirs +
+# install local policy module (paired with files/.../kyanite-sysupdate.te).
+semanage fcontext -a -t systemd_importd_var_run_t '/var/lib/sysupdate(/.*)?' || true
+semanage fcontext -a -t systemd_importd_var_run_t '/var/lib/extensions(/.*)?' || true
+TMP=$(mktemp -d)
+checkmodule -M -m -o "$TMP/kyanite-sysupdate.mod" \
+    /ctx/files/main/usr/share/kyanite/selinux/kyanite-sysupdate.te
+semodule_package -o "$TMP/kyanite-sysupdate.pp" -m "$TMP/kyanite-sysupdate.mod"
+semodule -i "$TMP/kyanite-sysupdate.pp"
+rm -rf "$TMP"
+
 # Set default/pinned applications on the taskmanager panel applet
 # There is no standard API for this configuration
 # Reference: https://bugs.kde.org/show_bug.cgi?id=511560

@@ -1,0 +1,15 @@
+module kyanite-sysupdate 1.3;
+
+# Plug F44 policy gap: systemd-sysupdate.timer needs init_t to rename
+# files and create/rename/unlink symlinks under /var/lib/{sysupdate,extensions}
+# (relabeled to systemd_importd_var_run_t in build/04-workarounds.sh).
+
+require {
+    type init_t;
+    type systemd_importd_var_run_t;
+    class file rename;
+    class lnk_file { create rename unlink };
+}
+
+allow init_t systemd_importd_var_run_t:file rename;
+allow init_t systemd_importd_var_run_t:lnk_file { create rename unlink };

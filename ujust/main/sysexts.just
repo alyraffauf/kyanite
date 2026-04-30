@@ -16,17 +16,18 @@ install-sysext NAME:
     curl -fSL "$BASE/{{ NAME }}.transfer" -o "$TMP/{{ NAME }}.transfer"
     (cd "$TMP" && sha256sum -c --ignore-missing SHA256SUMS)
 
-    sudo install -D -m 0644 "$TMP/{{ NAME }}.transfer" /etc/sysupdate.{{ NAME }}.d/{{ NAME }}.transfer
+    sudo install -D -m 0644 "$TMP/{{ NAME }}.transfer" /etc/sysupdate.d/{{ NAME }}.transfer
     sudo mkdir -p /var/lib/extensions
-    sudo /usr/lib/systemd/systemd-sysupdate --component={{ NAME }} update
+    sudo systemctl enable --now systemd-sysupdate.timer
+    sudo /usr/lib/systemd/systemd-sysupdate update
     sudo systemd-sysext refresh
     sudo udevadm control --reload && sudo udevadm trigger
     echo "{{ NAME }} sysext installed and merged."
 
-# Pull a newer version of an installed sysext
+# Pull newer versions of all installed sysexts
 [group('Extensions')]
-update-sysext NAME:
-    sudo /usr/lib/systemd/systemd-sysupdate --component={{ NAME }} update
+update-sysexts:
+    sudo /usr/lib/systemd/systemd-sysupdate update
     sudo systemd-sysext refresh
     sudo udevadm control --reload && sudo udevadm trigger
 
@@ -35,8 +36,9 @@ update-sysext NAME:
 remove-sysext NAME:
     #!/usr/bin/env bash
     set -euo pipefail
-    sudo rm -f /var/lib/extensions/{{ NAME }}.raw
-    sudo rm -rf /etc/sysupdate.{{ NAME }}.d /var/lib/sysupdate/{{ NAME }}
+    sudo rm -f /var/lib/extensions/{{ NAME }}.raw \
+              /etc/sysupdate.d/{{ NAME }}.transfer
+    sudo rm -rf /var/lib/sysupdate/{{ NAME }}
     sudo systemd-sysext refresh
     sudo udevadm control --reload && sudo udevadm trigger
     echo "{{ NAME }} sysext removed."
