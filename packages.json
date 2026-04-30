@@ -50,6 +50,7 @@
                 "flatpak-builder",
                 "libvirt",
                 "libvirt-nss",
+                "mkosi",
                 "qemu-audio-pipewire",
                 "qemu-char-spice",
                 "qemu-device-display-virtio-gpu",
