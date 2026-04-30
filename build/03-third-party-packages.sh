@@ -16,24 +16,24 @@ source /ctx/build/copr-helpers.sh
 # - COPR repositories
 ###############################################################################
 
-echo "::group:: Install Cider"
+# echo "::group:: Install Cider"
 
-echo "Installing Cider from official repository..."
+# echo "Installing Cider from official repository..."
 
-# Add Cider repository
-cat >/etc/yum.repos.d/cider.repo <<'EOF'
-[cidercollective]
-name=Cider Collective Repository
-baseurl=https://repo.cider.sh/rpm/RPMS
-enabled=0
-gpgcheck=1
-gpgkey=https://repo.cider.sh/RPM-GPG-KEY
-EOF
+# # Add Cider repository
+# cat >/etc/yum.repos.d/cider.repo <<'EOF'
+# [cidercollective]
+# name=Cider Collective Repository
+# baseurl=https://repo.cider.sh/rpm/RPMS
+# enabled=0
+# gpgcheck=1
+# gpgkey=https://repo.cider.sh/RPM-GPG-KEY
+# EOF
 
-# Install Cider package
-dnf5 -y install --enablerepo='cidercollective' Cider
+# # Install Cider package
+# dnf5 -y install --enablerepo='cidercollective' Cider
 
-echo "::endgroup::"
+# echo "::endgroup::"
 
 echo "::group:: Install Tailscale"
 
@@ -55,18 +55,6 @@ copr_install_isolated "ublue-os/packages" \
     "krunner-bazaar"
 
 echo "::endgroup::"
-
-# echo "::group:: Install Flatpak Preinstall Support"
-
-# # TODO: Remove this section when flatpak preinstall is available in Fedora stable
-# dnf5 -y copr enable ublue-os/flatpak-test
-# dnf5 -y copr disable ublue-os/flatpak-test
-# dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak flatpak
-# dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak-libs flatpak-libs
-# dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test swap flatpak-session-helper flatpak-session-helper
-# dnf5 -y --repo=copr:copr.fedorainfracloud.org:ublue-os:flatpak-test install flatpak-debuginfo flatpak-libs-debuginfo flatpak-session-helper-debuginfo
-
-# echo "::endgroup::"
 
 if [[ ${IMAGE_FLAVOR} =~ dx ]]; then
     echo "::group:: Add Developer Packages"

@@ -103,5 +103,4 @@ dnf5 -y group install development-tools
 
 echo "::endgroup::"
 
-
 echo "Fedora package installation complete!"

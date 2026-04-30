@@ -53,42 +53,38 @@ LABEL org.opencontainers.image.flavor="${IMAGE_FLAVOR}"
 ###############################################################################
 # BUILD PROCESS
 ###############################################################################
-# Execute build scripts with variant support
-# IMAGE_FLAVOR is available to all build scripts:
-#   - "main" (default): Base kyanite
-#   - "gaming": Kyanite with Steam and gaming tools
-
-# Step 1: Copy files and configure base system
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
-    /ctx/build/01-build.sh
+    /ctx/build/01-stage-brewfiles.sh
 
-# Step 2: Install Fedora packages
 RUN --mount=type=cache,dst=/var/cache/dnf \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
+    IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
     /ctx/build/02-fedora-packages.sh
 
-# Step 3: Install third-party packages
 RUN --mount=type=cache,dst=/var/cache/dnf \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
     /ctx/build/03-third-party-packages.sh
 
-# Step 4: Apply system workarounds
+# 04-workarounds seds third-party .desktop files; must follow step 03.
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build/04-workarounds.sh
 
-# Step 5: Configure systemd services
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build/05-systemd.sh
+    IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
+    /ctx/build/05-copy-files.sh
 
-# Step 6: Configure Homebrew
+# 06-systemd enables units that may be shipped by step 05; must follow it.
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build/06-homebrew.sh
+    IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
+    /ctx/build/06-systemd.sh
 
-# Step 7: Apply OS branding
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    /ctx/build/07-homebrew.sh
+
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
     IMAGE_NAME="${IMAGE_NAME}" \
@@ -96,11 +92,10 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     BASE_IMAGE_NAME="${BASE_IMAGE_NAME}" \
     SHA_HEAD_SHORT="${SHA_HEAD_SHORT}" \
     UBLUE_IMAGE_TAG="${UBLUE_IMAGE_TAG}" \
-    /ctx/build/07-branding.sh
+    /ctx/build/08-branding.sh
 
-# Step 8: Final cleanup
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build/08-cleanup.sh
+    /ctx/build/09-cleanup.sh
 
 ###############################################################################
 # FINALIZE

@@ -232,7 +232,7 @@ clean-containers:
 
 ## Important: Package Installation
 
-**Do not install packages via dnf5/rpm in ujust commands.** Bootc images are immutable and package installation should happen at build time in [`build/10-build.sh`](../../build/10-build.sh).
+**Do not install packages via dnf5/rpm in ujust commands.** Bootc images are immutable and package installation should happen at build time in [`build/02-fedora-packages.sh`](../../build/02-fedora-packages.sh) or [`build/03-third-party-packages.sh`](../../build/03-third-party-packages.sh).
 
 For runtime package installation, use:
 
@@ -285,7 +285,7 @@ just --justfile custom/ujust/custom-apps.just install-something
 - `custom-media.just` - Media editing workflows
 - `custom-dev.just` - Development environment setups
 
-All `.just` files in this directory are automatically included. See [`build/10-build.sh`](../../build/10-build.sh) for the consolidation logic.
+All `.just` files in this directory are automatically included. See [`build/05-copy-files.sh`](../../build/05-copy-files.sh) for the consolidation logic.
 
 ## Groups for Organization
 

@@ -3,19 +3,17 @@
 set -eoux pipefail
 
 ###############################################################################
-# Main Build Script
-###############################################################################
-# This script follows the @ublue-os/bluefin pattern for build scripts.
-# It uses set -eoux pipefail for strict error handling and debugging.
+# Stage variant-scoped files into the image:
+#   files/<variant>/             → /  (rsync overlay)
+#   ujust/<variant>/             → /usr/share/ublue-os/just/60-custom.just
+#   flatpaks/<variant>.preinstall → /usr/share/flatpak/preinstall.d/
 ###############################################################################
 
 echo "::group:: Copy Custom Files"
 
-# Copy system files based on IMAGE_FLAVOR
-# Split IMAGE_FLAVOR into array of variant names (e.g., "gaming-dx" -> ["gaming", "dx"])
-# Always includes "main" as the base
 IFS='-' read -ra FLAVOR_PARTS <<<"${IMAGE_FLAVOR}"
 
+# Copy variant file overlays
 for variant in main "${FLAVOR_PARTS[@]}"; do
     if [[ -d "/ctx/files/${variant}" ]]; then
         echo "Copying files for: ${variant}"
@@ -23,16 +21,7 @@ for variant in main "${FLAVOR_PARTS[@]}"; do
     fi
 done
 
-# Copy Brewfiles to standard location for each flavor
-mkdir -p /usr/share/ublue-os/homebrew/
-for variant in main "${FLAVOR_PARTS[@]}"; do
-    if [[ -d "/ctx/brew/${variant}" ]]; then
-        echo "Copying Brewfiles for: ${variant}"
-        cp "/ctx/brew/${variant}"/*.Brewfile /usr/share/ublue-os/homebrew/ 2>/dev/null || true
-    fi
-done
-
-# Consolidate Just Files for each flavor
+# Consolidate Just files into the ublue-os custom recipe location
 mkdir -p /usr/share/ublue-os/just/
 for variant in main "${FLAVOR_PARTS[@]}"; do
     if [[ -d "/ctx/ujust/${variant}" ]]; then
@@ -41,7 +30,7 @@ for variant in main "${FLAVOR_PARTS[@]}"; do
     fi
 done
 
-# Copy Flatpak preinstall files for each flavor
+# Stage Flatpak preinstall files
 mkdir -p /usr/share/flatpak/preinstall.d/
 for variant in main "${FLAVOR_PARTS[@]}"; do
     if [[ -f "/ctx/flatpaks/${variant}.preinstall" ]]; then
@@ -52,4 +41,4 @@ done
 
 echo "::endgroup::"
 
-echo "File copying and setup completed successfully!"
+echo "Custom file staging complete!"

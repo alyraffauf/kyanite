@@ -19,22 +19,22 @@ Valid types: `feat`, `fix`, `docs`, `chore`, `build`, `ci`, `refactor`, `test`
 4. Never hardcode variant packages/services in build scripts
 5. All packages live under `packages.json` `"variants.{name}.include"` — the `main` variant is the base applied to every image
 6. All services live under `services.json` `"variants.{name}.system.enable"` (or `.user.enable`) — same rule, `main` is the base
-7. Third-party software → `build/03-third-party-packages.sh`
+7. Third-party software → `build/04-third-party-packages.sh`
 
 ## QUICK REFERENCE
 
-| Task                   | Location                          | Format                                     |
-| ---------------------- | --------------------------------- | ------------------------------------------ |
-| Add base package       | `packages.json`                   | `"variants.main.include"` array            |
-| Add variant package    | `packages.json`                   | `"variants.{name}.include"` array          |
-| Remove package         | `packages.json`                   | `"variants.{name}.exclude"` array          |
-| Enable base service    | `services.json`                   | `"variants.main.system.enable"` array      |
-| Enable variant service | `services.json`                   | `"variants.{name}.system.enable"` array    |
-| Add 3rd-party RPM      | `build/03-third-party-packages.sh`| See examples                               |
-| Add COPR package       | `build/03-third-party-packages.sh`| `copr_install_isolated "owner/repo" "pkg"` |
-| Add Homebrew package   | `brew/{variant}/*.Brewfile`       | `brew "package-name"`                      |
-| Add Flatpak            | `flatpaks/{variant}.preinstall`   | `[Flatpak Preinstall app.id]`              |
-| Add ujust command      | `ujust/{variant}/*.just`          | Just recipe syntax                         |
+| Task                   | Location                           | Format                                     |
+| ---------------------- | ---------------------------------- | ------------------------------------------ |
+| Add base package       | `packages.json`                    | `"variants.main.include"` array            |
+| Add variant package    | `packages.json`                    | `"variants.{name}.include"` array          |
+| Remove package         | `packages.json`                    | `"variants.{name}.exclude"` array          |
+| Enable base service    | `services.json`                    | `"variants.main.system.enable"` array      |
+| Enable variant service | `services.json`                    | `"variants.{name}.system.enable"` array    |
+| Add 3rd-party RPM      | `build/04-third-party-packages.sh` | See examples                               |
+| Add COPR package       | `build/04-third-party-packages.sh` | `copr_install_isolated "owner/repo" "pkg"` |
+| Add Homebrew package   | `brew/{variant}/*.Brewfile`        | `brew "package-name"`                      |
+| Add Flatpak            | `flatpaks/{variant}.preinstall`    | `[Flatpak Preinstall app.id]`              |
+| Add ujust command      | `ujust/{variant}/*.just`           | Just recipe syntax                         |
 
 ## VARIANTS
 
@@ -86,14 +86,17 @@ Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
 
 ## BUILD SCRIPTS (Order)
 
-1. `01-build.sh` - Orchestration, file/Brewfile/ujust/flatpak-preinstall copying per variant
+Ordered rare-changing → frequent-changing for cache efficiency. Third-party packages, Homebrew, and branding are placed LATE so silent upstream bumps don't bust the expensive Fedora layer.
+
+1. `01-stage-brewfiles.sh` - Stage `brew/<variant>/*.Brewfile` to `/usr/share/ublue-os/homebrew/` (runtime data consumed by ujust)
 2. `02-fedora-packages.sh` - Packages from `packages.json` (also pins `plasma-desktop` and installs `development-tools` group)
 3. `03-third-party-packages.sh` - Cider, Tailscale, COPR; Docker CE + VSCode for `dx`; Sunshine for `gaming`
-4. `04-workarounds.sh` - Compatibility fixes (e.g. Ghostty KDE shortcut)
-5. `05-systemd.sh` - Services from `services.json`
-6. `06-homebrew.sh` - Homebrew system files + service presets
-7. `07-branding.sh` - OS release + KDE branding
-8. `08-cleanup.sh` - Hide unused desktop entries, fix bootc lint, `ostree container commit`
+4. `04-workarounds.sh` - Compatibility fixes that sed third-party `.desktop` files (Ghostty KDE shortcut, etc.)
+5. `05-copy-files.sh` - Variant overlay (`files/<variant>/` rsync — including custom `.service` units), ujust consolidation, Flatpak preinstalls
+6. `06-systemd.sh` - Services from `services.json` (may reference units shipped in step 5)
+7. `07-homebrew.sh` - Homebrew system files + service presets (late — brew base image SHA bumps multi-times/week)
+8. `08-branding.sh` - OS release + KDE branding (uses `SHA_HEAD_SHORT` build arg, invalidates per commit)
+9. `09-cleanup.sh` - Hide unused desktop entries, fix bootc lint, `ostree container commit`
 
 ## STRUCTURE
 
@@ -135,7 +138,7 @@ IMAGE_FLAVOR=dx-gaming just build
 ### Add Third-Party RPM
 
 ```bash
-# In build/03-third-party-packages.sh
+# In build/04-third-party-packages.sh
 dnf5 config-manager addrepo --from-repofile=https://example.com/repo.repo
 dnf5 config-manager setopt example-repo.enabled=0
 dnf5 -y install --enablerepo='example-repo' package-name
@@ -144,7 +147,7 @@ dnf5 -y install --enablerepo='example-repo' package-name
 ### Add COPR Package
 
 ```bash
-# In build/03-third-party-packages.sh
+# In build/04-third-party-packages.sh
 source /ctx/build/copr-helpers.sh
 copr_install_isolated "owner/repo" "package-name"
 ```
