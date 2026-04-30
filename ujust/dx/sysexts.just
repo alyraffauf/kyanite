@@ -5,38 +5,37 @@
 
 repo := "alyraffauf/kyanite-sysexts"
 
-# Install the ROCm sysext (registers transfer config, fetches latest, merges)
+# Install a sysext (downloads transfer config, fetches latest version, merges into /usr)
 [group('Extensions')]
-install-rocm-sysext:
+install-sysext NAME:
     #!/usr/bin/env bash
     set -euo pipefail
-    BASE="https://github.com/{{ repo }}/releases/download/sysext-rocm"
+    BASE="https://github.com/{{ repo }}/releases/download/sysext-{{ NAME }}"
     TMP=$(mktemp -d)
     trap 'rm -rf "$TMP"' EXIT
 
     curl -fSL "$BASE/SHA256SUMS" -o "$TMP/SHA256SUMS"
-    curl -fSL "$BASE/rocm.transfer" -o "$TMP/rocm.transfer"
+    curl -fSL "$BASE/{{ NAME }}.transfer" -o "$TMP/{{ NAME }}.transfer"
     (cd "$TMP" && sha256sum -c --ignore-missing SHA256SUMS)
 
-    sudo install -D -m 0644 "$TMP/rocm.transfer" /etc/sysupdate.rocm.d/rocm.transfer
+    sudo install -D -m 0644 "$TMP/{{ NAME }}.transfer" /etc/sysupdate.{{ NAME }}.d/{{ NAME }}.transfer
     sudo mkdir -p /var/lib/extensions
-    sudo /usr/lib/systemd/systemd-sysupdate --component=rocm update
-    sudo systemd-sysext merge
-    echo "ROCm sysext installed and merged."
+    sudo /usr/lib/systemd/systemd-sysupdate --component={{ NAME }} update
+    sudo systemd-sysext refresh
+    echo "{{ NAME }} sysext installed and merged."
 
-# Pull a newer ROCm sysext via systemd-sysupdate
+# Pull a newer version of an installed sysext
 [group('Extensions')]
-update-rocm-sysext:
-    sudo /usr/lib/systemd/systemd-sysupdate --component=rocm update
+update-sysext NAME:
+    sudo /usr/lib/systemd/systemd-sysupdate --component={{ NAME }} update
     sudo systemd-sysext refresh
 
-# Remove the ROCm sysext
+# Remove an installed sysext
 [group('Extensions')]
-remove-rocm-sysext:
+remove-sysext NAME:
     #!/usr/bin/env bash
     set -euo pipefail
-    sudo systemd-sysext unmerge || true
-    sudo rm -f /var/lib/extensions/rocm.raw
-    sudo rm -rf /etc/sysupdate.rocm.d /var/lib/sysupdate/rocm
-    sudo systemd-sysext merge || true
-    echo "ROCm sysext removed."
+    sudo rm -f /var/lib/extensions/{{ NAME }}.raw
+    sudo rm -rf /etc/sysupdate.{{ NAME }}.d /var/lib/sysupdate/{{ NAME }}
+    sudo systemd-sysext refresh
+    echo "{{ NAME }} sysext removed."
