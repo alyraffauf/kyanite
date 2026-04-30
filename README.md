@@ -11,37 +11,18 @@ Kyanite is built on Universal Blue's [kinoite-main](https://github.com/ublue-os/
 Kyanite improves Fedora Kinoite with:
 
 - **Saner defaults** - Mozilla's official Flatpak build of Firefox, Discover swapped for Bazaar, Flathub out of the box, and modernized KDE Plasma settings.
-- **Full container workflows** - Docker CE with buildx/compose, enhanced Podman.
-- **Developer tools** - Fish shell, modern terminal, comprehensive tooling.
-- **Nice to haves** - Tailscale VPN, containerized Syncthing, dynamic wallpapers.
-- **Gaming necessities** - Steam, Gamescope, MangoHud, etc.
-- **Audio enhancements** - Improved audio DSPs for select hardware.
-- **Flexible variants** - Declarative variants you can mix and match.
-
-## Available Variants
-
-All images are built and published automatically:
-
-- **kyanite** - Clean, modern, featureful KDE desktop for normal people.
-- **kyanite-dx** - Developer experience with Docker CE, QEMU/KVM, Flatpak builder, mkosi, etc.
-
-Optional extras (Steam, ROCm, gaming Flatpaks, etc.) are installed on demand from [kyanite-sysexts](https://github.com/alyraffauf/kyanite-sysexts) via `ujust install-sysext NAME` or `ujust install-gaming-flatpaks`.
-
-## State of the Project
-
-Kyanite is quite usable as-is, and it's my daily driver. However, it's still under active development with frequent changes. Also, while the word-branding of the distribution has been changed, Fedora defaults persist in many places (Kickoff logo, `fastfetch`, wallpapers). I'm a photographer at best, not a graphics designer.
+- **Minimal base** - Heavy / opt-in functionality (Docker, virtualization, Steam, ROCm) lives outside the image as [system extensions](#optional-extensions).
+- **Quality-of-life** - Fish shell, Tailscale VPN, containerized Syncthing, dynamic wallpapers, Cider for Apple Music, fcitx5 input methods.
+- **Audio enhancements** - Improved audio DSPs for select hardware via PipeWire filter chains.
+- **Local LLM stack** - Ollama Quadlets with CPU/ROCm/Vulkan backends preconfigured.
+- **Declarative variant architecture** - `packages.json` + `services.json` schema if you want to fork and add your own variants.
 
 ## Quick Start
 
 If you're already on a bootc-based system (like Kinoite or Aurora), switching is easy:
 
 ```bash
-# Standard variant
 sudo bootc switch ghcr.io/alyraffauf/kyanite:stable
-sudo systemctl reboot
-
-# Developer variant
-sudo bootc switch ghcr.io/alyraffauf/kyanite-dx:stable
 sudo systemctl reboot
 ```
 
@@ -53,9 +34,26 @@ After first boot, explore available commands:
 ujust --list
 ```
 
+> **Migrating from a previous Kyanite variant?** `kyanite-dx`, `kyanite-gaming`, and `kyanite-dx-gaming` tags now alias to `kyanite:stable`, so existing systems continue auto-updating. Run `ujust rebase-helper` to clean up the variant metadata when convenient.
+
+## Optional Extensions
+
+Heavy or opt-in functionality lives in [kyanite-sysexts](https://github.com/alyraffauf/kyanite-sysexts) as systemd-sysext packages. Install on demand with `ujust install-sysext NAME`:
+
+| Sysext   | Provides                                                                  |
+| -------- | ------------------------------------------------------------------------- |
+| `docker` | Docker CE + buildx, compose, and model plugins                            |
+| `rocm`   | AMD ROCm runtime + HIP, OpenCL, rocm-smi (for GPU compute / ML workloads) |
+| `steam`  | Native Steam, Gamescope, MangoHud, GameMode (i686 multilib stack)         |
+| `virt`   | QEMU/KVM + libvirt + edk2-ovmf (UEFI firmware) + virtio drivers           |
+
+Each sysext auto-updates via `systemd-sysupdate.timer`. To remove: `ujust remove-sysext NAME`.
+
+For gaming launchers (Heroic, ProtonUp-Qt, Lutris) installed as Flatpaks, run `ujust install-gaming-flatpaks`.
+
 ## Local LLMs (Ollama)
 
-All variants ship three Podman Quadlet units for running [Ollama](https://ollama.com/) as a user-level systemd service, using the official upstream container images. GPU runtimes (ROCm, Vulkan ICDs) live inside the container, not the host.
+Three Podman Quadlet units ship for running [Ollama](https://ollama.com/) as a user-level systemd service, using the official upstream container images. GPU runtimes (ROCm, Vulkan ICDs) live inside the container, not the host.
 
 ```bash
 # CPU (or NVIDIA, on a kinoite-nvidia base)
@@ -91,35 +89,38 @@ Available service templates live in `/usr/share/kyanite/quadlets/`. The `ujust e
 
 `podman-auto-update.timer` is enabled by default for all users, so quadlets with `AutoUpdate=registry` (which all Kyanite-shipped templates have) refresh nightly without manual intervention.
 
+## State of the Project
+
+Kyanite is quite usable as-is, and it's my daily driver. However, it's still under active development with frequent changes. Also, while the word-branding of the distribution has been changed, Fedora defaults persist in many places (Kickoff logo, `fastfetch`, wallpapers). I'm a photographer at best, not a graphics designer.
+
 ## Customization
 
 Kyanite uses a declarative configuration system:
 
 - **[packages.json](packages.json)** - Define packages per variant.
 - **[services.json](services.json)** - Configure systemd units by variant.
-- **files/{variant}/** - Variant-specific system files (main, dx).
-- **[brew/](brew/)** - Homebrew packages (runtime installation).
-- **[flatpaks/](flatpaks/)** - Flatpak preinstall files by variant.
-- **[ujust/](ujust/)** - Custom `ujust` commands by variant.
+- **files/{variant}/** - Variant-specific system files; only `main/` is currently populated.
+- **[brew/](brew/)** - Homebrew packages (runtime installation via `ujust install-*`).
+- **[flatpaks/](flatpaks/)** - Flatpak preinstall files (Flathub apps installed on first boot).
+- **[ujust/](ujust/)** - Custom `ujust` commands.
 
-Stacking variants are composed at build time. It is trivial to fork this repository and create your own Kyanite variants. See below for build options.
+The variant scaffold is preserved (`packages.json` `variants.{name}` blocks, `IMAGE_FLAVOR=NAME` build composition) even though only `kyanite` is currently built — forks can revive any variant with a single CI job edit.
 
 ## Building Locally
 
 Requires [Podman](https://podman.io/) and [Just](https://just.systems/):
 
 ```bash
-# Build standard variant
+# Build the published variant (kyanite)
 just build
 
-# Build specific variant
-IMAGE_FLAVOR=dx just build
+# Build a hypothetical variant scaffold
+IMAGE_FLAVOR=foo just build
 
 # Build with NVIDIA base image
 BASE_IMAGE_SHA=$(skopeo inspect docker://ghcr.io/ublue-os/kinoite-nvidia:latest --format '{{.Digest}}')
 BASE_IMAGE=ghcr.io/ublue-os/kinoite-nvidia:latest \
 BASE_IMAGE_SHA=$BASE_IMAGE_SHA \
-IMAGE_FLAVOR=dx \
 just build
 
 # Create bootable images
@@ -164,6 +165,7 @@ rpm-ostree status  # Should show "ostree-image-signed:" prefix
 
 ## Resources
 
+- [kyanite-sysexts](https://github.com/alyraffauf/kyanite-sysexts) - Optional system extensions repo.
 - [Universal Blue](https://universal-blue.org/) - Project ecosystem.
 - [bootc Documentation](https://containers.github.io/bootc/) - Cloud-native OS.
 - [Universal Blue Discord](https://discord.gg/WEu6BdFEtp) - Community support.
