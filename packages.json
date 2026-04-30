@@ -46,6 +46,7 @@
         },
         "dx": {
             "include": [
+                "edk2-ovmf",
                 "flatpak-builder",
                 "libvirt",
                 "libvirt-nss",
@@ -55,7 +56,7 @@
                 "qemu-device-display-virtio-vga",
                 "qemu-device-uefi-vars",
                 "qemu-device-usb-redirect",
-                "qemu-system-aarch64-core",
+                "qemu-pr-helper",
                 "qemu-system-x86-core",
                 "qemu-user-binfmt",
                 "qemu-user-static"
