@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Stage the Open WebUI quadlet into the user's session if not already present,
+# ensure the service is running, then open the UI in the default browser.
+# Idempotent — safe to run multiple times.
+
+set -euo pipefail
+
+QUADLET_SRC=/usr/share/kyanite/quadlets/open-webui.container
+QUADLET_DEST="$HOME/.config/containers/systemd/open-webui.container"
+URL=http://127.0.0.1:8080
+
+mkdir -p "$(dirname "$QUADLET_DEST")"
+[ -f "$QUADLET_DEST" ] || cp "$QUADLET_SRC" "$QUADLET_DEST"
+
+systemctl --user daemon-reload
+systemctl --user unmask open-webui.service 2>/dev/null || true
+systemctl --user start open-webui.service
+
+# Wait for the port to accept connections (up to 30s) before launching the browser.
+# Cold starts on first run can take longer; the browser will retry on its own.
+for _ in $(seq 1 30); do
+    if curl -fsS -o /dev/null --max-time 1 "$URL"; then
+        break
+    fi
+    sleep 1
+done
+
+xdg-open "$URL"

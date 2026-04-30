@@ -63,6 +63,30 @@ enable-ollama-vulkan:
     systemctl --user start ollama-vulkan.service
     echo "Ollama (Vulkan) running at http://127.0.0.1:11434"
 
+# Enable the containerized Open WebUI service. Copies the launcher into
+# ~/.local/share/applications/ so it shows up in the KDE menu.
+[group('Services')]
+enable-open-webui:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    /usr/libexec/kyanite/open-webui-start &
+    mkdir -p "$HOME/.local/share/applications"
+    cp -f /usr/share/kyanite/launchers/open-webui.desktop \
+        "$HOME/.local/share/applications/open-webui.desktop"
+    update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
+    echo "Open WebUI enabled. Will be reachable at http://127.0.0.1:8080 once started."
+
+# Stop the containerized Open WebUI service, prevent autostart, and remove the launcher
+[group('Services')]
+disable-open-webui:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    systemctl --user stop open-webui.service 2>/dev/null || true
+    systemctl --user mask open-webui.service 2>/dev/null || true
+    rm -f "$HOME/.local/share/applications/open-webui.desktop"
+    update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
+    echo "Open WebUI service stopped, masked, and launcher removed."
+
 # Stop any Ollama service and prevent autostart at next login
 [group('Services')]
 disable-ollama:

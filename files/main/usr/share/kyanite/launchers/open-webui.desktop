@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Open WebUI
+GenericName=ChatGPT-style frontend for Ollama
+Comment=Starts Open WebUI if needed and opens it in the default browser.
+Exec=/usr/libexec/kyanite/open-webui-start
+Icon=open-webui
+Terminal=false
+Type=Application
+Keywords=ai;chat;llm;ollama;
+Categories=Network;Chat;
