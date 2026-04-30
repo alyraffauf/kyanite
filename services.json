@@ -5,8 +5,7 @@
                 "enable": [
                     "flatpak-nuke-fedora.service",
                     "flatpak-preinstall.service",
-                    "podman.socket",
-                    "tailscaled.service"
+                    "podman.socket"
                 ],
                 "disable": []
             },

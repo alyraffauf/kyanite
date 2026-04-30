@@ -11,7 +11,6 @@ source /ctx/build/copr-helpers.sh
 ###############################################################################
 # This script optionally installs packages from third-party repositories:
 # - Cider
-# - Tailscale
 # - COPR repositories
 ###############################################################################
 
@@ -34,16 +33,6 @@ dnf5 -y install --enablerepo='cidercollective' Cider
 
 # echo "::endgroup::"
 
-echo "::group:: Install Tailscale"
-
-# Install tailscale package from their official repository
-echo "Installing Tailscale from official repository..."
-dnf5 config-manager addrepo --from-repofile=https://pkgs.tailscale.com/stable/fedora/tailscale.repo
-dnf5 config-manager setopt tailscale-stable.enabled=0
-dnf5 -y install --enablerepo='tailscale-stable' tailscale
-
-echo "::endgroup::"
-
 echo "::group:: Install COPR Packages"
 
 copr_install_isolated "scottames/ghostty" "ghostty"
@@ -58,7 +47,7 @@ echo "::endgroup::"
 echo "::group:: Disable Third-Party Repositories"
 
 # Disable third-party repos
-for repo in negativo17-fedora-multimedia tailscale fedora-cisco-openh264; do
+for repo in negativo17-fedora-multimedia fedora-cisco-openh264; do
     if [[ -f "/etc/yum.repos.d/${repo}.repo" ]]; then
         sed -i 's@enabled=1@enabled=0@g' "/etc/yum.repos.d/${repo}.repo"
     fi

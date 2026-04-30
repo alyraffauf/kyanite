@@ -12,7 +12,7 @@ Kyanite improves Fedora Kinoite with:
 
 - **Saner defaults** - Mozilla's official Flatpak build of Firefox, Discover swapped for Bazaar, Flathub out of the box, and modernized KDE Plasma settings.
 - **Minimal base** - Heavy / opt-in functionality (Docker, virtualization, Steam, ROCm) lives outside the image as [system extensions](#optional-extensions).
-- **Quality-of-life** - Fish shell, Tailscale VPN, containerized Syncthing, dynamic wallpapers, Cider for Apple Music, fcitx5 input methods.
+- **Quality-of-life** - Fish shell, dynamic wallpapers, Cider for Apple Music, fcitx5 input methods.
 - **Audio enhancements** - Improved audio DSPs for select hardware via PipeWire filter chains.
 - **Local LLM stack** - Ollama Quadlets with CPU/ROCm/Vulkan backends preconfigured.
 - **Declarative variant architecture** - `packages.json` + `services.json` schema if you want to fork and add your own variants.
@@ -40,12 +40,14 @@ ujust --list
 
 Heavy or opt-in functionality lives in [kyanite-sysexts](https://github.com/alyraffauf/kyanite-sysexts) as systemd-sysext packages. Install on demand with `ujust install-sysext NAME`:
 
-| Sysext   | Provides                                                                  |
-| -------- | ------------------------------------------------------------------------- |
-| `docker` | Docker CE + buildx, compose, and model plugins                            |
-| `rocm`   | AMD ROCm runtime + HIP, OpenCL, rocm-smi (for GPU compute / ML workloads) |
-| `steam`  | Native Steam, Gamescope, MangoHud, GameMode (i686 multilib stack)         |
-| `virt`   | QEMU/KVM + libvirt + edk2-ovmf (UEFI firmware) + virtio drivers           |
+| Sysext      | Provides                                                                  |
+| ----------- | ------------------------------------------------------------------------- |
+| `docker`    | Docker CE + buildx, compose, and model plugins                            |
+| `rocm`      | AMD ROCm runtime + HIP, OpenCL, rocm-smi (for GPU compute / ML workloads) |
+| `steam`     | Native Steam, Gamescope, MangoHud, GameMode (i686 multilib stack)         |
+| `syncthing` | Native Syncthing daemon                                                   |
+| `tailscale` | Tailscale mesh-VPN client + daemon                                        |
+| `virt`      | QEMU/KVM + libvirt + edk2-ovmf (UEFI firmware) + virtio drivers           |
 
 Each sysext auto-updates via `systemd-sysupdate.timer`. To remove: `ujust remove-sysext NAME`.
 
