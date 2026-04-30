@@ -66,7 +66,7 @@ Edit the existing Brewfiles or create new ones:
 - **[`default.Brewfile`](default.Brewfile)** - Modify for your essential tools
 - **[`development.Brewfile`](development.Brewfile)** - Add your dev stack
 - **[`fonts.Brewfile`](fonts.Brewfile)** - Add preferred fonts
-- **Create new files** - `gaming.Brewfile`, `media.Brewfile`, etc.
+- **Create new files** - `media.Brewfile`, etc.
 
 When you add new Brewfiles, create corresponding ujust commands in [`custom/ujust/custom-apps.just`](../ujust/custom-apps.just) for easy installation.
 

@@ -38,12 +38,11 @@ Valid types: `feat`, `fix`, `docs`, `chore`, `build`, `ci`, `refactor`, `test`
 
 ## VARIANTS
 
-Built images: `kyanite`, `kyanite-dx`, `kyanite-gaming`, `kyanite-dx-gaming`
+Built images: `kyanite`, `kyanite-dx`
 
 Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
 
-- `IMAGE_FLAVOR=gaming` → `["gaming"]`
-- `IMAGE_FLAVOR=dx-gaming` → `["dx", "gaming"]` (installs both)
+- `IMAGE_FLAVOR=dx` → `["dx"]`
 
 ### Configuration Layers
 
@@ -53,7 +52,7 @@ Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
 {
     "variants": {
         "main": { "include": ["common-pkg"], "exclude": [] },
-        "gaming": { "include": ["steam"], "exclude": [] }
+        "dx": { "include": ["libvirt"], "exclude": [] }
     }
 }
 ```
@@ -67,8 +66,8 @@ Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
             "system": { "enable": ["podman.socket"], "disable": [] },
             "user": { "enable": [], "disable": [] }
         },
-        "gaming": {
-            "system": { "enable": [], "disable": [] }
+        "dx": {
+            "system": { "enable": ["docker.socket"], "disable": [] }
         }
     }
 }
@@ -77,12 +76,11 @@ Variants use **exact matching** by splitting `IMAGE_FLAVOR` on hyphens:
 **3. Files** (`files/{variant}/`):
 
 - `files/main/` → Always copied (base for all images)
-- `files/gaming/` → Copied when variant contains "gaming"
 - `files/dx/` → Copied when variant contains "dx"
 
 **4. Branding** (automatic):
 
-- `IMAGE_FLAVOR=dx-gaming` → KDE About shows "Variant=DX+GAMING"
+- `IMAGE_FLAVOR=dx` → KDE About shows "Variant=DX"
 
 ## BUILD SCRIPTS (Order)
 
@@ -90,7 +88,7 @@ Ordered rare-changing → frequent-changing for cache efficiency. Third-party pa
 
 1. `01-stage-brewfiles.sh` - Stage `brew/<variant>/*.Brewfile` to `/usr/share/ublue-os/homebrew/` (runtime data consumed by ujust)
 2. `02-fedora-packages.sh` - Packages from `packages.json` (also pins `plasma-desktop` and installs `development-tools` group)
-3. `03-third-party-packages.sh` - Cider, Tailscale, COPR; Docker CE for `dx`; Sunshine for `gaming`
+3. `03-third-party-packages.sh` - Cider, Tailscale, COPR; Docker CE for `dx`
 4. `04-workarounds.sh` - Compatibility fixes that sed third-party `.desktop` files (Ghostty KDE shortcut, etc.)
 5. `05-copy-files.sh` - Variant overlay (`files/<variant>/` rsync — including custom `.service` units), ujust consolidation, Flatpak preinstalls
 6. `06-systemd.sh` - Services from `services.json` (may reference units shipped in step 5)
@@ -108,16 +106,13 @@ kyanite/
 ├── build/                 # Build scripts
 ├── files/                 # System files
 │   ├── main/             # All variants (base)
-│   ├── dx/               # Developer variant
-│   └── gaming/           # Gaming variant
+│   └── dx/               # Developer variant
 ├── brew/                  # Homebrew Brewfiles
 ├── flatpaks/              # Flatpak preinstall files
-│   ├── main.preinstall
-│   └── gaming.preinstall
+│   └── main.preinstall
 ├── ujust/                 # User commands by variant
 │   ├── main/             # Commands for all images
-│   ├── dx/               # Developer commands
-│   └── gaming/           # Gaming commands
+│   └── dx/               # Developer commands
 └── .github/workflows/     # CI/CD
 ```
 
@@ -129,8 +124,7 @@ just build-qcow2             # Build VM image
 just run-vm-qcow2            # Test in VM
 
 # Variants
-IMAGE_FLAVOR=gaming just build
-IMAGE_FLAVOR=dx-gaming just build
+IMAGE_FLAVOR=dx just build
 ```
 
 ## COMMON PATTERNS

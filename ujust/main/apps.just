@@ -33,3 +33,9 @@ install-flatpak APP_ID:
     echo "Installing {{ APP_ID }} from Flathub..."
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     flatpak install -y flathub {{ APP_ID }}
+
+# Install a curated set of gaming Flatpaks (Heroic, Steam, ProtonUp-Qt, Lutris)
+[group('Apps')]
+install-gaming-flatpaks:
+    #!/usr/bin/env bash
+    brew bundle --file /usr/share/ublue-os/homebrew/gaming.Brewfile

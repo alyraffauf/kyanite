@@ -24,16 +24,6 @@
                 "enable": [],
                 "disable": []
             }
-        },
-        "gaming": {
-            "system": {
-                "enable": [],
-                "disable": []
-            },
-            "user": {
-                "enable": [],
-                "disable": []
-            }
         }
     }
 }

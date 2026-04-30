@@ -7,7 +7,6 @@ This directory contains Flatpak preinstall configuration files for each image va
 Each `.preinstall` file corresponds to an image variant:
 
 - `main.preinstall` - Base variant flatpaks (applies to all kyanite images)
-- `gaming.preinstall` - Gaming variant flatpaks (applies to kyanite-gaming and kyanite-dx-gaming)
 
 Files are copied to `/usr/share/flatpak/preinstall.d/kyanite-{variant}.preinstall` in the built image based on the `IMAGE_FLAVOR` variable during the build.
 
@@ -61,7 +60,7 @@ See: https://docs.flatpak.org/en/latest/flatpak-command-reference.html#flatpak-p
 
 ### Adding Flatpaks to Your Image
 
-1. Edit the appropriate `.preinstall` file (e.g., `main.preinstall` or `gaming.preinstall`)
+1. Edit the appropriate `.preinstall` file (e.g., `main.preinstall`)
 2. Add Flatpak references in INI format with `[Flatpak Preinstall NAME]` sections
 3. Build your image - the files will be copied to `/usr/share/flatpak/preinstall.d/` based on the image variant
 4. After user setup completes, Flatpaks will be automatically installed

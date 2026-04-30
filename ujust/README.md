@@ -23,15 +23,13 @@ ujust/
 │   ├── apps.just
 │   ├── audio.just
 │   └── system.just
-├── dx/                # Developer-specific commands (optional)
-└── gaming/            # Gaming-specific commands (optional)
+└── dx/                # Developer-specific commands (optional)
 ```
 
 **Files are included based on IMAGE_FLAVOR:**
 
 - `main/` - Always included
-- `dx/` - Included for kyanite-dx and kyanite-dx-gaming
-- `gaming/` - Included for kyanite-gaming and kyanite-dx-gaming
+- `dx/` - Included for kyanite-dx
 
 ## Example Commands
 
@@ -281,7 +279,6 @@ just --justfile custom/ujust/custom-apps.just install-something
 
 **Create new files** for different categories:
 
-- `custom-gaming.just` - Gaming-related commands
 - `custom-media.just` - Media editing workflows
 - `custom-dev.just` - Development environment setups
 

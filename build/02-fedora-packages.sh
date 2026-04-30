@@ -36,7 +36,7 @@ echo "::group:: Build Package Lists"
 INCLUDED_PACKAGES=()
 EXCLUDED_PACKAGES=()
 
-# Split IMAGE_FLAVOR into array of variant names (e.g., "gaming-dx" -> ["gaming", "dx"])
+# Split IMAGE_FLAVOR into array of variant names (e.g., "dx" -> ["dx"])
 # Always includes "main" as the base
 IFS='-' read -ra FLAVOR_PARTS <<<"${IMAGE_FLAVOR}"
 

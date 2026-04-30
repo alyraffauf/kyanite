@@ -8,7 +8,7 @@ on:
                 required: true
                 type: string
             image_flavor:
-                description: "Image variant (main, dx, gaming, or dx-gaming)"
+                description: "Image variant (main or dx)"
                 required: true
                 type: string
             image_desc:

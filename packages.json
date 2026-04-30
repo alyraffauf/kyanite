@@ -63,10 +63,6 @@
                 "qemu-user-static"
             ],
             "exclude": ["podman-docker"]
-        },
-        "gaming": {
-            "include": ["gamescope", "gamemode"],
-            "exclude": []
         }
     }
 }

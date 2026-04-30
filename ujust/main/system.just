@@ -184,8 +184,6 @@ rebase-helper:
     declare -A IMAGES=(
         ["kyanite"]="ghcr.io/alyraffauf/kyanite:stable"
         ["kyanite-dx"]="ghcr.io/alyraffauf/kyanite-dx:stable"
-        ["kyanite-gaming"]="ghcr.io/alyraffauf/kyanite-gaming:stable"
-        ["kyanite-dx-gaming"]="ghcr.io/alyraffauf/kyanite-dx-gaming:stable"
     )
 
     # Build choices, excluding current variant

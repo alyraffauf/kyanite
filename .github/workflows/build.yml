@@ -42,28 +42,27 @@ jobs:
             image_desc: "Kyanite DX - Developer-focused variant with dev tools"
             image_keywords: "bootc,ublue,universal-blue,kde,dx"
 
-    build-kyanite-dx-gaming:
-        name: Build kyanite-dx-gaming
-        uses: ./.github/workflows/reusable_build.yml
+    alias-deprecated-tags:
+        name: Alias deprecated -gaming tags
+        needs: [build-kyanite, build-kyanite-dx]
+        if: github.event_name == 'push'
+        runs-on: ubuntu-24.04
         permissions:
-            contents: read
             packages: write
-            id-token: write
-        with:
-            image_name: "kyanite-dx-gaming"
-            image_flavor: "dx-gaming"
-            image_desc: "Kyanite DX+GAMING - Developer and gaming focused variant with dev tools + Steam"
-            image_keywords: "bootc,ublue,universal-blue,kde,dx,steam"
-
-    build-kyanite-gaming:
-        name: Build kyanite-gaming
-        uses: ./.github/workflows/reusable_build.yml
-        permissions:
-            contents: read
-            packages: write
-            id-token: write
-        with:
-            image_name: "kyanite-gaming"
-            image_flavor: "gaming"
-            image_desc: "Kyanite GAMING - Gaming-focused variant with Steam"
-            image_keywords: "bootc,ublue,universal-blue,kde,gaming,steam"
+        steps:
+            - name: Login to ghcr.io
+              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Alias kyanite-gaming → kyanite
+              run: |
+                  docker buildx imagetools create \
+                      -t ghcr.io/${{ github.repository_owner }}/kyanite-gaming:stable \
+                      ghcr.io/${{ github.repository_owner }}/kyanite:stable
+            - name: Alias kyanite-dx-gaming → kyanite-dx
+              run: |
+                  docker buildx imagetools create \
+                      -t ghcr.io/${{ github.repository_owner }}/kyanite-dx-gaming:stable \
+                      ghcr.io/${{ github.repository_owner }}/kyanite-dx:stable

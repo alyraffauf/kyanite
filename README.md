@@ -23,9 +23,9 @@ Kyanite improves Fedora Kinoite with:
 All images are built and published automatically:
 
 - **kyanite** - Clean, modern, featureful KDE desktop for normal people.
-- **kyanite-dx** - Developer experience with Docker CE, QEMU/KVM, Android tools, Flatpak builder, etc.
-- **kyanite-gaming** - Gaming experience with Steam, Gamescope, ProtonUp-Qt, Heroic Game Launcher, etc.
-- **kyanite-dx-gaming** - Everything combined.
+- **kyanite-dx** - Developer experience with Docker CE, QEMU/KVM, Flatpak builder, mkosi, etc.
+
+Optional extras (Steam, ROCm, gaming Flatpaks, etc.) are installed on demand from [kyanite-sysexts](https://github.com/alyraffauf/kyanite-sysexts) via `ujust install-sysext NAME` or `ujust install-gaming-flatpaks`.
 
 ## State of the Project
 
@@ -42,14 +42,6 @@ sudo systemctl reboot
 
 # Developer variant
 sudo bootc switch ghcr.io/alyraffauf/kyanite-dx:stable
-sudo systemctl reboot
-
-# Gaming variant
-sudo bootc switch ghcr.io/alyraffauf/kyanite-gaming:stable
-sudo systemctl reboot
-
-# Combined DX + Gaming
-sudo bootc switch ghcr.io/alyraffauf/kyanite-dx-gaming:stable
 sudo systemctl reboot
 ```
 
@@ -105,7 +97,7 @@ Kyanite uses a declarative configuration system:
 
 - **[packages.json](packages.json)** - Define packages per variant.
 - **[services.json](services.json)** - Configure systemd units by variant.
-- **files/{variant}/** - Variant-specific system files (main, gaming, dx).
+- **files/{variant}/** - Variant-specific system files (main, dx).
 - **[brew/](brew/)** - Homebrew packages (runtime installation).
 - **[flatpaks/](flatpaks/)** - Flatpak preinstall files by variant.
 - **[ujust/](ujust/)** - Custom `ujust` commands by variant.
@@ -122,14 +114,12 @@ just build
 
 # Build specific variant
 IMAGE_FLAVOR=dx just build
-IMAGE_FLAVOR=gaming just build
-IMAGE_FLAVOR=dx-gaming just build
 
 # Build with NVIDIA base image
 BASE_IMAGE_SHA=$(skopeo inspect docker://ghcr.io/ublue-os/kinoite-nvidia:latest --format '{{.Digest}}')
 BASE_IMAGE=ghcr.io/ublue-os/kinoite-nvidia:latest \
 BASE_IMAGE_SHA=$BASE_IMAGE_SHA \
-IMAGE_FLAVOR=dx-gaming \
+IMAGE_FLAVOR=dx \
 just build
 
 # Create bootable images

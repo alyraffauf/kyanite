@@ -95,7 +95,7 @@ sudoif command *args:
 # Examples:
 #   just build                          # builds kyanite:stable (main variant)
 
-# just build kyanite stable gaming    # builds kyanite-gaming:stable
+# just build kyanite stable dx       # builds kyanite-dx:stable
 build target_image=image_name tag=default_tag flavor=image_flavor:
     #!/usr/bin/env bash
 
@@ -230,7 +230,7 @@ _rebuild-bib $target_image $tag $type $config: (build target_image tag) && (_bui
 # Examples:
 #   just build-qcow2                                    # builds kyanite (main)
 
-# just build-qcow2 localhost/kyanite stable gaming    # builds kyanite-gaming
+# just build-qcow2 localhost/kyanite stable dx       # builds kyanite-dx
 [group('Build Virtal Machine Image')]
 build-qcow2 target_image=("localhost/" + _full_image_name) tag=default_tag flavor=image_flavor: (build ("localhost/" + image_name) tag flavor) && (_build-bib target_image tag "qcow2" "iso/disk.toml")
 
