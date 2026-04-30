@@ -11,7 +11,7 @@
                 "disable": []
             },
             "user": {
-                "enable": ["bazaar.service", "podman-auto-update.timer"],
+                "enable": ["bazaar.service", "podman-auto-update.timer", "podman.socket"],
                 "disable": []
             }
         },
