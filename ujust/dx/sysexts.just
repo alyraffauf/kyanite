@@ -3,7 +3,7 @@
 ### sysexts.just
 #######################
 
-repo := "alyraffauf/kyanite"
+repo := "alyraffauf/kyanite-sysexts"
 
 # Install the ROCm sysext (registers transfer config, fetches latest, merges)
 [group('Extensions')]
