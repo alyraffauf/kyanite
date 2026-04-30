@@ -7,9 +7,11 @@ Wants=network-online.target
 Image=ghcr.io/open-webui/open-webui:main
 ContainerName=open-webui
 AutoUpdate=registry
-Network=host
+Network=ai
+PublishPort=127.0.0.1:8080:8080
 Volume=open-webui-data:/app/backend/data
-Environment=WEBUI_HOST=127.0.0.1
+Environment=WEBUI_HOST=0.0.0.0
+Environment=OLLAMA_BASE_URL=http://ollama:11434
 
 [Service]
 Restart=on-failure

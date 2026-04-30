@@ -8,6 +8,8 @@ Conflicts=ollama-rocm.service ollama-vulkan.service
 Image=docker.io/ollama/ollama:latest
 ContainerName=ollama
 AutoUpdate=registry
+Network=ai
+HostName=ollama
 PublishPort=127.0.0.1:11434:11434
 Volume=ollama-data:/root/.ollama
 

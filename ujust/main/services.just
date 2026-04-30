@@ -25,6 +25,7 @@ disable-syncthing:
 enable-ollama:
     #!/usr/bin/env bash
     set -euo pipefail
+    podman network exists ai 2>/dev/null || podman network create ai
     mkdir -p "$HOME/.config/containers/systemd"
     cp -n /usr/share/kyanite/quadlets/ollama.container \
         "$HOME/.config/containers/systemd/ollama.container"
@@ -40,6 +41,7 @@ enable-ollama:
 enable-ollama-rocm:
     #!/usr/bin/env bash
     set -euo pipefail
+    podman network exists ai 2>/dev/null || podman network create ai
     mkdir -p "$HOME/.config/containers/systemd"
     cp -n /usr/share/kyanite/quadlets/ollama-rocm.container \
         "$HOME/.config/containers/systemd/ollama-rocm.container"
@@ -55,6 +57,7 @@ enable-ollama-rocm:
 enable-ollama-vulkan:
     #!/usr/bin/env bash
     set -euo pipefail
+    podman network exists ai 2>/dev/null || podman network create ai
     mkdir -p "$HOME/.config/containers/systemd"
     cp -n /usr/share/kyanite/quadlets/ollama-vulkan.container \
         "$HOME/.config/containers/systemd/ollama-vulkan.container"
@@ -63,12 +66,14 @@ enable-ollama-vulkan:
     systemctl --user start ollama-vulkan.service
     echo "Ollama (Vulkan) running at http://127.0.0.1:11434"
 
-# Enable the containerized Open WebUI service. Copies the launcher into
-# ~/.local/share/applications/ so it shows up in the KDE menu.
+# Enable the containerized Open WebUI service. Creates the shared 'ai' podman
+# network (if missing) so Open WebUI can reach Ollama by hostname, copies the
+# launcher into ~/.local/share/applications/ for the KDE menu, and starts the UI.
 [group('Services')]
 enable-open-webui:
     #!/usr/bin/env bash
     set -euo pipefail
+    podman network exists ai 2>/dev/null || podman network create ai
     /usr/libexec/kyanite/open-webui-start &
     mkdir -p "$HOME/.local/share/applications"
     cp -f /usr/share/kyanite/launchers/open-webui.desktop \
