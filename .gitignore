@@ -3,3 +3,5 @@ _build_*
 output
 _build-*/**
 node_modules/
+sysexts/mkosi.output/
+sysexts/mkosi.cache/
