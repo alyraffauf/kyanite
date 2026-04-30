@@ -19,6 +19,7 @@ install-rocm-sysext:
     (cd "$TMP" && sha256sum -c --ignore-missing SHA256SUMS)
 
     sudo install -D -m 0644 "$TMP/rocm.transfer" /etc/sysupdate.rocm.d/rocm.transfer
+    sudo mkdir -p /var/lib/extensions
     sudo /usr/lib/systemd/systemd-sysupdate --component=rocm update
     sudo systemd-sysext merge
     echo "ROCm sysext installed and merged."
@@ -36,6 +37,6 @@ remove-rocm-sysext:
     set -euo pipefail
     sudo systemd-sysext unmerge || true
     sudo rm -f /var/lib/extensions/rocm.raw
-    sudo rm -rf /etc/sysupdate.rocm.d
+    sudo rm -rf /etc/sysupdate.rocm.d /var/lib/sysupdate/rocm
     sudo systemd-sysext merge || true
     echo "ROCm sysext removed."
