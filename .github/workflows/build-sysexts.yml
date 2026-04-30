@@ -1,0 +1,82 @@
+---
+name: Build sysexts
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - "sysexts/**"
+            - ".github/workflows/build-sysexts.yml"
+    workflow_dispatch:
+        inputs:
+            name:
+                description: "Sysext to build"
+                default: "rocm"
+
+concurrency:
+    group: sysexts-${{ inputs.name || 'rocm' }}
+    cancel-in-progress: false
+
+permissions:
+    contents: write
+
+jobs:
+    build:
+        name: Build ${{ inputs.name || 'rocm' }} sysext
+        runs-on: ubuntu-latest
+        container:
+            image: registry.fedoraproject.org/fedora:44
+            options: --privileged
+            volumes:
+                - /tmp:/var/tmp
+        env:
+            NAME: ${{ inputs.name || 'rocm' }}
+            ARCH: x86-64
+            VERSION: ${{ github.run_number }}
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install build deps
+              run: |
+                  dnf install -y --setopt=install_weak_deps=False \
+                      mkosi squashfs-tools libseccomp \
+                      libselinux-utils selinux-policy-targeted \
+                      dnf-plugins-core distribution-gpg-keys \
+                      gh
+
+            - name: Build sysext
+              run: bash sysexts/build.sh "$NAME"
+
+            - name: Stage release artifacts
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  cd output/sysexts
+                  ASSET="${NAME}-${VERSION}-${ARCH}.raw"
+                  mv "${NAME}.raw" "$ASSET"
+                  cp "../../sysexts/sysupdate.d/${NAME}.conf" "${NAME}.conf"
+
+                  # Cumulative SHA256SUMS across all versions in the rolling release.
+                  # Newest entries win on filename collision (only happens for the static .conf).
+                  gh release download "sysext-${NAME}" \
+                      --pattern SHA256SUMS --output prev.sums 2>/dev/null \
+                      || : > prev.sums
+                  sha256sum "$ASSET" "${NAME}.conf" > new.sums
+                  cat new.sums prev.sums | awk '!seen[$2]++' | sort -k2 > SHA256SUMS
+                  rm new.sums prev.sums
+
+            - name: Publish to rolling release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: sysext-${{ env.NAME }}
+                  name: sysext-${{ env.NAME }}
+                  files: |
+                      output/sysexts/${{ env.NAME }}-${{ env.VERSION }}-${{ env.ARCH }}.raw
+                      output/sysexts/${{ env.NAME }}.conf
+                      output/sysexts/SHA256SUMS
+                  body: |
+                      Rolling release for the **${{ env.NAME }}** sysext.
+
+                      Latest build: `${{ env.VERSION }}` (${{ env.ARCH }})
+
+                      Install via `ujust install-${{ env.NAME }}-sysext` on kyanite-dx.
