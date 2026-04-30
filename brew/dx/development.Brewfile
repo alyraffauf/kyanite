@@ -1,6 +1,8 @@
 # Brewfile for development tools
 # Uncomment packages you want to install
 
+# brew "android-platform-tools"
+
 # Container and orchestration tools
 # brew "kind"           # Kubernetes in Docker
 # brew "kubectl"        # Kubernetes CLI

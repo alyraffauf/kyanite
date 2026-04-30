@@ -46,7 +46,6 @@
         },
         "dx": {
             "include": [
-                "android-tools",
                 "edk2-ovmf",
                 "flatpak-builder",
                 "libvirt",
