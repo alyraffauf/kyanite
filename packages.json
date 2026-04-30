@@ -46,9 +46,7 @@
             ]
         },
         "dx": {
-            "include": [
-                "flatpak-builder"
-            ],
+            "include": [],
             "exclude": ["podman-docker"]
         }
     }

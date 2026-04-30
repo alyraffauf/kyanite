@@ -30,6 +30,9 @@
 # brew "cmake"          # Cross-platform build system
 # brew "ninja"          # Small build system
 
+# Flatpak app development
+# flatpak "org.flatpak.Builder"
+
 # Debugging and profiling
 # brew "gdb"            # GNU debugger
 # brew "valgrind"       # Memory debugging tool
