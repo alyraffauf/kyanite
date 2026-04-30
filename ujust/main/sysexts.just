@@ -3,14 +3,12 @@
 ### sysexts.just
 #######################
 
-repo := "alyraffauf/kyanite-sysexts"
-
 # Install a sysext (downloads transfer config, fetches latest version, merges into /usr)
 [group('Extensions')]
 install-sysext NAME:
     #!/usr/bin/env bash
     set -euo pipefail
-    BASE="https://github.com/{{ repo }}/releases/download/sysext-{{ NAME }}"
+    BASE="https://github.com/alyraffauf/kyanite-sysexts/releases/download/sysext-{{ NAME }}"
     TMP=$(mktemp -d)
     trap 'rm -rf "$TMP"' EXIT
 
