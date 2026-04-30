@@ -90,7 +90,7 @@ Ordered rare-changing → frequent-changing for cache efficiency. Third-party pa
 
 1. `01-stage-brewfiles.sh` - Stage `brew/<variant>/*.Brewfile` to `/usr/share/ublue-os/homebrew/` (runtime data consumed by ujust)
 2. `02-fedora-packages.sh` - Packages from `packages.json` (also pins `plasma-desktop` and installs `development-tools` group)
-3. `03-third-party-packages.sh` - Cider, Tailscale, COPR; Docker CE + VSCode for `dx`; Sunshine for `gaming`
+3. `03-third-party-packages.sh` - Cider, Tailscale, COPR; Docker CE for `dx`; Sunshine for `gaming`
 4. `04-workarounds.sh` - Compatibility fixes that sed third-party `.desktop` files (Ghostty KDE shortcut, etc.)
 5. `05-copy-files.sh` - Variant overlay (`files/<variant>/` rsync — including custom `.service` units), ujust consolidation, Flatpak preinstalls
 6. `06-systemd.sh` - Services from `services.json` (may reference units shipped in step 5)
