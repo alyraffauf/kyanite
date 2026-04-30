@@ -124,6 +124,7 @@ build target_image=image_name tag=default_tag flavor=image_flavor:
     podman build \
         "${BUILD_ARGS[@]}" \
         --pull=newer \
+        --format=oci \
         --tag "${FINAL_IMAGE}:{{ tag }}" \
         .
 

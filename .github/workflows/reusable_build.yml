@@ -107,7 +107,7 @@ jobs:
                   image: ${{ env.IMAGE_NAME }}
                   tags: ${{ env.DEFAULT_TAG }}
                   labels: ${{ steps.metadata.outputs.labels }}
-                  oci: false
+                  oci: true
                   build-args: |
                       IMAGE_NAME=${{ env.IMAGE_NAME }}
                       IMAGE_FLAVOR=${{ env.IMAGE_FLAVOR }}
