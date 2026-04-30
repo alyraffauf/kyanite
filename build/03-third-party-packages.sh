@@ -16,22 +16,22 @@ source /ctx/build/copr-helpers.sh
 # - COPR repositories
 ###############################################################################
 
-# echo "::group:: Install Cider"
+echo "::group:: Install Cider"
 
-# echo "Installing Cider from official repository..."
+echo "Installing Cider from official repository..."
 
-# # Add Cider repository
-# cat >/etc/yum.repos.d/cider.repo <<'EOF'
-# [cidercollective]
-# name=Cider Collective Repository
-# baseurl=https://repo.cider.sh/rpm/RPMS
-# enabled=0
-# gpgcheck=1
-# gpgkey=https://repo.cider.sh/RPM-GPG-KEY
-# EOF
+# Add Cider repository
+cat >/etc/yum.repos.d/cider.repo <<'EOF'
+[cidercollective]
+name=Cider Collective Repository
+baseurl=https://repo.cider.sh/rpm/RPMS
+enabled=0
+gpgcheck=1
+gpgkey=https://repo.cider.sh/RPM-GPG-KEY
+EOF
 
-# # Install Cider package
-# dnf5 -y install --enablerepo='cidercollective' Cider
+# Install Cider package
+dnf5 -y install --enablerepo='cidercollective' Cider
 
 # echo "::endgroup::"
 
