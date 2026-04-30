@@ -22,6 +22,7 @@ install-sysext NAME:
     sudo mkdir -p /var/lib/extensions
     sudo /usr/lib/systemd/systemd-sysupdate --component={{ NAME }} update
     sudo systemd-sysext refresh
+    sudo udevadm control --reload && sudo udevadm trigger
     echo "{{ NAME }} sysext installed and merged."
 
 # Pull a newer version of an installed sysext
@@ -29,6 +30,7 @@ install-sysext NAME:
 update-sysext NAME:
     sudo /usr/lib/systemd/systemd-sysupdate --component={{ NAME }} update
     sudo systemd-sysext refresh
+    sudo udevadm control --reload && sudo udevadm trigger
 
 # Remove an installed sysext
 [group('Extensions')]
@@ -38,4 +40,5 @@ remove-sysext NAME:
     sudo rm -f /var/lib/extensions/{{ NAME }}.raw
     sudo rm -rf /etc/sysupdate.{{ NAME }}.d /var/lib/sysupdate/{{ NAME }}
     sudo systemd-sysext refresh
+    sudo udevadm control --reload && sudo udevadm trigger
     echo "{{ NAME }} sysext removed."
