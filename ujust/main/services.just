@@ -3,22 +3,18 @@
 ### services.just
 ########################
 
-# Enable the containerized Syncthing service. Reuses an existing
-# ~/.local/state/syncthing/ config if present.
+# Remove the legacy containerized Syncthing Quadlet (transition helper).
+# Use the syncthing sysext instead: `ujust install-sysext syncthing`.
 [group('Services')]
-enable-syncthing:
-    #!/usr/bin/env bash
-    /usr/libexec/kyanite/syncthing-start
-    echo "Syncthing running at http://127.0.0.1:8384"
-
-# Stop the containerized Syncthing service and prevent autostart at next login
-[group('Services')]
-disable-syncthing:
+remove-syncthing-quadlet:
     #!/usr/bin/env bash
     set -euo pipefail
     systemctl --user stop syncthing.service 2>/dev/null || true
-    systemctl --user mask syncthing.service
-    echo "Syncthing service stopped and masked."
+    rm -f "$HOME/.config/containers/systemd/syncthing.container"
+    systemctl --user daemon-reload
+    echo "Syncthing Quadlet removed. To run native syncthing, install the sysext:"
+    echo "  ujust install-sysext syncthing"
+    echo "  systemctl --user enable --now syncthing.service"
 
 # Enable the CPU/generic Ollama service (uses the official ollama:latest image)
 [group('Services')]

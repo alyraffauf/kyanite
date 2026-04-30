@@ -75,13 +75,16 @@ All three backends listen on `127.0.0.1:11434` and share an `ollama-data` volume
 
 ## Syncthing
 
-Syncthing ships as a Quadlet rather than a system RPM, so you always get the latest upstream version without bloating the OS image. It reuses an existing `~/.local/state/syncthing/` config if present, so peer devices and folder lists migrate transparently.
+Syncthing is available as a [sysext](#optional-extensions) — install once, then enable the native user service:
 
 ```bash
-ujust enable-syncthing
+ujust install-sysext syncthing
+systemctl --user enable --now syncthing.service
 ```
 
-GUI is locked to `http://127.0.0.1:8384`; sync and discovery ports (22000/21027) bind to all interfaces as syncthing requires for LAN/relay peer discovery.
+GUI lives at `http://127.0.0.1:8384`. Existing `~/.local/state/syncthing/` config is preserved across the install (peer devices / folder lists carry over).
+
+> Migrating from the previous containerized Quadlet flow? Run `ujust remove-syncthing-quadlet` to clean up the user-local Quadlet copy before installing the sysext.
 
 ## Quadlet Catalog
 
