@@ -172,5 +172,15 @@ jobs:
                     images+="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${tag}@${DIGEST} "
                   done
                   echo "Images to sign: ${images}"
-                  cosign sign -y --key /tmp/cosign.key ${images}
+                  # legacy referrers mode writes signatures as `<digest>.sig`
+                  # tags. containers/image (rpm-ostree's pull stack on F44)
+                  # only looks there; the cosign 3.x default of OCI 1.1
+                  # referrers API isn't read by it yet. Without this flag,
+                  # `rpm-ostree rebase ostree-image-signed:...` fails with
+                  # "A signature was required, but no signature exists" even
+                  # though `cosign verify` finds the sig fine.
+                  cosign sign -y \
+                      --key /tmp/cosign.key \
+                      --registry-referrers-mode=legacy \
+                      ${images}
                   echo "✓ Images signed successfully"
