@@ -148,12 +148,11 @@ The generated ISO will be in the `output/` directory.
 
 ## Security
 
-Images are signed with [Sigstore Cosign](https://github.com/sigstore/cosign) using keyless signing:
+Images are signed with [Sigstore Cosign](https://github.com/sigstore/cosign) against the public key at [`cosign.pub`](./cosign.pub):
 
 ```bash
 cosign verify \
-  --certificate-identity-regexp="https://github.com/alyraffauf/kyanite/.*" \
-  --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+  --key https://raw.githubusercontent.com/alyraffauf/kyanite/main/cosign.pub \
   ghcr.io/alyraffauf/kyanite:stable
 ```
 
