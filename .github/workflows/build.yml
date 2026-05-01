@@ -19,6 +19,7 @@ jobs:
     build-kyanite:
         name: Build kyanite
         uses: ./.github/workflows/reusable_build.yml
+        secrets: inherit
         permissions:
             contents: read
             packages: write
