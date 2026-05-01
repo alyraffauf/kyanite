@@ -1,12 +1,12 @@
 # Kyanite
 
-Kyanite is a custom bootable container based on Fedora Kinoite focusing on minimal branding, sane defaults, and clean behavior. Built with [Universal Blue](https://universal-blue.org/).
+Kyanite is a custom bootable container based on Fedora Kinoite focusing on minimal branding, sane defaults, and clean behavior. Inspired by [Universal Blue](https://universal-blue.org/).
 
 ![](./_img/screenshot.png)
 
 ## What Changed
 
-Kyanite is built on Universal Blue's [kinoite-main](https://github.com/ublue-os/main) image, which itself derives from Fedora Kinoite.
+Kyanite is built directly on [Fedora Kinoite](https://fedoraproject.org/kinoite/), incorporating select customizations adapted from Universal Blue's [kinoite-main](https://github.com/ublue-os/main) — fuller codec stack via [negativo17](https://negativo17.org/), the [ujust](https://github.com/ublue-os/packages/tree/main/packages/ublue-os-just) command framework, and a few QoL bits.
 
 Kyanite improves Fedora Kinoite with:
 
@@ -158,14 +158,23 @@ cosign verify \
 
 ### Use Signed Transport
 
+`ostree-image-signed:` requires the running deployment to ship the kyanite-specific entries in `/etc/containers/policy.json` (which trust this `cosign.pub`). On a fresh switch from non-kyanite, `policy.json` defaults to `insecureAcceptAnything` and the signed transport refuses outright. Bootstrap is therefore two steps:
+
 ```bash
-# Switch to signed registry
+# 1. Switch via unsigned transport — gets a deployment with the policy + key.
+sudo bootc switch ghcr.io/alyraffauf/kyanite:stable
+sudo systemctl reboot
+
+# 2. From the now-policy-equipped deployment, switch the tracking transport
+#    so future updates are signature-verified.
 sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/alyraffauf/kyanite:stable
 sudo systemctl reboot
 
-# Verify
-rpm-ostree status  # Should show "ostree-image-signed:" prefix
+# Verify — booted spec should now have the "ostree-image-signed:" prefix.
+rpm-ostree status
 ```
+
+After step 2, every update pulled by `rpm-ostreed-automatic.timer` (or a manual `rpm-ostree upgrade`) is verified against `cosign.pub` before any of its bytes touch your filesystem.
 
 ## Resources
 
@@ -178,4 +187,4 @@ rpm-ostree status  # Should show "ostree-image-signed:" prefix
 
 Apache License 2.0 - See [LICENSE.md](LICENSE.md) for details.
 
-Built with [Universal Blue](https://universal-blue.org/) tooling. Based on [Fedora Kinoite](https://fedoraproject.org/kinoite/) with [KDE Plasma](https://kde.org/).
+Based on [Fedora Kinoite](https://fedoraproject.org/kinoite/) with [KDE Plasma](https://kde.org/). Inspired by [Universal Blue](https://universal-blue.org/).
