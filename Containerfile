@@ -2,15 +2,15 @@
 # BUILD ARGUMENTS
 ###############################################################################
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
-ARG SOURCE_IMAGE="${BASE_IMAGE_NAME}-main"
 # Static value enables Renovate to detect and update the base image
-ARG BASE_IMAGE="ghcr.io/ublue-os/kinoite-main:44"
+ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/kinoite:44"
 ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 # SHA pinning enables Renovate to automatically update dependencies
 # See: https://docs.renovatebot.com/docker/#digest-pinning
 
-# Base Image @ ublue-os/main
-ARG BASE_IMAGE_SHA="sha256:27593eae824195b09748620b42aa3aa69e00555ab71a13ac0e544d1aa5427691"
+# Base Image @ fedora-ostree-desktops/kinoite (upstream Fedora; ublue
+# customizations replicated in build/02-fedora-packages.sh)
+ARG BASE_IMAGE_SHA="sha256:57e2911c448f764d9509e7b9c74201e4b636a2c54416c020e098d79ff2184134"
 
 # Brew Image
 ARG BREW_IMAGE_SHA="sha256:7d15cef4485d33f5a03f734b7f89cb02ab0cb694aa0115c12bf42f5fed5e9e08"
@@ -39,7 +39,7 @@ FROM ${BASE_IMAGE}@${BASE_IMAGE_SHA} AS base
 
 # Build arguments for image metadata and variant selection
 ARG IMAGE_NAME="${IMAGE_NAME:-kyanite}"
-ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
+ARG IMAGE_VENDOR="${IMAGE_VENDOR:-alyraffauf}"
 ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
 ARG SHA_HEAD_SHORT="${SHA_HEAD_SHORT:-}"

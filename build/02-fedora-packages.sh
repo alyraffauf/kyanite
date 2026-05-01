@@ -6,8 +6,46 @@ set -eoux pipefail
 # Fedora Package Installation
 ###############################################################################
 # This script installs and removes packages from Fedora repositories only.
-# Third-party repositories are handled in 25-third-party-packages.sh.
+# Third-party repositories are handled in 03-third-party-packages.sh.
 ###############################################################################
+
+echo "::group:: Replicate ublue base customizations"
+
+# Replicates the parts of ublue-os/main's install.sh that we want now that
+# we're rebased directly on quay.io/fedora-ostree-desktops/kinoite.
+# Two-phase: (1) repo setup + ublue-os-just install BEFORE the package list
+# install so codecs come from negativo17 transparently, (2) distro-sync of
+# the mesa/libva stack and versionlocks AFTER the install (see end of file).
+
+# negativo17 fedora-multimedia for fuller codec coverage. priority=90 outranks
+# Fedora's default (99); higher-priority versions auto-win during install.
+dnf5 config-manager addrepo \
+    --from-repofile="https://negativo17.org/repos/fedora-multimedia.repo" || true
+dnf5 config-manager setopt fedora-multimedia.priority=90
+dnf5 config-manager setopt fedora-multimedia.enabled=1
+
+# Fedora packaging bug: OpenCL-ICD-Loader gets installed in error; ocl-icd is
+# the expected ICD loader. https://bugzilla.redhat.com/show_bug.cgi?id=2332429
+dnf5 -y swap --repo='fedora' OpenCL-ICD-Loader ocl-icd || true
+
+# Replace podman's default policy.json so /etc has it (bootc/ostree copies
+# /usr/etc to /etc on first boot, but moving avoids divergence).
+if [[ -f /usr/etc/containers/policy.json ]]; then
+    mv /usr/etc/containers/policy.json /etc/containers/policy.json
+fi
+
+# Pull a small set of ublue-os utility packages from their COPR. ublue-os-just
+# provides /usr/bin/ujust + the /usr/share/ublue-os/just/ dispatch layout that
+# 05-copy-files.sh and our recipes assume; the others provide LUKS unlock
+# helpers, hardware udev rules, and rpm-ostreed-automatic timer wrappers.
+dnf5 -y copr enable ublue-os/packages
+dnf5 -y install \
+    ublue-os-just \
+    ublue-os-luks \
+    ublue-os-udev-rules \
+    ublue-os-update-services
+
+echo "::endgroup::"
 
 echo "::group:: Lock Plasma Desktop Version"
 
@@ -100,6 +138,39 @@ echo "::endgroup::"
 echo "::group:: Add Build Tools"
 
 dnf5 -y group install development-tools
+
+echo "::endgroup::"
+
+echo "::group:: Override mesa/libva from fedora-multimedia + versionlocks"
+
+# Force the mesa/libva/intel-codec stack to negativo17's fuller versions and
+# pin them so a future Fedora upgrade doesn't flip-flop. Mirrors ublue's list.
+OVERRIDES=(
+    intel-gmmlib
+    intel-mediasdk
+    intel-vpl-gpu-rt
+    libheif
+    libva
+    libva-intel-media-driver
+    mesa-dri-drivers
+    mesa-filesystem
+    mesa-libEGL
+    mesa-libGL
+    mesa-libgbm
+    mesa-va-drivers
+    mesa-vulkan-drivers
+)
+dnf5 distro-sync --skip-unavailable -y --repo='fedora-multimedia' "${OVERRIDES[@]}"
+dnf5 versionlock add "${OVERRIDES[@]}"
+
+# Prevent partial qt6 upgrades that can break SDDM/KWin between Fedora bumps.
+dnf5 versionlock add "qt6-*"
+
+# Ship Flathub for first-boot flatpak preinstall (kyanite's flatpak-nuke-fedora
+# service removes Fedora's flatpak remotes; this provides the real Flathub).
+mkdir -p /etc/flatpak/remotes.d/
+curl --retry 3 -fsSLo /etc/flatpak/remotes.d/flathub.flatpakrepo \
+    https://dl.flathub.org/repo/flathub.flatpakrepo
 
 echo "::endgroup::"
 

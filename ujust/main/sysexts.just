@@ -21,6 +21,7 @@ install-sysext NAME:
     sudo systemctl enable --now systemd-sysupdate.timer
     sudo /usr/lib/systemd/systemd-sysupdate update
     sudo systemd-sysext refresh
+    sudo systemd-sysusers
     sudo udevadm control --reload && sudo udevadm trigger
     echo "{{ NAME }} sysext installed and merged."
 

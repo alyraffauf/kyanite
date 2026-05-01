@@ -23,6 +23,12 @@ chmod 755 /nix
 semanage fcontext -a -t systemd_importd_var_run_t '/var/lib/sysupdate(/.*)?' || true
 semanage fcontext -a -t systemd_importd_var_run_t '/var/lib/extensions(/.*)?' || true
 
+# Mask systemd-remount-fs.service: it runs `mount -o remount /`, which fails
+# on bootc/composefs roots ("overlay: No changes allowed in reconfigure").
+# There's nothing to remount on a read-only ostree root anyway. ublue-os/main
+# masks this in their base; we replicate that now that we're on upstream.
+systemctl mask systemd-remount-fs.service
+
 # Set default/pinned applications on the taskmanager panel applet
 # There is no standard API for this configuration
 # Reference: https://bugs.kde.org/show_bug.cgi?id=511560

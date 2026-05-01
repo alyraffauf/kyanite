@@ -17,7 +17,10 @@
     "pinDigests": true
   },
 
-  // Custom regex managers for Justfile container images
+  // Custom regex managers for Justfile + Containerfile images.
+  // Containerfile uses split BASE_IMAGE / BASE_IMAGE_SHA ARGs which
+  // Renovate's stock dockerfile manager doesn't always pair correctly,
+  // so we match them explicitly here.
   "customManagers": [
     {
       "customType": "regex",
@@ -38,6 +41,24 @@
       "datasourceTemplate": "docker",
       "versioningTemplate": "docker",
       "currentValueTemplate": "latest"
+    },
+    {
+      "customType": "regex",
+      "description": "Containerfile BASE_IMAGE pair (tag + digest in separate ARGs)",
+      "managerFilePatterns": ["/(^|/)Containerfile$/"],
+      "matchStrings": [
+        "ARG BASE_IMAGE=\"(?<depName>[^:\"]+):(?<currentValue>[^\"@]+)\"[\\s\\S]+?ARG BASE_IMAGE_SHA=\"(?<currentDigest>sha256:[a-f0-9]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "description": "Containerfile BREW_IMAGE pair (tag + digest in separate ARGs)",
+      "managerFilePatterns": ["/(^|/)Containerfile$/"],
+      "matchStrings": [
+        "ARG BREW_IMAGE=\"(?<depName>[^:\"]+):(?<currentValue>[^\"@]+)\"[\\s\\S]+?ARG BREW_IMAGE_SHA=\"(?<currentDigest>sha256:[a-f0-9]+)\""
+      ],
+      "datasourceTemplate": "docker"
     }
   ],
 
