@@ -17,7 +17,7 @@ install-sysext NAME:
     (cd "$TMP" && sha256sum -c --ignore-missing SHA256SUMS)
 
     sudo install -D -m 0644 "$TMP/{{ NAME }}.transfer" /etc/sysupdate.d/{{ NAME }}.transfer
-    sudo mkdir -p /var/lib/extensions
+    sudo systemd-tmpfiles --create kyanite-sysexts.conf
     sudo systemctl enable --now systemd-sysupdate.timer
     sudo /usr/lib/systemd/systemd-sysupdate update
     sudo systemd-sysext refresh

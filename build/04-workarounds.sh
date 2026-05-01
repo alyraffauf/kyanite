@@ -15,16 +15,13 @@ mkdir -p /nix
 chown root:root /nix
 chmod 755 /nix
 
-# systemd-sysupdate.timer SELinux gap on F44: relabel its state dirs +
-# install local policy module (paired with files/.../kyanite-sysupdate.te).
+# Register systemd_importd_var_run_t labels for systemd-sysupdate's state
+# dirs. The matching tmpfiles.d snippet creates/relabels them at boot, so
+# systemd-sysupdate.service (which transitions to systemd_importd_t) can
+# read/write them. Without this, the dirs inherit a label like
+# container_var_lib_t and the timer-driven update path fails with EACCES.
 semanage fcontext -a -t systemd_importd_var_run_t '/var/lib/sysupdate(/.*)?' || true
 semanage fcontext -a -t systemd_importd_var_run_t '/var/lib/extensions(/.*)?' || true
-TMP=$(mktemp -d)
-checkmodule -M -m -o "$TMP/kyanite-sysupdate.mod" \
-    /ctx/files/main/usr/share/kyanite/selinux/kyanite-sysupdate.te
-semodule_package -o "$TMP/kyanite-sysupdate.pp" -m "$TMP/kyanite-sysupdate.mod"
-semodule -i "$TMP/kyanite-sysupdate.pp"
-rm -rf "$TMP"
 
 # Set default/pinned applications on the taskmanager panel applet
 # There is no standard API for this configuration
