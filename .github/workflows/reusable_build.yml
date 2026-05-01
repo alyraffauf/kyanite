@@ -145,14 +145,32 @@ jobs:
               env:
                   DIGEST: ${{ steps.push.outputs.digest }}
                   TAGS: ${{ steps.metadata.outputs.tags }}
-                  COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+                  SIGNING_SECRET: ${{ secrets.SIGNING_SECRET }}
                   COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
               run: |
                   echo "Signing images with Cosign..."
+                  # Write the secret to a file. env:// has been flaky with
+                  # multi-line PEM blocks in CI; --key=path is robust.
+                  printf '%s\n' "${SIGNING_SECRET}" > /tmp/cosign.key
+                  chmod 600 /tmp/cosign.key
+                  LINES=$(wc -l < /tmp/cosign.key)
+                  BYTES=$(wc -c < /tmp/cosign.key)
+                  echo "key file: ${LINES} lines, ${BYTES} bytes"
+                  if [ "$LINES" -lt 4 ]; then
+                      echo "::error::cosign.key has only ${LINES} lines (PEM needs ≥4: BEGIN, body, END, trailing newline)"
+                      head -c 60 /tmp/cosign.key | od -c | head -2
+                      exit 1
+                  fi
+                  if ! head -1 /tmp/cosign.key | grep -q '^-----BEGIN'; then
+                      echo "::error::cosign.key does not start with -----BEGIN"
+                      head -1 /tmp/cosign.key
+                      exit 1
+                  fi
+                  trap 'shred -u /tmp/cosign.key 2>/dev/null || rm -f /tmp/cosign.key' EXIT
                   images=""
                   for tag in ${TAGS}; do
                     images+="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:${tag}@${DIGEST} "
                   done
                   echo "Images to sign: ${images}"
-                  cosign sign -y --key env://COSIGN_PRIVATE_KEY ${images}
+                  cosign sign -y --key /tmp/cosign.key ${images}
                   echo "✓ Images signed successfully"
