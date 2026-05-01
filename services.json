@@ -5,7 +5,8 @@
                 "enable": [
                     "flatpak-nuke-fedora.service",
                     "flatpak-preinstall.service",
-                    "podman.socket"
+                    "podman.socket",
+                    "rpm-ostreed-automatic.timer"
                 ],
                 "disable": []
             },
