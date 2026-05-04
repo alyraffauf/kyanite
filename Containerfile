@@ -13,7 +13,7 @@ ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 ARG BASE_IMAGE_SHA="sha256:df1d8ed84c04ddbe4effd3c8d6bfc5f630e92e676096a5e9f17fd5988a2dcc5e"
 
 # Brew Image
-ARG BREW_IMAGE_SHA="sha256:7d15cef4485d33f5a03f734b7f89cb02ab0cb694aa0115c12bf42f5fed5e9e08"
+ARG BREW_IMAGE_SHA="sha256:7646a12d0369270ba479bde05d69e273af966a55178f283b0f717381d086ca7a"
 
 ###############################################################################
 # IMPORT STAGES
