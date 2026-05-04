@@ -3,14 +3,14 @@
 ###############################################################################
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
 # Static value enables Renovate to detect and update the base image
-ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/kinoite:44"
+ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/kinoite:45"
 ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 # SHA pinning enables Renovate to automatically update dependencies
 # See: https://docs.renovatebot.com/docker/#digest-pinning
 
 # Base Image @ fedora-ostree-desktops/kinoite (upstream Fedora; ublue
 # customizations replicated in build/02-fedora-packages.sh)
-ARG BASE_IMAGE_SHA="sha256:6a3ed2a184b83f4f2f8d62c6f41eff0c9cd6cbabc42cb068c81e4d3a8fbfa033"
+ARG BASE_IMAGE_SHA="sha256:c480b0f44b7a06bb88be754b03ff6a4928ec7ee7de7a80d690f25359dea7b5f2"
 
 # Brew Image
 ARG BREW_IMAGE_SHA="sha256:7646a12d0369270ba479bde05d69e273af966a55178f283b0f717381d086ca7a"
