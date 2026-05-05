@@ -1,0 +1,6 @@
+; systemd-sysupdate runs as init_t but operates on files labeled
+; systemd_importd_var_run_t (the helper systemd-pull transitions to
+; systemd_importd_t and creates the temp files there). Without this,
+; the atomic rename + symlink-replace at install time is denied.
+(allow init_t systemd_importd_var_run_t (file (rename unlink)))
+(allow init_t systemd_importd_var_run_t (lnk_file (create rename unlink)))
