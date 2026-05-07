@@ -29,7 +29,7 @@
                     }
                 }
             ],
-            "ghcr.io/alyraffauf": [
+            "ghcr.io/alyraffauf/kyanite": [
                 {
                     "type": "sigstoreSigned",
                     "keyPath": "/etc/pki/containers/kyanite.pub",
