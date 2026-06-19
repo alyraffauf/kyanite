@@ -26,6 +26,7 @@
                 "fish",
                 "flatpak-spawn",
                 "fuse",
+                "fuse-libs",
                 "fzf",
                 "git",
                 "google-noto-sans-balinese-fonts",
