@@ -11,7 +11,6 @@ source /ctx/build/copr-helpers.sh
 ###############################################################################
 # This script optionally installs packages from third-party repositories:
 # - Cider
-# - Noctalia Shell
 # - COPR repositories
 ###############################################################################
 
@@ -34,19 +33,6 @@ dnf5 -y install --enablerepo='cidercollective' Cider
 
 # echo "::endgroup::"
 
-echo "::group:: Install Noctalia Shell"
-
-dnf5 -y install \
-    --nogpgcheck \
-    --repofrompath "terra,https://repos.fyralabs.com/terra\$releasever" \
-    terra-release
-
-dnf5 config-manager setopt terra.enabled=0
-
-dnf5 -y install --enablerepo='terra' noctalia-shell
-
-echo "::endgroup::"
-
 echo "::group:: Install COPR Packages"
 
 copr_install_isolated "scottames/ghostty" "ghostty"
@@ -61,7 +47,7 @@ echo "::endgroup::"
 echo "::group:: Disable Third-Party Repositories"
 
 # Disable third-party repos
-for repo in negativo17-fedora-multimedia fedora-cisco-openh264 terra; do
+for repo in negativo17-fedora-multimedia fedora-cisco-openh264; do
     if [[ -f "/etc/yum.repos.d/${repo}.repo" ]]; then
         sed -i 's@enabled=1@enabled=0@g' "/etc/yum.repos.d/${repo}.repo"
     fi
