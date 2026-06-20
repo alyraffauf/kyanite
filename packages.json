@@ -76,6 +76,7 @@
                 "squashfs-tools",
                 "symlinks",
                 "tcpdump",
+                "thermald",
                 "tmux",
                 "traceroute",
                 "usbmuxd",
