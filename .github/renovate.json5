@@ -7,6 +7,8 @@
   // Do not rebase when the default branch is updated
   "rebaseWhen": "never",
   "automerge": true,
+  "timezone": "America/New_York",
+  "schedule": ["* 22-23,0-5 * * *"],
 
   // Explicitly enable managers
   "enabledManagers": ["dockerfile", "github-actions", "custom.regex"],
