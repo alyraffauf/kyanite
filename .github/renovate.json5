@@ -6,6 +6,7 @@
 
   // Do not rebase when the default branch is updated
   "rebaseWhen": "never",
+  "automerge": true,
 
   // Explicitly enable managers
   "enabledManagers": ["dockerfile", "github-actions", "custom.regex"],
@@ -86,12 +87,6 @@
       "labels": ["renovate", "automerge"]
     },
     {
-      "description": "Disable automerge for rechunk to allow manual review",
-      "matchPackageNames": ["ghcr.io/hhd-dev/rechunk"],
-      "matchUpdateTypes": ["major", "minor", "patch", "digest", "pinDigest"],
-      "automerge": false
-    },
-    {
       "description": "Enable and auto-merge GitHub Actions digest updates",
       "matchDepTypes": ["action"],
       "matchFileNames": [".github/workflows/**"],
@@ -101,15 +96,15 @@
       "enabled": true
     },
     {
-      "description": "Manual review for major/minor version updates",
-      "matchUpdateTypes": ["major", "minor"],
-      "automerge": false
-    },
-    {
       "description": "Pin digests for container images detected by custom regex managers",
       "matchManagers": ["custom.regex"],
       "matchDatasources": ["docker"],
       "pinDigests": true
+    },
+    {
+      "description": "Keep Fedora OCI base image updates manual",
+      "matchPackageNames": ["quay.io/fedora-ostree-desktops/kinoite"],
+      "automerge": false
     }
   ]
 }
