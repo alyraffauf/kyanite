@@ -102,8 +102,9 @@
       "pinDigests": true
     },
     {
-      "description": "Keep Fedora OCI base image updates manual",
+      "description": "Keep Fedora OCI base image version updates manual",
       "matchPackageNames": ["quay.io/fedora-ostree-desktops/kinoite"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
       "automerge": false
     }
   ]
