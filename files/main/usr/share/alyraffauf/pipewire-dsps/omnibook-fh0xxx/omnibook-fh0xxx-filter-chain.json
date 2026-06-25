@@ -29,6 +29,21 @@
             },
             {
                 "type": "lv2",
+                "plugin": "http://lsp-plug.in/plugins/lv2/para_equalizer_x16_stereo",
+                "name": "eq",
+                "control": {
+                    "ft_0": 1,
+                    "f_0": 300.0,
+                    "g_0": 0.75,
+                    "q_0": 1.2,
+                    "ft_1": 1,
+                    "f_1": 2600.0,
+                    "g_1": 1.26,
+                    "q_1": 0.8
+                }
+            },
+            {
+                "type": "lv2",
                 "plugin": "http://lsp-plug.in/plugins/lv2/mb_compressor_stereo",
                 "name": "woofer_bp",
                 "control": {
@@ -80,10 +95,18 @@
             },
             {
                 "output": "el:out_l",
-                "input": "woofer_bp:in_l"
+                "input": "eq:in_l"
             },
             {
                 "output": "el:out_r",
+                "input": "eq:in_r"
+            },
+            {
+                "output": "eq:out_l",
+                "input": "woofer_bp:in_l"
+            },
+            {
+                "output": "eq:out_r",
                 "input": "woofer_bp:in_r"
             },
             {
@@ -100,7 +123,7 @@
         "capture.volumes": [
             {
                 "control": "el:volume",
-                "min": -47.5,
+                "min": -45.0,
                 "max": 0.0,
                 "scale": "cubic"
             }
