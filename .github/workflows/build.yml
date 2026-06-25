@@ -29,25 +29,3 @@ jobs:
             image_flavor: "main"
             image_desc: "Kyanite - A clean KDE Plasma bootc image"
             image_keywords: "bootc,ublue,universal-blue,kde"
-
-    alias-deprecated-tags:
-        name: Alias deprecated variant tags to kyanite
-        needs: [build-kyanite]
-        if: github.event_name == 'push'
-        runs-on: ubuntu-24.04
-        permissions:
-            packages: write
-        steps:
-            - name: Login to ghcr.io
-              uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
-              with:
-                  registry: ghcr.io
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-            - name: Alias deprecated tags to kyanite:stable
-              run: |
-                  for tag in kyanite-dx kyanite-dx-gaming kyanite-gaming; do
-                      docker buildx imagetools create \
-                          -t "ghcr.io/${{ github.repository_owner }}/${tag}:stable" \
-                          "ghcr.io/${{ github.repository_owner }}/kyanite:stable"
-                  done

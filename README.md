@@ -27,8 +27,6 @@ sudo systemctl reboot
 
 After it boots, `ujust --list` shows what custom recipes are available. A couple things to know up front: stuff under `/etc/skel` doesn't auto-migrate, and rebasing across desktop environments (e.g. GNOME → KDE) usually goes badly.
 
-> **Migrating from kyanite-dx / kyanite-gaming?** Those tags now alias to `kyanite:stable`, so you'll keep getting updates. Run `ujust rebase-helper` to clean up the variant metadata when you get around to it.
-
 ## Optional sysexts
 
 Anything heavy or opt-in lives in [kyanite-sysexts](https://github.com/alyraffauf/kyanite-sysexts) as systemd-sysext payloads. Install only what you actually want:
