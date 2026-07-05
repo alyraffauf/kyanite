@@ -2,6 +2,7 @@
     "variants": {
         "main": {
             "include": [
+                "age",
                 "alsa-firmware",
                 "apr",
                 "apr-util",
