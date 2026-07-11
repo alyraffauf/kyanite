@@ -10,7 +10,7 @@ ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 
 # Base Image @ fedora-ostree-desktops/kinoite (upstream Fedora; ublue
 # customizations replicated in build/02-fedora-packages.sh)
-ARG BASE_IMAGE_SHA="sha256:2cb797635e0472371039036546233f1a31e216153d151ecefb3598a55c830931"
+ARG BASE_IMAGE_SHA="sha256:5c83c21cc1f3829c8b5b250b383d2a8205baa27b3d5bd6e730a8e3701c789df2"
 
 # Brew Image
 ARG BREW_IMAGE_SHA="sha256:13b3c31fd280181943543afeeef70d0d5161d6102fba749f475877980d5a90b7"
