@@ -4,6 +4,7 @@
             "include": [
                 "age",
                 "alsa-firmware",
+                "ansible",
                 "cachefilesd",
                 "chezmoi",
                 "curl",
