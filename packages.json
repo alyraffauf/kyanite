@@ -7,6 +7,7 @@
                 "apr",
                 "apr-util",
                 "cachefilesd",
+                "chezmoi",
                 "curl",
                 "distrobox",
                 "fcitx5-chewing",
