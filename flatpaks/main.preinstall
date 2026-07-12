@@ -13,27 +13,6 @@ Branch=stable
 [Flatpak Preinstall org.fedoraproject.MediaWriter]
 Branch=stable
 
-[Flatpak Preinstall org.kde.gwenview]
-Branch=stable
-
-[Flatpak Preinstall org.kde.haruna]
-Branch=stable
-
-[Flatpak Preinstall org.kde.kcalc]
-Branch=stable
-
-[Flatpak Preinstall org.kde.kclock]
-Branch=stable
-
-[Flatpak Preinstall org.kde.kweather]
-Branch=stable
-
-[Flatpak Preinstall org.kde.okular]
-Branch=stable
-
-[Flatpak Preinstall org.kde.skanpage]
-Branch=stable
-
 [Flatpak Preinstall org.mozilla.firefox]
 Branch=stable
 
