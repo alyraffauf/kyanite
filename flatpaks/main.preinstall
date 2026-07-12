@@ -7,9 +7,6 @@ Branch=stable
 [Flatpak Preinstall io.github.kolunmi.Bazaar]
 Branch=stable
 
-[Flatpak Preinstall org.fedoraproject.MediaWriter]
-Branch=stable
-
 [Flatpak Preinstall org.mozilla.firefox]
 Branch=stable
 
