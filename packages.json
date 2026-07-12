@@ -4,8 +4,6 @@
             "include": [
                 "age",
                 "alsa-firmware",
-                "apr",
-                "apr-util",
                 "cachefilesd",
                 "chezmoi",
                 "curl",
