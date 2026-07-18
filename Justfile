@@ -2,7 +2,7 @@ export image_name := env("IMAGE_NAME", "kyanite")
 export image_flavor := env("IMAGE_FLAVOR", "main")
 export default_tag := env("DEFAULT_TAG", "stable")
 export bib_image := env("BIB_IMAGE", "quay.io/centos-bootc/bootc-image-builder:latest@sha256:2b52843ea2bfda73b0a08d97e76b734393b1d3a804681b9fabb26723bd3a2f0b")
-export qemu_image := env("QEMU_IMAGE", "docker.io/qemux/qemu:latest@sha256:63aef29ad47ee8ef14f193c4391182d1070aeac1960ef2d42498559e82e27e20")
+export qemu_image := env("QEMU_IMAGE", "docker.io/qemux/qemu:latest@sha256:dc75252cc1a68e0fb778f475ce440932d3a2e9e0f9b018c7df1cf8ad6a92eba1")
 
 # Construct the full image name with optional variant suffix
 
