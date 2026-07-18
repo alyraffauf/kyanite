@@ -32,10 +32,12 @@ done
 
 # Consolidate Just files into the ublue-os custom recipe location
 mkdir -p /usr/share/ublue-os/just/
-if [[ -d /ctx/common/ujust/main ]]; then
-    echo "Installing common ujust recipes"
-    find /ctx/common/ujust/main -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >>/usr/share/ublue-os/just/60-custom.just
-fi
+for variant in "${VARIANTS[@]}"; do
+    if [[ -d "/ctx/common/ujust/${variant}" ]]; then
+        echo "Installing common ujust recipes for: ${variant}"
+        find "/ctx/common/ujust/${variant}" -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >>/usr/share/ublue-os/just/60-custom.just
+    fi
+done
 
 for variant in "${VARIANTS[@]}"; do
     if [[ -d "/ctx/ujust/${variant}" ]]; then
@@ -46,10 +48,12 @@ done
 
 # Stage Flatpak preinstall files
 mkdir -p /usr/share/flatpak/preinstall.d/
-if [[ -f /ctx/common/flatpaks/main.preinstall ]]; then
-    echo "Installing common Flatpak preinstall"
-    cp /ctx/common/flatpaks/main.preinstall /usr/share/flatpak/preinstall.d/kyanite-common-main.preinstall
-fi
+for variant in "${VARIANTS[@]}"; do
+    if [[ -f "/ctx/common/flatpaks/${variant}.preinstall" ]]; then
+        echo "Installing common Flatpak preinstall for: ${variant}"
+        cp "/ctx/common/flatpaks/${variant}.preinstall" "/usr/share/flatpak/preinstall.d/kyanite-common-${variant}.preinstall"
+    fi
+done
 
 for variant in "${VARIANTS[@]}"; do
     if [[ -f "/ctx/flatpaks/${variant}.preinstall" ]]; then

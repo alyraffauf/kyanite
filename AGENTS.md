@@ -96,7 +96,7 @@ Heavy/opt-in functionality is **not** baked into the kyanite image. It ships as 
 | `steam`  | Native Steam, Gamescope, MangoHud, GameMode (multilib) |
 | `virt`   | QEMU/KVM + libvirt + edk2-ovmf + virtio drivers        |
 
-Users install via `ujust install-sysext NAME` (recipe in `ujust/main/sysexts.just`). To add a new sysext, work in the `kyanite-sysexts` repo — not this one.
+Users install via `ujust install-sysext NAME` (recipe in `ujust/main/sysexts.just` in the kyanite-common repo, which selects the Fedora or LTS release track at runtime). To add a new sysext, work in the `kyanite-sysexts` repo — not this one.
 
 ## BUILD SCRIPTS (Order)
 
@@ -127,7 +127,7 @@ kyanite/
 ├── flatpaks/
 │   └── main.preinstall    # Flathub preinstall config
 ├── ujust/
-│   └── main/              # User commands (apps, audio, services, sysexts, system)
+│   └── main/              # Fedora-only user commands (rebase-helper); shared recipes live in kyanite-common
 └── .github/workflows/     # CI/CD (build, alias deprecated tags, clean old images)
 ```
 
