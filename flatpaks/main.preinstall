@@ -10,5 +10,5 @@ Branch=stable
 [Flatpak Preinstall org.mozilla.firefox]
 Branch=stable
 
-[Flatpak Preinstall org.mozilla.Thunderbird]
+[Flatpak Preinstall org.mozilla.thunderbird]
 Branch=stable
