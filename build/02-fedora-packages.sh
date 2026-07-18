@@ -34,13 +34,12 @@ if [[ -f /usr/etc/containers/policy.json ]]; then
     mv /usr/etc/containers/policy.json /etc/containers/policy.json
 fi
 
-# Pull a small set of ublue-os utility packages from their COPR. ublue-os-just
-# provides /usr/bin/ujust + the /usr/share/ublue-os/just/ dispatch layout that
-# 05-copy-files.sh and our recipes assume; the others provide LUKS unlock
-# helpers, hardware udev rules, and rpm-ostreed-automatic timer wrappers.
+# Pull a small set of ublue-os utility packages from their COPR. ujust
+# infrastructure is now in-house (kyanite-common); the remaining packages
+# provide LUKS unlock helpers, hardware udev rules, and rpm-ostreed-automatic
+# timer wrappers.
 dnf5 -y copr enable ublue-os/packages
 dnf5 -y install \
-    ublue-os-just \
     ublue-os-luks \
     ublue-os-udev-rules \
     ublue-os-update-services
