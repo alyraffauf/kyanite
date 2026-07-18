@@ -1,6 +1,0 @@
-[Context]
-filesystems=xdg-config/gtk-4.0:ro;
-unset-environment=QT_QPA_PLATFORMTHEME;
-
-[Environment]
-QT_QPA_PLATFORMTHEME=

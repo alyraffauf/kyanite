@@ -9,13 +9,19 @@ set -eoux pipefail
 echo "::group:: Stage Brewfiles"
 
 IFS='-' read -ra FLAVOR_PARTS <<<"${IMAGE_FLAVOR}"
+VARIANTS=(main)
+for variant in "${FLAVOR_PARTS[@]}"; do
+    [[ ${variant} == "main" ]] || VARIANTS+=("${variant}")
+done
 
 mkdir -p /usr/share/ublue-os/homebrew/
-for variant in main "${FLAVOR_PARTS[@]}"; do
-    if [[ -d "/ctx/brew/${variant}" ]]; then
-        echo "Copying Brewfiles for: ${variant}"
-        cp "/ctx/brew/${variant}"/*.Brewfile /usr/share/ublue-os/homebrew/ 2>/dev/null || true
-    fi
+for variant in "${VARIANTS[@]}"; do
+    for root in /ctx/common /ctx; do
+        if [[ -d "${root}/brew/${variant}" ]]; then
+            echo "Copying Brewfiles for: ${variant} from ${root}"
+            cp "${root}/brew/${variant}"/*.Brewfile /usr/share/ublue-os/homebrew/ 2>/dev/null || true
+        fi
+    done
 done
 
 echo "::endgroup::"

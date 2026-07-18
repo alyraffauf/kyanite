@@ -20,6 +20,7 @@ Valid types: `feat`, `fix`, `docs`, `chore`, `build`, `ci`, `refactor`, `test`
 5. All packages live under `packages.json` `"variants.{name}.include"` — the `main` variant is the base applied to every image
 6. All services live under `services.json` `"variants.{name}.system.enable"` (or `.user.enable`) — same rule, `main` is the base
 7. Third-party RPMs and COPR setup → `build/03-third-party-packages.sh`
+8. Shared distro-neutral assets come from the digest-pinned `kyanite-common` OCI layer; keep Fedora-specific overrides in this repository.
 
 ## QUICK REFERENCE
 
@@ -88,12 +89,12 @@ Deprecated tags (`kyanite-dx`, `kyanite-gaming`, `kyanite-dx-gaming`) are aliase
 
 Heavy/opt-in functionality is **not** baked into the kyanite image. It ships as systemd-sysext packages from [kyanite-sysexts](https://github.com/alyraffauf/kyanite-sysexts):
 
-| Sysext | Provides |
-| --- | --- |
-| `docker` | Docker CE + buildx, compose, model plugins |
-| `rocm` | AMD ROCm runtime (HIP, OpenCL, rocm-smi) |
-| `steam` | Native Steam, Gamescope, MangoHud, GameMode (multilib) |
-| `virt` | QEMU/KVM + libvirt + edk2-ovmf + virtio drivers |
+| Sysext   | Provides                                               |
+| -------- | ------------------------------------------------------ |
+| `docker` | Docker CE + buildx, compose, model plugins             |
+| `rocm`   | AMD ROCm runtime (HIP, OpenCL, rocm-smi)               |
+| `steam`  | Native Steam, Gamescope, MangoHud, GameMode (multilib) |
+| `virt`   | QEMU/KVM + libvirt + edk2-ovmf + virtio drivers        |
 
 Users install via `ujust install-sysext NAME` (recipe in `ujust/main/sysexts.just`). To add a new sysext, work in the `kyanite-sysexts` repo — not this one.
 

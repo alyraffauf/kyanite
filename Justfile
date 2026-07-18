@@ -118,6 +118,8 @@ build target_image=image_name tag=default_tag flavor=image_flavor:
     [[ -n "${BASE_IMAGE:-}" ]] && BUILD_ARGS+=("--build-arg" "BASE_IMAGE=${BASE_IMAGE}")
     [[ -n "${BASE_IMAGE_NAME:-}" ]] && BUILD_ARGS+=("--build-arg" "BASE_IMAGE_NAME=${BASE_IMAGE_NAME}")
     [[ -n "${BASE_IMAGE_SHA:-}" ]] && BUILD_ARGS+=("--build-arg" "BASE_IMAGE_SHA=${BASE_IMAGE_SHA}")
+    [[ -n "${COMMON_IMAGE:-}" ]] && BUILD_ARGS+=("--build-arg" "COMMON_IMAGE=${COMMON_IMAGE}")
+    [[ -n "${COMMON_IMAGE_SHA:-}" ]] && BUILD_ARGS+=("--build-arg" "COMMON_IMAGE_SHA=${COMMON_IMAGE_SHA}")
 
     echo "Building image: ${FINAL_IMAGE}:{{ tag }} (variant: {{ flavor }})"
 

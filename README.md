@@ -31,14 +31,14 @@ After it boots, `ujust --list` shows what custom recipes are available. A couple
 
 Anything heavy or opt-in lives in [kyanite-sysexts](https://github.com/alyraffauf/kyanite-sysexts) as systemd-sysext payloads. Install only what you actually want:
 
-| Sysext | What you get |
-|---|---|
-| `docker` | Docker CE + buildx, compose, model plugins |
-| `rocm` | AMD ROCm, HIP, OpenCL, rocm-smi |
-| `steam` | Native Steam, Gamescope, MangoHud, GameMode (i686 multilib) |
-| `syncthing` | Native Syncthing daemon |
-| `tailscale` | Tailscale mesh-VPN client + daemon |
-| `virt` | QEMU/KVM, libvirt, edk2-ovmf, virtio drivers |
+| Sysext      | What you get                                                |
+| ----------- | ----------------------------------------------------------- |
+| `docker`    | Docker CE + buildx, compose, model plugins                  |
+| `rocm`      | AMD ROCm, HIP, OpenCL, rocm-smi                             |
+| `steam`     | Native Steam, Gamescope, MangoHud, GameMode (i686 multilib) |
+| `syncthing` | Native Syncthing daemon                                     |
+| `tailscale` | Tailscale mesh-VPN client + daemon                          |
+| `virt`      | QEMU/KVM, libvirt, edk2-ovmf, virtio drivers                |
 
 ```bash
 ujust install-sysext NAME
@@ -106,6 +106,11 @@ just build-qcow2     # build a qcow2 for VM testing
 just build-iso       # ~10GB, takes 30+ min
 just run-vm          # boot the qcow2 in qemu
 ```
+
+The shared desktop assets come from the digest-pinned
+[`kyanite-common`](https://github.com/alyraffauf/kyanite-common) OCI layer.
+For local common-layer development, build it first and pass
+`COMMON_IMAGE=localhost/kyanite-common:stable`.
 
 NVIDIA base experiment:
 
