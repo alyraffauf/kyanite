@@ -109,8 +109,13 @@ just run-vm          # boot the qcow2 in qemu
 
 The shared desktop assets come from the digest-pinned
 [`kyanite-common`](https://github.com/alyraffauf/kyanite-common) OCI layer.
-For local common-layer development, build it first and pass
-`COMMON_IMAGE=localhost/kyanite-common:stable`.
+For local common-layer development, build it first and pass its local digest:
+
+```bash
+COMMON_IMAGE=localhost/kyanite-common:stable \
+COMMON_IMAGE_SHA=$(podman image inspect localhost/kyanite-common:stable --format '{{.Digest}}') \
+just build
+```
 
 NVIDIA base experiment:
 
