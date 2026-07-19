@@ -12,7 +12,7 @@ ARG COMMON_IMAGE_SHA="sha256:3d37604c7e1597b90944d8e6547cdb74c26fcff1400b72069a8
 
 # Base Image @ fedora-ostree-desktops/kinoite (upstream Fedora; ublue
 # customizations replicated in build/02-fedora-packages.sh)
-ARG BASE_IMAGE_SHA="sha256:2f94a2da3ddd05499f95e534c075f56c971d2817d36f8bcbabd58cfaf8f74e2f"
+ARG BASE_IMAGE_SHA="sha256:770d60914f3ef96ad863cc18d497f32ef1e54d3fcdfa5645404b2a3765fc71b1"
 
 # Brew Image
 ARG BREW_IMAGE_SHA="sha256:14ad3acb89bea0a7d98cacc206a4f590efcb794b7da7385bbeba4ed943289ad4"
