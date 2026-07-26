@@ -55,7 +55,7 @@ jobs:
                   # cosign 3.x defaults to OCI 1.1 referrers which the
                   # containers/image stack on Fedora 44 doesn't read yet
                   # (rpm-ostree fails with "no signature exists").
-                  cosign-release: "v2.6.3"
+                  cosign-release: "v2.6.4"
 
             - name: Maximize build space
               uses: ublue-os/remove-unwanted-software@695eb75bc387dbcd9685a8e72d23439d8686cba6
