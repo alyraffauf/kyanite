@@ -10,11 +10,6 @@ set -eoux pipefail
 
 echo "::group:: Apply System Workarounds"
 
-# Fix /nix directory for Nix package manager compatibility on Fedora >=42
-mkdir -p /nix
-chown root:root /nix
-chmod 755 /nix
-
 # systemd-sysupdate's state dirs need the systemd_importd_var_run_t label
 # so the systemd-pull helper (running as systemd_importd_t) can write the
 # downloaded temp files. Without an explicit rule the dirs can inherit
