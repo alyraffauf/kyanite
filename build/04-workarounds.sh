@@ -45,19 +45,6 @@ cp /usr/share/applications/com.mitchellh.ghostty.desktop /usr/share/kglobalaccel
 # sed -i 's@\[Desktop Action toggle\]@\[Desktop Action toggle\]\nX-KDE-Shortcuts=Meta+Space@g' /usr/share/applications/vicinae.desktop
 # cp /usr/share/applications/vicinae.desktop /usr/share/kglobalaccel/
 
-# # Force Ptyxis version opened via dbus (e.g., keyboard shortcut) to use the proper shim
-# # https://github.com/ublue-os/bazzite/pull/3620
-# sed -i 's@Exec=/usr/bin/ptyxis@Exec=/usr/bin/kde-ptyxis@g' /usr/share/dbus-1/services/org.gnome.Ptyxis.service
-
-# # Configure Ptyxis terminal for KDE integration
-# sed -i 's@\[Desktop Action new-window\]@\[Desktop Action new-window\]\nX-KDE-Shortcuts=Ctrl+Alt+T@g' /usr/share/applications/org.gnome.Ptyxis.desktop
-# sed -i 's@Exec=ptyxis@Exec=kde-ptyxis@g' /usr/share/applications/org.gnome.Ptyxis.desktop
-# sed -i 's@Keywords=@Keywords=konsole;console;@g' /usr/share/applications/org.gnome.Ptyxis.desktop
-# # GTK 4.20 changed input method handling
-# # Reference: https://github.com/ghostty-org/ghostty/discussions/8899#discussioncomment-14717979
-# desktop-file-edit --set-key=Exec --set-value='env GTK_IM_MODULE=ibus kde-ptyxis' /usr/share/applications/org.gnome.Ptyxis.desktop
-# cp /usr/share/applications/org.gnome.Ptyxis.desktop /usr/share/kglobalaccel/
-
 echo "::endgroup::"
 
 echo "System workarounds applied successfully!"

@@ -24,20 +24,13 @@ dnf5 config-manager addrepo \
 dnf5 config-manager setopt fedora-multimedia.priority=90
 dnf5 config-manager setopt fedora-multimedia.enabled=1
 
-# Fedora packaging bug: OpenCL-ICD-Loader gets installed in error; ocl-icd is
-# the expected ICD loader. https://bugzilla.redhat.com/show_bug.cgi?id=2332429
-dnf5 -y swap --repo='fedora' OpenCL-ICD-Loader ocl-icd || true
-
 # Replace podman's default policy.json so /etc has it (bootc/ostree copies
 # /usr/etc to /etc on first boot, but moving avoids divergence).
 if [[ -f /usr/etc/containers/policy.json ]]; then
     mv /usr/etc/containers/policy.json /etc/containers/policy.json
 fi
 
-# Pull a small set of ublue-os utility packages from their COPR. ujust
-# infrastructure is now in-house (kyanite-common); the remaining packages
-# provide LUKS unlock helpers, hardware udev rules, and rpm-ostreed-automatic
-# timer wrappers.
+# Nice-to-haves from the ublue-os COPR.
 dnf5 -y copr enable ublue-os/packages
 dnf5 -y install \
     ublue-os-luks \
@@ -58,7 +51,6 @@ echo "::endgroup::"
 echo "::group:: Validate packages.json"
 
 # Validate packages.json before attempting to parse it
-# This ensures builds fail fast if the JSON is malformed
 if ! jq empty /ctx/packages.json 2>/dev/null; then
     echo "ERROR: packages.json contains syntax errors and cannot be parsed" >&2
     echo "Please fix the JSON syntax before building" >&2
@@ -100,7 +92,6 @@ echo "::endgroup::"
 
 echo "::group:: Install Fedora Packages"
 
-# Install all packages in one command
 if [[ ${#INCLUDED_PACKAGES[@]} -gt 0 ]]; then
     dnf5 -y install \
         "${INCLUDED_PACKAGES[@]}"
@@ -113,7 +104,6 @@ echo "::endgroup::"
 echo "::group:: Remove Excluded Packages"
 
 # Filter to only packages that are actually installed
-
 if [[ ${#EXCLUDED_PACKAGES[@]} -gt 0 ]]; then
     INSTALLED_EXCLUDED=()
     for pkg in "${EXCLUDED_PACKAGES[@]}"; do
