@@ -6,7 +6,7 @@ ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
 ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/kinoite:44"
 ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 ARG COMMON_IMAGE="ghcr.io/alyraffauf/kyanite-common:stable"
-ARG COMMON_IMAGE_SHA="sha256:713035d56189188910e44f2baea2904c0c41b15671d9fc33f99546754bd2e646"
+ARG COMMON_IMAGE_SHA="sha256:a1fa1ab4801f089c4d07481268bb283fa24bcbb902266caf55706001050d1a0f"
 # SHA pinning enables Renovate to automatically update dependencies
 # See: https://docs.renovatebot.com/docker/#digest-pinning
 
