@@ -6,12 +6,17 @@
                     "flatpak-nuke-fedora.service",
                     "flatpak-preinstall.service",
                     "podman.socket",
-                    "rpm-ostreed-automatic.timer"
+                    "rpm-ostreed-automatic.timer",
+                    "tailscaled.service"
                 ],
                 "disable": []
             },
             "user": {
-                "enable": ["bazaar.service", "podman-auto-update.timer", "podman.socket"],
+                "enable": [
+                    "bazaar.service",
+                    "podman-auto-update.timer",
+                    "podman.socket"
+                ],
                 "disable": []
             }
         },
