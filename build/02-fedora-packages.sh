@@ -94,7 +94,6 @@ echo "::group:: Install Fedora Packages"
 
 if [[ ${#INCLUDED_PACKAGES[@]} -gt 0 ]]; then
     dnf5 -y install \
-        --enablerepo=code \
         "${INCLUDED_PACKAGES[@]}"
 else
     echo "No packages to install."
