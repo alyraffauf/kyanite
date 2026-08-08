@@ -64,6 +64,11 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
 RUN --mount=type=cache,dst=/var/cache/dnf \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
+    /ctx/build/00-vscode-repository.sh
+
+RUN --mount=type=cache,dst=/var/cache/dnf \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
     /ctx/build/02-fedora-packages.sh
 
