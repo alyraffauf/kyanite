@@ -15,7 +15,7 @@ ARG COMMON_IMAGE_SHA="sha256:a1fa1ab4801f089c4d07481268bb283fa24bcbb902266caf557
 ARG BASE_IMAGE_SHA="sha256:eec89ad3a17808de87fbe268a2db8060b358b76d315c2e3e3bbcb316e40f0219"
 
 # Brew Image
-ARG BREW_IMAGE_SHA="sha256:60ada2d65891d8797beef49d8b43f2108519cbbaf04c9c7363e1a008677fcd35"
+ARG BREW_IMAGE_SHA="sha256:e9a72571b7644b6277f0638b6a3c5e497e265e1098ab91224567acbdeb8b74ea"
 
 ###############################################################################
 # IMPORT STAGES
