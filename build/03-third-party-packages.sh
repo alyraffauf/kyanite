@@ -48,6 +48,9 @@ echo "::group:: Install COPR packages"
 # copr_install_isolated "quadratech188/vicinae" "vicinae"
 
 copr_install_isolated "ublue-os/packages" \
+    "ublue-os-luks" \
+    "ublue-os-udev-rules" \
+    "ublue-os-update-services" \
     "krunner-bazaar"
 
 echo "::endgroup::"

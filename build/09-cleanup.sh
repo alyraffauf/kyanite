@@ -57,6 +57,9 @@ fi
 echo "Cleaning up temporary build artifacts..."
 rm -rf /var/lib/dnf
 rm -rf /var/lib/freeipmi
+rm -f /var/cache/ldconfig/aux-cache
+rm -rf /run/dnf
+rm -rf /run/selinux-policy
 rm -rf /run/faillock
 rm -rf /run/sepermit
 
