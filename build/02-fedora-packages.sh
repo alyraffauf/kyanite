@@ -13,7 +13,7 @@ echo "::group:: Replicate ublue base customizations"
 
 # Replicates the parts of ublue-os/main's install.sh that we want now that
 # we're rebased directly on quay.io/fedora-ostree-desktops/kinoite.
-# Two-phase: (1) repo setup + ublue-os-just install BEFORE the package list
+# Two-phase: (1) repo setup BEFORE the package list
 # install so codecs come from negativo17 transparently, (2) distro-sync of
 # the mesa/libva stack and versionlocks AFTER the install (see end of file).
 
@@ -29,13 +29,6 @@ dnf5 config-manager setopt fedora-multimedia.enabled=1
 if [[ -f /usr/etc/containers/policy.json ]]; then
     mv /usr/etc/containers/policy.json /etc/containers/policy.json
 fi
-
-# Nice-to-haves from the ublue-os COPR.
-dnf5 -y copr enable ublue-os/packages
-dnf5 -y install \
-    ublue-os-luks \
-    ublue-os-udev-rules \
-    ublue-os-update-services
 
 echo "::endgroup::"
 
