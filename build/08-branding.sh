@@ -18,8 +18,11 @@ IMAGE_NAME="${IMAGE_NAME:-kyanite}"
 IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 IMAGE_TAG="${UBLUE_IMAGE_TAG:-stable}"
 BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
-FEDORA_VERSION="44"
-VERSION="${VERSION:-44}"
+FEDORA_VERSION=$(
+    . /usr/lib/os-release
+    printf '%s' "${VERSION_ID:?Base image must define VERSION_ID}"
+)
+VERSION="${VERSION:-$FEDORA_VERSION}"
 HOME_URL="https://github.com/${IMAGE_VENDOR}/kyanite"
 DOCUMENTATION_URL="https://github.com/${IMAGE_VENDOR}/kyanite/blob/main/README.md"
 SUPPORT_URL="https://github.com/${IMAGE_VENDOR}/kyanite/issues/"

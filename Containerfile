@@ -3,7 +3,7 @@
 ###############################################################################
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
 # Static value enables Renovate to detect and update the base image
-ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/kinoite:44"
+ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/kinoite:45"
 ARG BREW_IMAGE="ghcr.io/ublue-os/brew:latest"
 ARG COMMON_IMAGE="ghcr.io/alyraffauf/kyanite-common:stable"
 ARG COMMON_IMAGE_SHA="sha256:a1fa1ab4801f089c4d07481268bb283fa24bcbb902266caf55706001050d1a0f"
@@ -12,7 +12,7 @@ ARG COMMON_IMAGE_SHA="sha256:a1fa1ab4801f089c4d07481268bb283fa24bcbb902266caf557
 
 # Base Image @ fedora-ostree-desktops/kinoite (upstream Fedora; ublue
 # customizations replicated in build/02-fedora-packages.sh)
-ARG BASE_IMAGE_SHA="sha256:eec89ad3a17808de87fbe268a2db8060b358b76d315c2e3e3bbcb316e40f0219"
+ARG BASE_IMAGE_SHA="sha256:28da950e73e4f24d3a04db89963bcdb4e4a428a079e4b205aaddc9c502b2361c"
 
 # Brew Image
 ARG BREW_IMAGE_SHA="sha256:5bdf54dc7c21c22db29df6550e3711788719c5123549ea6dc5645d5af47795e3"
@@ -61,13 +61,13 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
     /ctx/build/01-stage-brewfiles.sh
 
-RUN --mount=type=cache,dst=/var/cache/dnf \
+RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
     /ctx/build/02-fedora-packages.sh
 
-RUN --mount=type=cache,dst=/var/cache/dnf \
+RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     IMAGE_FLAVOR="${IMAGE_FLAVOR}" \
